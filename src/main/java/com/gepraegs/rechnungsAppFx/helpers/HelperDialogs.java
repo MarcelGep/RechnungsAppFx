@@ -63,8 +63,8 @@ public class HelperDialogs {
 	public static void showMainWindow() throws IOException {
 		Parent root = loadFXML( MAINVIEW ).load();
 
-		Image weddingPlanerIcon = new Image(
-			HelperDialogs.class.getResource( "/icons/weddingPlanerIcon.png" ).toString() );
+//		Image weddingPlanerIcon = new Image(
+//			HelperDialogs.class.getResource( "/icons/weddingPlanerIcon.png" ).toString() );
 
 		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -77,7 +77,7 @@ public class HelperDialogs {
 		mainWindow.setScene( mainScene );
 		mainWindow.setTitle( "WeddingPlaner" );
 		mainWindow.setMaximized( true );
-		mainWindow.getIcons().add( weddingPlanerIcon );
+//		mainWindow.getIcons().add( weddingPlanerIcon );
 		mainWindow.setOnCloseRequest( e -> {
 			e.consume();
 			AppViewController.exitProgram();

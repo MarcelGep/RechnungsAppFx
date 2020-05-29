@@ -24,8 +24,8 @@ public class StartViewController {
     private String DB_LAST_PATH;
     private String DB_LOAD_PATH;
 
-    private static final String DB_MAIN_PATH = "weddingDB.db";
-    private static final String DB_DEVELOPMENT_PATH = "src/main/resources/weddingDB.db";
+    private static final String DB_MAIN_PATH = "/database/database.db";
+    private static final String DB_DEVELOPMENT_PATH = "src/main/resources/database/database.db";
 
     private static final Logger LOGGER = Logger.getLogger(StartViewController.class.getName());
     private DbController dbController = DbController.getInstance();

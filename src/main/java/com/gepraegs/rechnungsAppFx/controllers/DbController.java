@@ -15,11 +15,11 @@ public class DbController {
 	private static final DbController dbcontroller = new DbController();
 	private static Connection connection;
 	private static final Logger LOGGER = Logger.getLogger( DbController.class.getName() );
-	private static final String DB_NAME = "weddingDB.db";
+	private static final String DB_NAME = "database/database.db";
 	private static final String JDBC_PREFIX = "jdbc:sqlite:";
 	private static String DB_PATH = "";
 	// TODO
-	private static final String DB_SQL_FILE = "src/main/resources/weddingDB.sql";
+	private static final String DB_SQL_FILE = "src/main/resources/database.sql";
 
 	static {
 		try {
