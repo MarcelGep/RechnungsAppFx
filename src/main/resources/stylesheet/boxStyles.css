@@ -1,0 +1,37 @@
+@import "mainStyles.css";
+
+/*text field*/
+.text-field {
+    -fx-focus-color: -fx-accent;
+    -fx-faint-focus-color: -fx-accent-faint;
+}
+/*.text-field {
+    -fx-background-color: -fx-text-box-border, -fx-background ;
+    -fx-background-insets: 0, 0 0 1 0 ;
+    -fx-background-radius: 0 ;
+}
+
+.text-field:focused {
+    -fx-background-color: -fx-accent, -fx-background ;
+}*/
+
+/*text area*/
+.text-area {
+    -fx-focus-color: -fx-accent;
+    -fx-faint-focus-color: -fx-accent-faint;
+}
+
+/*check box*/
+/*.check-box .box {
+    -fx-focus-color: -fx-accent;
+    -fx-faint-focus-color: -fx-accent-faint;
+    -fx-background-radius: 0px;
+    -fx-padding: 0.15em;
+}*/
+
+/*combo box*/
+.combo-box {
+    -fx-focus-color: -fx-accent;
+    -fx-faint-focus-color: -fx-accent-faint;
+    -fx-background-radius: 4px;
+}

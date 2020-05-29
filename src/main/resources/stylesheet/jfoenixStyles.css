@@ -1,0 +1,158 @@
+@import "mainStyles.css";
+
+/*JFoenix styles*/
+
+/*custom tab pane app*/
+#app-tab-pane {
+    -fx-tab-min-width:170px;
+    -fx-tab-min-height:60px;
+}
+
+#app-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #313237;
+}
+
+#app-tab-pane .tab-header-area  .tab-selected-line {
+    -fx-background-color: transparent;
+    /*-fx-pref-height: 5;*/
+}
+
+#app-tab-pane .tab-header-area .jfx-rippler{
+    -jfx-rippler-fill: #f0f0f0;
+    -fx-cursor:hand;
+}
+
+#app-tab-pane .tab .tab-label {
+    -fx-text-fill: gray;
+}
+
+#app-tab-pane .tab:selected .tab-label{
+	-fx-text-fill: white;
+}
+
+#app-tab-pane .tab:hover {
+	-fx-background-color: derive(#313237, 20%);
+}
+
+#app-tab-pane .tab:hover .tab-label {
+    -fx-text-fill: white;
+}
+
+#app-tab-pane .tab:selected {
+    -fx-background-color: -fx-accent;
+}
+
+/*guest dialog tab pane*/
+#guest-tab-pane {
+    -fx-tab-min-width:130px;
+    -fx-tab-min-height:60px;
+}
+
+#guest-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #313237;
+}
+
+#guest-tab-pane .tab-header-area  .tab-selected-line {
+    -fx-background-color: -fx-accent;
+    -fx-pref-height: 3;
+}
+
+#guest-tab-pane .tab-header-area .jfx-rippler{
+    -jfx-rippler-fill: #f0f0f0;
+    -fx-cursor:hand;
+}
+
+#guest-tab-pane .tab .tab-label {
+    -fx-text-fill: gray;
+}
+
+#guest-tab-pane .tab:selected .tab-label{
+	-fx-text-fill: white;
+}
+
+#guest-tab-pane .tab:hover {
+	-fx-background-color: derive(#313237, 20%);
+}
+
+#guest-tab-pane .tab:hover .tab-label {
+    -fx-text-fill: white;
+}
+
+/*text-field*/
+.jfx-text-field {
+    -jfx-focus-color: -fx-accent;
+    -jfx-label-float: true;
+}
+
+/*text-area*/
+.jfx-text-area {
+    -jfx-focus-color: -fx-accent;
+    -jfx-label-float: true;
+}
+
+/*combo-box*/
+.jfx-combo-box {
+    /*-fx-prompt-text-fill: -fx-accent;*/
+}
+
+/*button*/
+.jfx-button {
+    -jfx-disable-visual-focus: true;
+}
+
+.jfx-button .jfx-rippler {
+    /*empty*/
+}
+
+/*check-box*/
+.jfx-check-box {
+     -jfx-checked-color: -fx-accent;
+}
+
+.jfx-check-box .box {
+    -fx-border-color: derive(grey, -10%);
+    -fx-border-width: 1.5px;
+}
+
+.jfx-check-box:selected .box {
+    -fx-border-color: -fx-accent;
+}
+
+.jfx-check-box .mark {
+     -fx-border-color: white;
+}
+
+/*radio-button*/
+.jfx-radio-button {
+    -jfx-selected-color: -fx-accent;
+}
+
+/*toggle-node*/
+.jfx-toggle-node {
+    -jfx-toggle-color: -fx-accent;
+    -jfx-untoggle-color: #9eb1af;
+}
+
+.jfx-toggle-node .jfx-rippler {
+    -jfx-rippler-fill: derive(-fx-accent, -40%);
+    -fx-cursor:hand;
+}
+
+/*dialog styles*/
+/*.jfx-dialog-overlay-pane > StackPane {
+    -fx-background-color: TRANSPARENT;
+}*/
+
+.jfx-dialog .dialogButton {
+    -fx-background-color: green;
+    -fx-text-fill: red;
+    -fx-font-size: 12pt;
+    -fx-background-radius: 0;
+    -fx-border-width: 1px;
+    -fx-border-color: -fx-secondary;
+}
+
+.jfx-dialog .dialogButton:hover {
+    -fx-background-color: -fx-secondary;
+}
+

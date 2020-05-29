@@ -1,0 +1,183 @@
+/*main styles*/
+/*colors*/
+* {
+   /*orange*/
+   /*-fx-accent: #E95F35;*/
+   /*-fx-accent-faint: #E95F3522;*/
+
+   /*pink*/
+   -fx-accent: #E91E63;
+   -fx-accent-faint: #E91E6322;
+}
+
+/*font sizes*/
+.fn-10 {
+    -fx-font-size:10.0px;
+}
+
+.fn-12 {
+    -fx-font-size:12.0px;
+}
+
+.fn-14 {
+    -fx-font-size:14.0px;
+}
+
+.fn-16 {
+    -fx-font-size:16.0px;
+}
+
+.fn-18 {
+    -fx-font-size:18.0px;
+}
+
+.fn-24 {
+    -fx-font-size:24.0px;
+}
+
+.fn-30 {
+    -fx-font-size:30.0px;
+}
+
+.fn-32 {
+    -fx-font-size:32.0px;
+}
+
+.fn-36 {
+    -fx-font-size:36.0px;
+}
+
+.fn-38 {
+    -fx-font-size:38.0px;
+}
+
+.fn-46 {
+    -fx-font-size:46.0px;
+}
+
+.fn-48 {
+    -fx-font-size:48.0px;
+}
+
+.fn-52 {
+    -fx-font-size:52.0px;
+}
+
+.fn-64 {
+    -fx-font-size:64.0px;
+}
+
+/*font weight*/
+.fn-bold {
+    -fx-font-weight:bold;
+}
+
+/*text-alignments*/
+.txt-center {
+    -fx-text-alignment:center;
+}
+
+.txt-justify {
+    -fx-text-alignment:justify;
+}
+
+.txt-left {
+    -fx-text-alignment:left;
+}
+
+.txt-right {
+    -fx-text-alignment:right;
+}
+
+/*text-colors*/
+.fill-light-grey {
+    -fx-fill: #d0d0d0;
+    -fx-text-fill: #d0d0d0;
+}
+
+.fill-grey {
+    -fx-fill: #9c9c9c;
+    -fx-text-fill: #9c9c9c;
+}
+
+.fill-dark {
+    -fx-fill: #4f5d55;
+    -fx-text-fill: #4f5d55;
+}
+
+.fill-white {
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+.fill-red {
+    -fx-fill: #e86829;
+    -fx-text-fill: #e86829;
+}
+
+.fill-green {
+     -fx-fill: #8bc34a;
+     -fx-text-fill: #8bc34a;
+ }
+
+
+/*background-colors*/
+.back-white {
+    -fx-background-color: white;
+}
+
+.back-transparent {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0.0px;
+}
+
+.back-light-grey {
+    -fx-background-color: #d0d0d0;
+}
+
+.back-green {
+    -fx-background-color: #8bc34a;
+}
+
+.back-red {
+    -fx-background-color: -fx-accent;
+}
+
+.back-gray {
+    -fx-background-color: #9eb1af;
+}
+
+/*shapes*/
+.flat {
+    -fx-background-radius: 0.0px;
+}
+
+/*borders*/
+.border-2px {
+    -fx-border-width: 2.0px;
+}
+
+.border-light-grey {
+    -fx-border-color: #d0d0d0;
+}
+
+/*hovers*/
+.hover-hand:hover {
+    -fx-cursor: hand;
+}
+
+.hover-dark-grey:hover {
+    -fx-background-color: #a0a0a0;
+}
+
+/*card style with shadow*/
+.card {
+     -fx-background-radius: 4.0;
+     -fx-background-color: white;
+     -fx-effect: dropshadow(three-pass-box, derive(gray, -10%), 5, 0, 3, 3);
+ }
+
+/*error label for jfx-text-field*/
+.error-label {
+    -fx-font-size: 10px;
+}

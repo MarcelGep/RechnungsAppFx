@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane alignment="TOP_RIGHT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="560.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weddingPlaner.controllers.TaskDialogController">
+   <children>
+      <AnchorPane>
+         <children>
+            <JFXTabPane id="guest-tab-pane" layoutX="14.0" layoutY="52.0" prefHeight="365.0" prefWidth="560.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <tabs>
+                  <Tab closable="false" text="Task">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <AnchorPane layoutX="21.0" layoutY="24.0" prefHeight="272.0" prefWidth="518.0" styleClass="card">
+                                 <children>
+                                    <JFXComboBox fx:id="cbUnit" layoutX="309.0" layoutY="180.0" prefHeight="26.0" prefWidth="112.0" promptText="Einheit" />
+                                    <ImageView fx:id="ivCheck" fitHeight="169.0" fitWidth="162.0" layoutX="27.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/checklist.png" />
+                                       </image>
+                                    </ImageView>
+                                    <JFXTextField fx:id="tfTask" layoutX="210.0" layoutY="60.0" prefHeight="26.0" prefWidth="210.0" promptText="Aufgabe" />
+                                    <JFXTextField fx:id="tfPerson" layoutX="210.0" layoutY="120.0" prefHeight="26.0" prefWidth="210.0" promptText="Person" />
+                                    <JFXTextField fx:id="tfDuration" layoutX="210.0" layoutY="180.0" prefHeight="26.0" prefWidth="61.0" promptText="Dauer" />
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+                  <Tab text="Datum" />
+               </tabs>
+            </JFXTabPane>
+            <HBox layoutX="300.0" layoutY="376.0" spacing="20.0">
+               <children>
+                  <Button id="save_button" fx:id="btnGuestSave" mnemonicParsing="false" onAction="#handleSave" text="Speichern" />
+                  <Button id="cancel_button" fx:id="btnGuestCancel" mnemonicParsing="false" onAction="#handleCancel" text="Abbrechen" />
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </children>
+   <stylesheets>
+      <URL value="@../stylesheet/jfoenixStyles.css" />
+      <URL value="@../stylesheet/buttonStyles.css" />
+   </stylesheets>
+</StackPane>

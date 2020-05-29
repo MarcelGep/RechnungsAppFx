@@ -1,0 +1,72 @@
+@import "mainStyles.css";
+
+/*table styles*/
+/* Selected row */
+.table-row-cell:selected {
+    -fx-table-cell-border-color: transparent;
+    -fx-background-color: derive(#f0f0f0, -10%);
+    -fx-text-background-color: -fx-text-inner-color;
+}
+
+/* Row hovered */
+.table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+/* Selected row */
+/*.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: brown;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}*/
+
+/* Selected row when table not focused */
+/*.table-row-cell:filled:focused:selected {
+    -fx-background-color: red;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background: -fx-accent;
+    -fx-text-fill: -fx-selection-bar-text;
+}*/
+
+/* Selected row hovered */
+/*.table-view:focused .table-row-cell:filled:focused:selected:hover {
+    -fx-background: -fx-accent;
+    -fx-background-color: yellow;
+    -fx-background-insets: 0, 1, 2;
+    -fx-text-fill: -fx-selection-bar-text;
+}*/
+
+/* Selected row hovered when table not focused */
+/*.table-view:row-selection .table-row-cell:filled:focused:hover {
+    -fx-background-color: blue;
+    -fx-background-insets: 0, 0 0 1 0, 1 1 2 1, 2 2 3 2, 3 3 4 3;
+    -fx-text-fill: -fx-text-inner-color;
+}*/
+
+.table-row-cell:empty {
+    -fx-table-cell-border-color: transparent;
+    -fx-background-color: white;
+}
+
+.table-view {
+    -fx-control-inner-background: white;
+    -fx-table-cell-border-color: transparent;
+    -fx-focus-color:transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/*.table-view .column-header .text {
+    -fx-fill: white;
+}
+
+.table-view .column-header, .table-view .filler {
+    -fx-border-width: 0 0 5 0;
+    -fx-background-color: derive(#313237, 20%);
+    -fx-text-background: white;
+    -fx-border-color:
+        transparent
+        transparent
+        derive(#313237, 20%)
+        transparent;
+}*/

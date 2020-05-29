@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.StartViewController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="590.0" prefWidth="550.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: black;">
+               <children>
+                  <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../icons/wedding-planer3.png" />
+                     </image>
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </ImageView>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="WeddingPlaner Start">
+                     <styleClass>
+                        <String fx:value="fn-32" />
+                        <String fx:value="fill-white" />
+                     </styleClass>
+                  </Text>
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" top="20.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="CENTER" spacing="3.0" style="-fx-background-color: #e6e7e8;">
+               <children>
+                  <Label styleClass="fn-14" text="Benutzer:" />
+                  <Label fx:id="lbUsername" text="Marcel Geprägs">
+                     <styleClass>
+                        <String fx:value="fn-bold" />
+                        <String fx:value="fn-14" />
+                     </styleClass>
+                  </Label>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </HBox>
+            <VBox spacing="5.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <Label text="Auswahl der Datenbank">
+                     <styleClass>
+                        <String fx:value="fn-16" />
+                        <String fx:value="fn-bold" />
+                     </styleClass>
+                     <graphic>
+                        <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../icons/database.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Label>
+                  <GridPane vgap="6.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="358.333251953125" minWidth="254.333251953125" prefWidth="262.3333740234375" />
+                      <ColumnConstraints halignment="RIGHT" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="0.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <RadioButton fx:id="rbLastUsedDb" mnemonicParsing="false" onAction="#onRbLastDbClicked" text="zuletzt Verwendete Datenbank">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="rbgDbSelection" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="rbCreateDb" mnemonicParsing="false" onAction="#onRbNewDbClicked" text="neue Datenbank anlegen" toggleGroup="$rbgDbSelection" GridPane.rowIndex="1" />
+                        <RadioButton fx:id="rbLoadDb" mnemonicParsing="false" onAction="#onRbLoadDbClicked" text="vorhandene Datenbank laden" toggleGroup="$rbgDbSelection" GridPane.rowIndex="2" />
+                        <JFXButton fx:id="btnSelectDb" disable="true" onAction="#onSelectDbButtonClicked" styleClass="back-light-grey" text="Datenbank auswählen..." GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <graphic>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/select_dir.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                        </JFXButton>
+                        <RadioButton fx:id="rbDevelopmentSettings" mnemonicParsing="false" onAction="#onRbDevelopmentSettingsClicked" text="development Settings" toggleGroup="$rbgDbSelection" GridPane.rowIndex="3" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" top="5.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets left="2.0" />
+                     </padding>
+                  </GridPane>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="15.0" />
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label minWidth="-Infinity" styleClass="fn-bold" text="Ausgewählte Datenbank" />
+                        <Label fx:id="lbDbPath" text="path" />
+                     </children>
+                  </VBox>
+                  <Label text="Development Settings">
+                     <padding>
+                        <Insets top="30.0" />
+                     </padding>
+                  </Label>
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Separator>
+                  <VBox spacing="15.0">
+                     <children>
+                        <RadioButton fx:id="rbDevelopment" mnemonicParsing="false" onAction="#onRbDevelopmentClicked" selected="true" text="IDE development">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="rbgDevelopSettings" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="rbJar" mnemonicParsing="false" onAction="#onRbJarClicked" text="JAR executable" toggleGroup="$rbgDevelopSettings" />
+                     </children>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="25.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+            <Separator prefWidth="200.0">
+               <VBox.margin>
+                  <Insets bottom="10.0" />
+               </VBox.margin>
+            </Separator>
+            <HBox alignment="CENTER_RIGHT" spacing="25.0">
+               <children>
+                  <JFXButton id="cancel_button" fx:id="btnTestDialog" onAction="#showJfxDialog" text="Test Dialog" />
+                  <Button id="save_button" fx:id="btnStart" mnemonicParsing="false" onAction="#onStartButtonClicked" text="Start" />
+                  <Button id="cancel_button" fx:id="btnExit" mnemonicParsing="false" onAction="#onExitButtonClicked" text="Exit" />
+               </children>
+               <padding>
+                  <Insets bottom="5.0" right="20.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</StackPane>

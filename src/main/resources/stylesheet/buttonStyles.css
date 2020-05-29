@@ -1,0 +1,112 @@
+@import "mainStyles.css";
+
+/*button*/
+.button {
+    -fx-focus-color: -fx-accent;
+    -fx-faint-focus-color: -fx-accent-faint;
+}
+
+/*radio-button*/
+.radio-button .radio {
+    -fx-focus-color: -fx-accent;
+    -fx-faint-focus-color: -fx-accent-faint;
+}
+
+/*toogle-button*/
+.toggle-button:selected {
+    -fx-background-color: -fx-accent;
+    -fx-text-fill: white;
+}
+
+/*.toggle-button {
+    -fx-background-color: #313237;
+    -fx-text-fill: white;
+}*/
+.toggle-button {
+    -fx-background-color: #9eb1af;
+    -fx-text-fill: black;
+    -fx-font-weight:bold;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 35px;
+    -fx-background-radius: 0px;
+}
+
+/*.toggle-button:hover {
+    -fx-background-color: #46474b;
+}*/
+.toggle-button:hover {
+    -fx-background-color: derive(#9eb1af, 20%);
+}
+
+.toggle-button:focused {
+   -fx-background-insets: 0, 0, 0, 0;
+}
+
+.toggle-button:selected:hover {
+    -fx-background-color: -fx-accent;
+}
+
+/*custom button*/
+#cancel_button {
+    -fx-background-color: #9eb1af;
+    -fx-font-weight:bold;
+    -fx-background-radius: 4px;
+    -fx-fill: white;
+    -fx-text-fill: white;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-min-width: 110px;
+    -fx-min-height: 30px;
+}
+
+#cancel_button:focused {
+    -fx-background-color: derive(#9eb1af, -40%);
+}
+
+#cancel_button:pressed {
+    -fx-background-color: derive(#9eb1af, 40%);
+}
+
+#save_button {
+    -fx-background-color: -fx-accent;
+    -fx-font-weight:bold;
+    -fx-background-radius: 4px;
+    -fx-fill: white;
+    -fx-text-fill: white;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-min-width: 110px;
+    -fx-min-height: 30px;
+/*    -fx-focus-color: blue;
+    -fx-faint-focus-color: yellow;*/
+}
+
+#save_button:focused {
+    -fx-background-color: derive(-fx-accent, -40%);
+}
+
+#save_button:pressed {
+    -fx-background-color: derive(-fx-accent, 40%);
+}
+
+#tabButton {
+    -fx-background-color: #9eb1af;
+    -fx-font-weight:bold;
+    -fx-background-radius: 0.0px;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+#tabButton:hover {
+    -fx-background-color: derive(#9eb1af, 20%);
+}
+
+#tabButtonSelected {
+    -fx-background-color: -fx-accent;
+    -fx-font-weight:bold;
+    -fx-background-radius: 0.0px;
+    -fx-fill: white;
+    -fx-text-fill: white;
+}
+
+#tabButtonSelected:hover {
+    -fx-background-color: derive(-fx-accent, 20%);
+}

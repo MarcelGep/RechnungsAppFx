@@ -1,0 +1,20 @@
+@import "mainStyles.css";
+
+/*context menu style*/
+.context-menu .menu-item:focused {
+   -fx-background-color: derive(gray, 60%);
+   -fx-text-background-color: -fx-text-inner-color;
+}
+
+.context-menu {
+    -fx-background-radius: 0 0 6 6, 0 0 5 5, 0 0 4 4;
+    -fx-padding: 4 1 8 1;
+}
+
+.context-menu .separator {
+    -fx-padding: 4 4 4 4;
+}
+
+.menu-item:focused .label {
+  -fx-text-fill: -fx-text-inner-color;
+}

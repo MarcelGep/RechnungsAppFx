@@ -1,0 +1,21 @@
+@import "mainStyles.css";
+
+/*list style*/
+.list-cell {
+    -fx-background-color: white;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: red blue #f0f0f0 yellow;
+    -fx-padding: 0px;
+}
+
+.list-cell:filled:hover {
+    -fx-background-color: #f0f0f0;
+}
+
+.list-cell:empty {
+    -fx-border-width: 0 0 0 0;
+    -fx-background-color: white;
+}
+
+
+
