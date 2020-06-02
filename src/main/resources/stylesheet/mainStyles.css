@@ -1,13 +1,12 @@
-/*main styles*/
 /*colors*/
+/*
+orange		#E95F35 
+pink 		#E91E63 
+green		#4caf50 
+*/
 * {
-   /*orange*/
-   /*-fx-accent: #E95F35;*/
-   /*-fx-accent-faint: #E95F3522;*/
-
-   /*pink*/
-   -fx-accent: #E91E63;
-   -fx-accent-faint: #E91E6322;
+   -fx-accent: #E95F35;
+   -fx-accent-faint: #E95F3522;
 }
 
 /*font sizes*/

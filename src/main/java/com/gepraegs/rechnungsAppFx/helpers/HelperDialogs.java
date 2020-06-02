@@ -2,14 +2,12 @@ package com.gepraegs.rechnungsAppFx.helpers;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Optional;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -25,15 +23,14 @@ import static com.gepraegs.rechnungsAppFx.Constants.*;
 import static com.gepraegs.rechnungsAppFx.helpers.HelperResourcesLoader.*;
 
 public class HelperDialogs {
-
-
+	
 	public static void showStartDialog( Stage stage ) throws IOException {
 		FXMLLoader fxmlLoader = loadFXML( STARTVIEW );
 
 		Parent root = fxmlLoader.load();
 
-//		Image weddingPlanerIcon = new Image(
-//			HelperDialogs.class.getResource( "/icons/weddingPlanerIcon.png" ).toString() );
+//		Image icon = new Image(
+//			HelperDialogs.class.getResource( "/icons/cash.png" ).toString() );
 
 		Scene mainScene = new Scene( root );
 
@@ -42,14 +39,14 @@ public class HelperDialogs {
 		stage.setMinHeight( 590 );
 		stage.setTitle( "RechnungsAppFx Start" );
 		stage.setScene( mainScene );
-//		stage.getIcons().add( weddingPlanerIcon );
+//		stage.getIcons().add( icon );
 
 		Ini ini = new Ini( HelperDialogs.class.getClassLoader().getResourceAsStream( "config.ini" ) );
 		String lastPath = ini.get( "database-path", "last_path" );
 
 		StartViewController controller = fxmlLoader.getController();
 		controller.setDbPathSetting(); // TODO only for development
-		controller.setLastDbPath( lastPath );
+//		controller.setLastDbPath( lastPath );
 		controller.setDialogStage( stage );
 
 		stage.setOnCloseRequest( e -> {
@@ -75,7 +72,7 @@ public class HelperDialogs {
 
 		Stage mainWindow = new Stage();
 		mainWindow.setScene( mainScene );
-		mainWindow.setTitle( "WeddingPlaner" );
+		mainWindow.setTitle( "RechnungsAppFx" );
 		mainWindow.setMaximized( true );
 //		mainWindow.getIcons().add( weddingPlanerIcon );
 		mainWindow.setOnCloseRequest( e -> {

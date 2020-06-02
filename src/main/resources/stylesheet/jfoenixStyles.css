@@ -100,8 +100,13 @@
     -jfx-disable-visual-focus: true;
 }
 
-.jfx-button .jfx-rippler {
-    /*empty*/
+.jfx-button {
+/*     -fx-padding: 0.7em 0.57em; */
+/*     -fx-font-size: 14px; */
+    -jfx-button-type: FLAT;
+    -fx-background-color: -fx-accent;
+    -fx-pref-width: 150;
+    -fx-text-fill: WHITE;
 }
 
 /*check-box*/

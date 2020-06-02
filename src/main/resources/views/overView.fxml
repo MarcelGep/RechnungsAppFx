@@ -14,7 +14,7 @@
       <URL value="@../stylesheet/jfoenixStyles.css" />
    </stylesheets>
    <children>
-      <Button mnemonicParsing="false" prefHeight="330.0" prefWidth="610.0" text="Button" />
-      <Button mnemonicParsing="false" prefHeight="330.0" prefWidth="610.0" text="Button" />
+      <Button id="save_button" mnemonicParsing="false" prefHeight="330.0" prefWidth="610.0" text="Button" />
+      <Button id="cancel_button" mnemonicParsing="false" prefHeight="330.0" prefWidth="610.0" text="Button" />
    </children>
 </VBox>

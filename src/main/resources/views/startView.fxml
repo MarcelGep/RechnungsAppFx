@@ -14,12 +14,14 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.StartViewController">
+<StackPane fx:id="stackPane" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.StartViewController">
    <children>
       <VBox alignment="CENTER" prefHeight="590.0" prefWidth="550.0">
          <children>
@@ -27,17 +29,20 @@
                <children>
                   <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../icons/wedding-planer3.png" />
+                        <Image url="@../icons/cash.png" />
                      </image>
                      <HBox.margin>
                         <Insets right="10.0" />
                      </HBox.margin>
                   </ImageView>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="WeddingPlaner Start">
+                  <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="RechnungsAppFx Start">
                      <styleClass>
                         <String fx:value="fn-32" />
                         <String fx:value="fill-white" />
                      </styleClass>
+                     <font>
+                        <Font size="32.0" />
+                     </font>
                   </Text>
                </children>
                <VBox.margin>
@@ -78,8 +83,8 @@
                   </Label>
                   <GridPane vgap="6.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="ALWAYS" maxWidth="358.333251953125" minWidth="254.333251953125" prefWidth="262.3333740234375" />
-                      <ColumnConstraints halignment="RIGHT" />
+                      <ColumnConstraints hgrow="ALWAYS" maxWidth="358.333251953125" minWidth="234.0" prefWidth="295.0" />
+                      <ColumnConstraints halignment="LEFT" maxWidth="269.0" minWidth="156.0" prefWidth="208.0" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -96,9 +101,9 @@
                         </RadioButton>
                         <RadioButton fx:id="rbCreateDb" mnemonicParsing="false" onAction="#onRbNewDbClicked" text="neue Datenbank anlegen" toggleGroup="$rbgDbSelection" GridPane.rowIndex="1" />
                         <RadioButton fx:id="rbLoadDb" mnemonicParsing="false" onAction="#onRbLoadDbClicked" text="vorhandene Datenbank laden" toggleGroup="$rbgDbSelection" GridPane.rowIndex="2" />
-                        <JFXButton fx:id="btnSelectDb" disable="true" onAction="#onSelectDbButtonClicked" styleClass="back-light-grey" text="Datenbank auswählen..." GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <JFXButton fx:id="btnSelectDb" disable="true" onAction="#onSelectDbButtonClicked" prefHeight="30.0" prefWidth="207.0" styleClass="back-light-grey" text="Datenbank auswählen..." GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="20.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../icons/select_dir.png" />
                                  </image>
@@ -154,14 +159,15 @@
                   <Insets bottom="10.0" />
                </VBox.margin>
             </Separator>
-            <HBox alignment="CENTER_RIGHT" spacing="25.0">
+            <HBox spacing="25.0">
                <children>
-                  <JFXButton id="cancel_button" fx:id="btnTestDialog" onAction="#showJfxDialog" text="Test Dialog" />
+                  <JFXButton fx:id="btnTestDialog" onAction="#showJfxDialog" stylesheets="@../stylesheet/jfoenixStyles.css" text="Test Dialog" />
+                  <Region prefHeight="28.0" prefWidth="195.0" />
                   <Button id="save_button" fx:id="btnStart" mnemonicParsing="false" onAction="#onStartButtonClicked" text="Start" />
                   <Button id="cancel_button" fx:id="btnExit" mnemonicParsing="false" onAction="#onExitButtonClicked" text="Exit" />
                </children>
                <padding>
-                  <Insets bottom="5.0" right="20.0" />
+                  <Insets bottom="5.0" left="20.0" right="20.0" />
                </padding>
             </HBox>
          </children>
@@ -170,4 +176,8 @@
          </padding>
       </VBox>
    </children>
+   <stylesheets>
+      <URL value="@../stylesheet/jfoenixStyles.css" />
+      <URL value="@../stylesheet/buttonStyles.css" />
+   </stylesheets>
 </StackPane>
