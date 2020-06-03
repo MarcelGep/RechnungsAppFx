@@ -26,6 +26,7 @@ public class HelperDialogs {
 	
 	public static void showStartDialog( Stage stage ) throws IOException {
 		FXMLLoader fxmlLoader = loadFXML( STARTVIEW );
+
 		Parent root = fxmlLoader.load();
 
 //		Image icon = new Image(
