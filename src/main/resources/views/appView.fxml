@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="922.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.AppViewController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="922.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.AppViewController">
    <children>
       <MenuBar fx:id="menuBar">
         <menus>
@@ -71,19 +64,19 @@
       </HBox>
       <TabPane fx:id="tabPaneContent" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
-            <Tab text="ÜBERSICHT">
+            <Tab text="Kunden">
                 <content>
                     <VBox minHeight="0.0" minWidth="0.0" prefHeight="106.0" prefWidth="200.0">
                         <children>
-                            <fx:include fx:id="overView" source="overView.fxml" VBox.vgrow="ALWAYS" />
+                            <fx:include fx:id="overView" source="customers.fxml" VBox.vgrow="ALWAYS" />
                         </children>
                     </VBox>
                 </content>
             </Tab>
            
-            <Tab text="Tab2" />
-            <Tab text="Tab3" />
-            <Tab text="Tab4" />
+            <Tab text="Artikel" />
+            <Tab text="Rechnungen" />
+            <Tab text="Einstellungen" />
         </tabs>
       </TabPane>
    </children>

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.gepraegs.rechnungsAppFx.*;
+import javafx.beans.property.StringProperty;
 
 public class DbController {
 
@@ -173,103 +174,112 @@ public class DbController {
 //		}
 //	}
 
-	public boolean createGuest( Guest guest ) {
+	public boolean createCustomer(Customer customer ) {
 		// updateSqliteSeq();
 
-		String query = "INSERT INTO Guests (lastname, firstname, age, status, phone, handy, email, street, plz, ort, comments) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+		String query = "INSERT INTO Customers(company, name1, name2, street, plz, location, country, phone, fax, email, website, discount, accountBalance, informations, handy) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, guest.getLastName() );
-			ps.setString( 2, guest.getFirstName() );
-			ps.setInt( 3, guest.getAge() );
-			ps.setString( 4, guest.getStatus() );
-			ps.setString( 5, guest.getPhone() );
-			ps.setString( 6, guest.getHandy() );
-			ps.setString( 7, guest.getEmail() );
-			ps.setString( 8, guest.getStreet() );
-			ps.setString( 9, guest.getPlz() );
-			ps.setString( 10, guest.getOrt() );
-			ps.setString( 11, guest.getComments() );
-			ps.executeUpdate();
+//		try {
+//			PreparedStatement ps = connection.prepareStatement( query );
+//			ps.setString( 1, customer.getCompany() );
+//			ps.setString( 2, customer.getName1() );
+//			ps.setInt( 3, customer.getName2() );
+//			ps.setString( 4, customer.getStreet() );
+//			ps.setString( 4, customer.getPlz() );
+//			ps.setString( 4, customer.getLocation() );
+//			ps.setString( 5, customer.getPhone() );
+//			ps.setString( 6, customer.getHandy() );
+//			ps.setString( 7, customer.getEmail() );
+//			ps.setString( 8, customer.getStreet() );
+//			ps.setString( 9, customer.getPlz() );
+//			ps.setString( 10, customer.getOrt() );
+//			ps.setString( 11, customer.getComments() );
+//			ps.executeUpdate();
+//
+//			LOGGER.info( "New guest created!" );
 
-			LOGGER.info( "New guest created!" );
+//			return true;
+//		} catch ( SQLException e ) {
+//			LOGGER.warning( e.toString() );
+//			return false;
+//		}
 
-			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
-			return false;
-		}
+		return true;
 	}
 
-	public boolean editGuest( Guest guest ) {
-		String query = "UPDATE Guests SET LastName = ?, FirstName = ?, Age = ?, Status = ?, Phone = ?, Handy = ?, "
-			+ "Email = ?, Street = ?, Plz = ?, Ort = ?, Comments = ? WHERE ID = ?";
-
-		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, guest.getLastName() );
-			ps.setString( 2, guest.getFirstName() );
-			ps.setInt( 3, guest.getAge() );
-			ps.setString( 4, guest.getStatus() );
-			ps.setString( 5, guest.getPhone() );
-			ps.setString( 6, guest.getHandy() );
-			ps.setString( 7, guest.getEmail() );
-			ps.setString( 8, guest.getStreet() );
-			ps.setString( 9, guest.getPlz() );
-			ps.setString( 10, guest.getOrt() );
-			ps.setString( 11, guest.getComments() );
-			ps.setInt( 12, guest.getId() );
-			ps.executeUpdate();
-
-			LOGGER.info( "Guest with ID: " + guest.getId() + " updated to: " + guest.getFirstName() + ", "
-				+ guest.getLastName() + ", " + guest.getAge() + ", " + guest.getStatus() + ", " + guest.getPhone()
-				+ ", " + guest.getHandy() + ", " + guest.getEmail() + ", " + guest.getStreet() + ", " + guest.getPlz()
-				+ ", " + guest.getOrt() + ", " + guest.getComments() );
-
-			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
-			return false;
-		}
+	public boolean editGuest( Customer guest ) {
+//		String query = "UPDATE Guests SET LastName = ?, FirstName = ?, Age = ?, Status = ?, Phone = ?, Handy = ?, "
+//			+ "Email = ?, Street = ?, Plz = ?, Ort = ?, Comments = ? WHERE ID = ?";
+//
+//		try {
+//			PreparedStatement ps = connection.prepareStatement( query );
+//			ps.setString( 1, guest.getLastName() );
+//			ps.setString( 2, guest.getFirstName() );
+//			ps.setInt( 3, guest.getAge() );
+//			ps.setString( 4, guest.getStatus() );
+//			ps.setString( 5, guest.getPhone() );
+//			ps.setString( 6, guest.getHandy() );
+//			ps.setString( 7, guest.getEmail() );
+//			ps.setString( 8, guest.getStreet() );
+//			ps.setString( 9, guest.getPlz() );
+//			ps.setString( 10, guest.getOrt() );
+//			ps.setString( 11, guest.getComments() );
+//			ps.setInt( 12, guest.getId() );
+//			ps.executeUpdate();
+//
+//			LOGGER.info( "Guest with ID: " + guest.getId() + " updated to: " + guest.getFirstName() + ", "
+//				+ guest.getLastName() + ", " + guest.getAge() + ", " + guest.getStatus() + ", " + guest.getPhone()
+//				+ ", " + guest.getHandy() + ", " + guest.getEmail() + ", " + guest.getStreet() + ", " + guest.getPlz()
+//				+ ", " + guest.getOrt() + ", " + guest.getComments() );
+//
+//			return true;
+//		} catch ( SQLException e ) {
+//			LOGGER.warning( e.toString() );
+//			return false;
+//		}
+		return true;
 	}
 
-	public boolean deleteGuest( Guest guest ) {
-		String query = "DELETE FROM Guests WHERE ID = ?";
-		int id = guest.getId();
+	public boolean deleteGuest( Customer guest ) {
+//		String query = "DELETE FROM Guests WHERE ID = ?";
+//		int id = guest.getId();
+//
+//		try {
+//			PreparedStatement ps = connection.prepareStatement( query );
+//			ps.setInt( 1, id );
+//			ps.executeUpdate();
+//
+//			LOGGER.info( "Guest " + guest.getFirstName() + " " + guest.getLastName() + " with ID: " + guest.getId()
+//				+ " deleted!" );
+//
+//			return true;
+//		} catch ( SQLException e ) {
+//			LOGGER.warning( e.toString() );
+//			return false;
+//		}
 
-		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setInt( 1, id );
-			ps.executeUpdate();
-
-			LOGGER.info( "Guest " + guest.getFirstName() + " " + guest.getLastName() + " with ID: " + guest.getId()
-				+ " deleted!" );
-
-			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
-			return false;
-		}
+		return true;
 	}
 
-	public boolean setInvite( Guest guest ) {
-		String query = "UPDATE Guests SET Invite = ? WHERE ID = ?";
+	public boolean setInvite( Customer guest ) {
+//		String query = "UPDATE Guests SET Invite = ? WHERE ID = ?";
+//
+//		try {
+//			PreparedStatement ps = connection.prepareStatement( query );
+//			ps.setInt( 1, guest.isInvite() ? 1 : 0 );
+//			ps.setInt( 2, guest.getId() );
+//			ps.executeUpdate();
+//
+//			LOGGER.info(
+//				"Set invite: " + guest.isInvite() + " for " + guest.getFirstName() + ", " + guest.getLastName() );
+//
+//			return true;
+//		} catch ( SQLException e ) {
+//			LOGGER.warning( e.toString() );
+//			return false;
+//		}
+		return true;
 
-		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setInt( 1, guest.isInvite() ? 1 : 0 );
-			ps.setInt( 2, guest.getId() );
-			ps.executeUpdate();
-
-			LOGGER.info(
-				"Set invite: " + guest.isInvite() + " for " + guest.getFirstName() + ", " + guest.getLastName() );
-
-			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
-			return false;
-		}
 	}
 
 	public String readInviteCount() {
@@ -294,64 +304,67 @@ public class DbController {
 		}
 	}
 
-	public int getGuestId( Guest guest ) {
+	public int getGuestId( Customer guest ) {
 		int id = -1;
-
-		String query = "SELECT ID FROM Guests WHERE LastName = ? AND FirstName = ? AND Age = ?";
-
-		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, guest.getLastName() );
-			ps.setString( 2, guest.getFirstName() );
-			ps.setInt( 3, guest.getAge() );
-
-			ResultSet rs = ps.executeQuery();
-
-			while ( rs.next() ) {
-				id = rs.getInt( "ID" );
-			}
-
-			LOGGER.info( "Guest ID = " + id );
-
-			return id;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
-		}
+//
+//		String query = "SELECT ID FROM Guests WHERE LastName = ? AND FirstName = ? AND Age = ?";
+//
+//		try {
+//			PreparedStatement ps = connection.prepareStatement( query );
+//			ps.setString( 1, guest.getLastName() );
+//			ps.setString( 2, guest.getFirstName() );
+//			ps.setInt( 3, guest.getAge() );
+//
+//			ResultSet rs = ps.executeQuery();
+//
+//			while ( rs.next() ) {
+//				id = rs.getInt( "ID" );
+//			}
+//
+//			LOGGER.info( "Guest ID = " + id );
+//
+//			return id;
+//		} catch ( SQLException e ) {
+//			LOGGER.warning( e.toString() );
+//		}
 
 		return id;
 	}
 
-	public List<Guest> readGuests() {
-		String query = "SELECT * FROM Guests ORDER BY LOWER(LastName) ASC, LOWER(FirstName) ASC";
+	public List<Customer> readCustomers() {
+		String query = "SELECT * FROM Customers ORDER BY LOWER(\"Company\") ASC, LOWER(\"Kd-Nr.\") ASC";
 
 		try {
 			Statement st = connection.createStatement();
 			ResultSet rs = st.executeQuery( query );
 
-			List<Guest> guestList = new ArrayList<>();
+			List<Customer> customerData = new ArrayList<>();
 
 			while ( rs.next() ) {
-				int id = rs.getInt( "ID" );
-				String firstName = rs.getString( "FirstName" );
-				String lastName = rs.getString( "LastName" );
-				int age = rs.getInt( "Age" );
-				String status = rs.getString( "Status" );
-				String phone = rs.getString( "Phone" );
-				String handy = rs.getString( "Handy" );
-				String email = rs.getString( "Email" );
+				String kdNr = rs.getString( "Kd-Nr." );
+				String company = rs.getString( "Company" );
+				String name1 = rs.getString( "Name1" );
+				String name2 = rs.getString( "Name2" );
 				String street = rs.getString( "Street" );
 				String plz = rs.getString( "Plz" );
-				String ort = rs.getString( "Ort" );
-				String comments = rs.getString( "Comments" );
-				int invite = rs.getInt( "Invite" );
+				String location = rs.getString( "Location" );
+				String country = rs.getString( "Country" );
+				String phone = rs.getString( "Phone" );
+				String handy = rs.getString( "Handy" );
+				String fax = rs.getString( "Fax" );
+				String email = rs.getString( "Email" );
+				String website = rs.getString( "Website" );
+				String informations = rs.getString( "Informations" );
+				double discount = rs.getDouble( "Discount" );
+				double accountBalance = rs.getDouble( "AccountBalance" );
 
-				Guest guest = new Guest( id, lastName, firstName, age, status, phone, handy, email, street, plz, ort,
-					comments, invite == 1 );
+				Customer customer = new Customer(kdNr, company, name1, name2, street, plz, location, country, phone, handy, fax,
+						email, website, informations, discount, accountBalance);
 
-				guestList.add( guest );
+				customerData.add( customer );
 			}
-			LOGGER.info( "Read all guests!" );
-			return guestList;
+			LOGGER.info( "Read all customers!" );
+			return customerData;
 		} catch ( SQLException e ) {
 			LOGGER.warning( e.toString() );
 			return null;
