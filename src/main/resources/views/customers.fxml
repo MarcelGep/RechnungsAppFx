@@ -5,7 +5,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox prefWidth="1300.0" spacing="20.0" style="-fx-background-color: #d4dad9;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomersController">
+<VBox prefWidth="1300.0" spacing="20.0" style="-fx-background-color: -fx-accent;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomersController">
    <padding>
       <Insets bottom="25.0" left="40.0" right="40.0" top="25.0" />
    </padding>
@@ -14,6 +14,6 @@
       <URL value="@../stylesheet/jfoenixStyles.css" />
    </stylesheets>
    <children>
-      <JFXTreeTableView fx:id="customerTable" currentItemsCount="2" />
+      <JFXTreeTableView fx:id="customerTable" currentItemsCount="2" VBox.vgrow="ALWAYS" />
    </children>
 </VBox>

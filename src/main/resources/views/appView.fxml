@@ -67,9 +67,7 @@
             <Tab text="Kunden">
                 <content>
                     <VBox minHeight="0.0" minWidth="0.0" prefHeight="106.0" prefWidth="200.0">
-                        <children>
-                            <fx:include fx:id="overView" source="customers.fxml" VBox.vgrow="ALWAYS" />
-                        </children>
+                        <fx:include fx:id="customers" source="customers.fxml" VBox.vgrow="ALWAYS"/>
                     </VBox>
                 </content>
             </Tab>

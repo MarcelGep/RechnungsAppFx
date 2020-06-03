@@ -5,15 +5,19 @@ import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TreeItem;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 
 import java.net.URL;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
@@ -36,8 +40,8 @@ public class CustomersController implements Initializable {
 	private final JFXTreeTableColumn<Customer, String> colFax = new JFXTreeTableColumn<>("Fax");
 	private final JFXTreeTableColumn<Customer, String> colEmail = new JFXTreeTableColumn<>("E-Mail");
 	private final JFXTreeTableColumn<Customer, String> colWebsite  = new JFXTreeTableColumn<>("Website");
-	private final JFXTreeTableColumn<Customer, Double> colDiscount = new JFXTreeTableColumn<>("Rabatt");
-	private final JFXTreeTableColumn<Customer, Double> colAccountBalance = new JFXTreeTableColumn<>("Kontostand");
+	private final JFXTreeTableColumn<Customer, String> colDiscount = new JFXTreeTableColumn<>("Rabatt");
+	private final JFXTreeTableColumn<Customer, String> colAccountBalance = new JFXTreeTableColumn<>("Kontostand");
 
 	@FXML private JFXTreeTableView<Customer> customerTable;
 
@@ -71,6 +75,7 @@ public class CustomersController implements Initializable {
 	private void initializeColumns() {
 		colKdNr.setPrefWidth(150);
 		colKdNr.setCellValueFactory(param -> param.getValue().getValue().getKdNr());
+		colKdNr.setStyle("-fx-alignment: CENTER;");
 
 		colCompany.setPrefWidth(150);
 		colCompany.setCellValueFactory(param -> param.getValue().getValue().getCompany());
@@ -86,6 +91,7 @@ public class CustomersController implements Initializable {
 
 		colPlz.setPrefWidth(150);
 		colPlz.setCellValueFactory(param -> param.getValue().getValue().getPlz());
+		colPlz.setStyle("-fx-alignment: CENTER;");
 
 		colLocation.setPrefWidth(150);
 		colLocation.setCellValueFactory(param -> param.getValue().getValue().getLocation());
@@ -109,10 +115,20 @@ public class CustomersController implements Initializable {
 		colWebsite.setCellValueFactory(param -> param.getValue().getValue().getWebsite());
 
 		colDiscount.setPrefWidth(150);
-		colDiscount.setCellValueFactory(new TreeItemPropertyValueFactory<>("discount"));
+		colDiscount.setStyle("-fx-alignment: CENTER-RIGHT;");
+		colDiscount.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) -> {
+			NumberFormat format = NumberFormat.getPercentInstance(Locale.GERMANY);
+			String percent = format.format(param.getValue().getValue().getDiscount());
+			return new ReadOnlyStringWrapper(percent);
+		});
 
 		colAccountBalance.setPrefWidth(150);
-		colAccountBalance.setCellValueFactory(new TreeItemPropertyValueFactory<>("accountBalance"));
+		colAccountBalance.setStyle("-fx-alignment: CENTER-RIGHT;");
+		colAccountBalance.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) -> {
+			NumberFormat format = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+			String currency = format.format(param.getValue().getValue().getAccountBalance());
+		 	return new ReadOnlyStringWrapper(currency);
+		});
 
 		customerTable.getColumns().add(colKdNr);
 		customerTable.getColumns().add(colCompany);
@@ -134,4 +150,18 @@ public class CustomersController implements Initializable {
 		customerTable.setRoot(root);
 		customerTable.setShowRoot(false);
 	}
+//
+//	public class PercentCell extends TreeTableCell<Customer, String> {
+//
+//		PercentCell() {
+//		}
+//
+//		@Override
+//		protected void updateItem(String t, boolean empty) {
+//			super.updateItem(t, empty);
+//			if (!empty) {
+//
+//			}
+//		}
+//	}
 }
