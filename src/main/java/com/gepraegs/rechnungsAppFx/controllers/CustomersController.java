@@ -46,6 +46,13 @@ public class CustomersController implements Initializable {
 
 		initializeColumns();
 		loadCustomersData();
+
+		//clear selection if table has no focus
+		customerTable.focusedProperty().addListener((obs, oldVal, newVal) -> {
+			if (!newVal) {
+				customerTable.getSelectionModel().clearSelection();
+			}
+		});
 	}
 
 	private void loadCustomersData()
