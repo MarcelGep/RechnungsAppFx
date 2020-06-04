@@ -27,8 +27,8 @@ public class CustomersController implements Initializable {
 	private final DbController dbController = DbController.getInstance();
 	private final ObservableList<Customer> customerData = FXCollections.observableArrayList();
 
-	private final JFXTreeTableColumn<Customer, String> colKdNr = new JFXTreeTableColumn<>("Kd-Nr.");
-	private final JFXTreeTableColumn<Customer, String> colCompany = new JFXTreeTableColumn<>("Firma");
+	private final JFXTreeTableColumn<Customer, String> colKdNr = new JFXTreeTableColumn<>("Nummer");
+	private final JFXTreeTableColumn<Customer, String> colCompany = new JFXTreeTableColumn<>("Kunde	");
 	private final JFXTreeTableColumn<Customer, String> colName1 = new JFXTreeTableColumn<>("Name 1");
 	private final JFXTreeTableColumn<Customer, String> colName2 = new JFXTreeTableColumn<>("Name 2");
 	private final JFXTreeTableColumn<Customer, String> colStreet = new JFXTreeTableColumn<>("Strasse");
@@ -73,11 +73,17 @@ public class CustomersController implements Initializable {
 	}
 
 	private void initializeColumns() {
+
+		customerTable.setColumnResizePolicy( TreeTableView.CONSTRAINED_RESIZE_POLICY );
+		colKdNr.setMaxWidth( 1f * Integer.MAX_VALUE * 15 );
+		colCompany.setMaxWidth( 1f * Integer.MAX_VALUE * 70 );
+		colAccountBalance.setMaxWidth( 1f * Integer.MAX_VALUE * 15 );
+
 		colKdNr.setPrefWidth(150);
 		colKdNr.setCellValueFactory(param -> param.getValue().getValue().getKdNr());
-		colKdNr.setStyle("-fx-alignment: CENTER;");
+		colKdNr.setStyle("-fx-alignment: CENTER-LEFT;");
 
-		colCompany.setPrefWidth(150);
+		colCompany.setPrefWidth(700);
 		colCompany.setCellValueFactory(param -> param.getValue().getValue().getCompany());
 
 		colName1.setPrefWidth(150);
@@ -123,7 +129,7 @@ public class CustomersController implements Initializable {
 		});
 
 		colAccountBalance.setPrefWidth(150);
-		colAccountBalance.setStyle("-fx-alignment: CENTER-RIGHT;");
+		colAccountBalance.setStyle("-fx-alignment: CENTER-LEFT;");
 		colAccountBalance.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) -> {
 			NumberFormat format = NumberFormat.getCurrencyInstance(Locale.GERMANY);
 			String currency = format.format(param.getValue().getValue().getAccountBalance());
@@ -132,18 +138,18 @@ public class CustomersController implements Initializable {
 
 		customerTable.getColumns().add(colKdNr);
 		customerTable.getColumns().add(colCompany);
-		customerTable.getColumns().add(colName1);
-		customerTable.getColumns().add(colName2);
-		customerTable.getColumns().add(colStreet);
-		customerTable.getColumns().add(colPlz);
-		customerTable.getColumns().add(colLocation);
-		customerTable.getColumns().add(colCountry);
-		customerTable.getColumns().add(colPhone);
-		customerTable.getColumns().add(colHandy);
-		customerTable.getColumns().add(colFax);
-		customerTable.getColumns().add(colEmail);
-		customerTable.getColumns().add(colWebsite);
-		customerTable.getColumns().add(colDiscount);
+//		customerTable.getColumns().add(colName1);
+//		customerTable.getColumns().add(colName2);
+//		customerTable.getColumns().add(colStreet);
+//		customerTable.getColumns().add(colPlz);
+//		customerTable.getColumns().add(colLocation);
+//		customerTable.getColumns().add(colCountry);
+//		customerTable.getColumns().add(colPhone);
+//		customerTable.getColumns().add(colHandy);
+//		customerTable.getColumns().add(colFax);
+//		customerTable.getColumns().add(colEmail);
+//		customerTable.getColumns().add(colWebsite);
+//		customerTable.getColumns().add(colDiscount);
 		customerTable.getColumns().add(colAccountBalance);
 
 		final TreeItem<Customer> root = new RecursiveTreeItem<>(customerData, RecursiveTreeObject::getChildren);

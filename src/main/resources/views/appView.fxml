@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="922.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.AppViewController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="922.0" stylesheets="@../stylesheet/tabPaneStyles.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.AppViewController">
    <children>
       <MenuBar fx:id="menuBar">
         <menus>
@@ -64,10 +64,10 @@
       </HBox>
       <TabPane fx:id="tabPaneContent" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
-            <Tab text="Kunden">
+            <Tab closable="false" text="Kunden">
                 <content>
-                    <VBox minHeight="0.0" minWidth="0.0" prefHeight="106.0" prefWidth="200.0">
-                        <fx:include fx:id="customers" source="customers.fxml" VBox.vgrow="ALWAYS"/>
+                    <VBox minHeight="0.0" minWidth="0.0">
+                        <fx:include fx:id="customers" source="customers.fxml" VBox.vgrow="ALWAYS" />
                     </VBox>
                 </content>
             </Tab>

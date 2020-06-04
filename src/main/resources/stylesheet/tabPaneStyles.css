@@ -1,21 +1,21 @@
-@import "mainStyles.css";
+    @import "mainStyles.css";
 
 /*tab pane style*/
 .tab-pane .tab-header-area .tab-header-background {
     -fx-opacity: 100;
-    -fx-background-color: #313237;
+    -fx-background-color: -fx-accent;
 }
 
 .tab-pane
 {
-    -fx-tab-min-width:150px;
-    -fx-tab-min-height:70px;
+    -fx-tab-min-width:120px;
+    -fx-tab-min-height:50px;
     -fx-focus-color: transparent;
 }
 
 .tab-pane .tab
 {
-    -fx-background-color: #313237;
+    -fx-background-color: -fx-accent;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-background-insets: 0 0 0 0,0,0;
@@ -23,16 +23,16 @@
 }
 
 .tab-pane .tab:hover {
-    -fx-background-color: derive(#313237, 20%);
-}
-
-.tab:hover{
-    -fx-background-color:  derive(-fx-base, 20%);
+    -fx-background-color: derive(-fx-accent, -20%);
 }
 
 .tab-pane .tab:selected
 {
-    -fx-background-color: -fx-accent;
+    -fx-background-color: derive(-fx-accent, -40%);
+}
+
+.tab:hover{
+    -fx-background-color: derive(-fx-base, 20%);
 }
 
 .tab .tab-label {
