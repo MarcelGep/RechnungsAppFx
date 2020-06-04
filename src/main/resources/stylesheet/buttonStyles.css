@@ -101,7 +101,7 @@
 
 #tabButtonSelected {
     -fx-background-color: -fx-accent;
-    -fx-font-weight:bold;
+    -fx-font-weight: bold;
     -fx-background-radius: 0.0px;
     -fx-fill: white;
     -fx-text-fill: white;
@@ -109,4 +109,41 @@
 
 #tabButtonSelected:hover {
     -fx-background-color: derive(-fx-accent, 20%);
+}
+
+#green-button {
+    -jfx-button-type: FLAT;
+    -fx-background-color: #6bc733;
+    -fx-pref-width: 110;
+    -fx-pref-height: 35;
+    -fx-text-fill: white;
+    -jfx-disable-visual-focus: true;
+}
+
+#green-button:hover {
+    -fx-background-color: rgb(126, 220, 70);
+}
+
+#light-button {
+    -jfx-button-type: FLAT;
+    -fx-background-color: transparent;
+    -fx-text-fill: derive(-fx-accent, 20%);
+    -jfx-disable-visual-focus: true;
+    -fx-font-weight: bold;
+}
+
+#light-button:hover {
+    -fx-text-fill: derive(-fx-accent, -20%);
+}
+
+#close-button {
+    -jfx-button-type: FLAT;
+    -fx-background-color: transparent;
+    -jfx-disable-visual-focus: true;
+}
+
+#close-button:hover {
+    -fx-cursor: hand;
+    -fx-background-color: derive(-fx-accent, 30%);
+    -fx-background-radius: 40;
 }

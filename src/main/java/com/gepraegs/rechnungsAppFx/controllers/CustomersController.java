@@ -1,25 +1,28 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
 import com.gepraegs.rechnungsAppFx.Customer;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
 import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
-import java.text.NumberFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
+
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
 
 public class CustomersController implements Initializable {
 
@@ -27,35 +30,55 @@ public class CustomersController implements Initializable {
 	private final DbController dbController = DbController.getInstance();
 	private final ObservableList<Customer> customerData = FXCollections.observableArrayList();
 
-	private final JFXTreeTableColumn<Customer, String> colKdNr = new JFXTreeTableColumn<>("Nummer");
-	private final JFXTreeTableColumn<Customer, String> colCompany = new JFXTreeTableColumn<>("Kunde	");
-	private final JFXTreeTableColumn<Customer, String> colName1 = new JFXTreeTableColumn<>("Name 1");
-	private final JFXTreeTableColumn<Customer, String> colName2 = new JFXTreeTableColumn<>("Name 2");
-	private final JFXTreeTableColumn<Customer, String> colStreet = new JFXTreeTableColumn<>("Strasse");
-	private final JFXTreeTableColumn<Customer, String> colPlz = new JFXTreeTableColumn<>("PLZ");
-	private final JFXTreeTableColumn<Customer, String> colLocation = new JFXTreeTableColumn<>("Ort");
-	private final JFXTreeTableColumn<Customer, String> colCountry = new JFXTreeTableColumn<>("Land");
-	private final JFXTreeTableColumn<Customer, String> colPhone = new JFXTreeTableColumn<>("Telefon");
-	private final JFXTreeTableColumn<Customer, String> colHandy = new JFXTreeTableColumn<>("Handy");
-	private final JFXTreeTableColumn<Customer, String> colFax = new JFXTreeTableColumn<>("Fax");
-	private final JFXTreeTableColumn<Customer, String> colEmail = new JFXTreeTableColumn<>("E-Mail");
-	private final JFXTreeTableColumn<Customer, String> colWebsite  = new JFXTreeTableColumn<>("Website");
-	private final JFXTreeTableColumn<Customer, String> colDiscount = new JFXTreeTableColumn<>("Rabatt");
-	private final JFXTreeTableColumn<Customer, String> colAccountBalance = new JFXTreeTableColumn<>("Kontostand");
+	private final JFXTreeTableColumn<Customer, String> colKdNr = new JFXTreeTableColumn<>("NUMMER");
+	private final JFXTreeTableColumn<Customer, String> colCompany = new JFXTreeTableColumn<>("KUNDE");
+	private final JFXTreeTableColumn<Customer, String> colOpenCosts = new JFXTreeTableColumn<>("OFFENE RECHNUNGEN");
+	private final JFXTreeTableColumn<Customer, String> colPayedCosts = new JFXTreeTableColumn<>("BEZAHLTE RECHNUNGEN");
 
 	@FXML private JFXTreeTableView<Customer> customerTable;
+
+	@FXML private JFXButton btnNewCustomer;
+
+	@FXML private Label lbCompany;
+	@FXML private Label lbName;
+	@FXML private Label lbKdNr;
+	@FXML private Label lbPhone;
+	@FXML private Label lbHandy;
+	@FXML private Label lbFax;
+	@FXML private Label lbStreet;
+	@FXML private Label lbLocation;
+	@FXML private Label lbCountry;
+	@FXML private Label lbEmail;
+	@FXML private Label lbWebsite;
+	@FXML private Label lbDiscount;
+
+	@FXML private VBox customerDetailsFilled;
+	@FXML private VBox customerDetailsEmpty;
 
 	@Override
 	public void initialize( URL location, ResourceBundle resources ) {
 
 		initializeColumns();
 		loadCustomersData();
+		showCustomerDetails(false);
 
 		//clear selection if table has no focus
-		customerTable.focusedProperty().addListener((obs, oldVal, newVal) -> {
-			if (!newVal) {
-				customerTable.getSelectionModel().clearSelection();
-			}
+//		customerTable.focusedProperty().addListener((obs, oldVal, newVal) -> {
+//			if (!newVal) {
+//				customerTable.getSelectionModel().clearSelection();
+//				clearCustomerDetails();
+//			}
+//		});
+
+		customerTable.setRowFactory(tv -> {
+			TreeTableRow<Customer> row = new TreeTableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+					Customer customer = customerData.get(row.getIndex());
+					showCustomerInformations(customer);
+				}
+			});
+			return row;
 		});
 	}
 
@@ -74,100 +97,88 @@ public class CustomersController implements Initializable {
 
 	private void initializeColumns() {
 
+		// set size of columns
 		customerTable.setColumnResizePolicy( TreeTableView.CONSTRAINED_RESIZE_POLICY );
-		colKdNr.setMaxWidth( 1f * Integer.MAX_VALUE * 15 );
-		colCompany.setMaxWidth( 1f * Integer.MAX_VALUE * 70 );
-		colAccountBalance.setMaxWidth( 1f * Integer.MAX_VALUE * 15 );
 
-		colKdNr.setPrefWidth(150);
+		colKdNr.setMaxWidth( 1f * Integer.MAX_VALUE * 10);
+		colCompany.setMaxWidth( 1f * Integer.MAX_VALUE * 62);
+		colCompany.setPrefWidth(900);
+		colOpenCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 13.5);
+		colPayedCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 14.5);
+
+		// set cell value factory
 		colKdNr.setCellValueFactory(param -> param.getValue().getValue().getKdNr());
-		colKdNr.setStyle("-fx-alignment: CENTER-LEFT;");
-
-		colCompany.setPrefWidth(700);
 		colCompany.setCellValueFactory(param -> param.getValue().getValue().getCompany());
+		colOpenCosts.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) ->
+				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getValue().getOpenCosts())));
+//		colOpenCosts.setStyle("-fx-alignment: CENTER-RIGHT;");
+		colPayedCosts.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) ->
+				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getValue().getPayedCosts())));
 
-		colName1.setPrefWidth(150);
-		colName1.setCellValueFactory(param -> param.getValue().getValue().getName1());
-
-		colName2.setPrefWidth(150);
-		colName2.setCellValueFactory(param -> param.getValue().getValue().getName2());
-
-		colStreet.setPrefWidth(150);
-		colStreet.setCellValueFactory(param -> param.getValue().getValue().getStreet());
-
-		colPlz.setPrefWidth(150);
-		colPlz.setCellValueFactory(param -> param.getValue().getValue().getPlz());
-		colPlz.setStyle("-fx-alignment: CENTER;");
-
-		colLocation.setPrefWidth(150);
-		colLocation.setCellValueFactory(param -> param.getValue().getValue().getLocation());
-
-		colCountry.setPrefWidth(150);
-		colCountry.setCellValueFactory(param -> param.getValue().getValue().getCountry());
-
-		colPhone.setPrefWidth(150);
-		colPhone.setCellValueFactory(param -> param.getValue().getValue().getPhone());
-
-		colHandy.setPrefWidth(150);
-		colHandy.setCellValueFactory(param -> param.getValue().getValue().getHandy());
-
-		colFax.setPrefWidth(150);
-		colFax.setCellValueFactory(param -> param.getValue().getValue().getFax());
-
-		colEmail.setPrefWidth(150);
-		colEmail.setCellValueFactory(param -> param.getValue().getValue().getEmail());
-
-		colWebsite.setPrefWidth(150);
-		colWebsite.setCellValueFactory(param -> param.getValue().getValue().getWebsite());
-
-		colDiscount.setPrefWidth(150);
-		colDiscount.setStyle("-fx-alignment: CENTER-RIGHT;");
-		colDiscount.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) -> {
-			NumberFormat format = NumberFormat.getPercentInstance(Locale.GERMANY);
-			String percent = format.format(param.getValue().getValue().getDiscount());
-			return new ReadOnlyStringWrapper(percent);
-		});
-
-		colAccountBalance.setPrefWidth(150);
-		colAccountBalance.setStyle("-fx-alignment: CENTER-LEFT;");
-		colAccountBalance.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) -> {
-			NumberFormat format = NumberFormat.getCurrencyInstance(Locale.GERMANY);
-			String currency = format.format(param.getValue().getValue().getAccountBalance());
-		 	return new ReadOnlyStringWrapper(currency);
-		});
-
+		// add columns to customer table
 		customerTable.getColumns().add(colKdNr);
 		customerTable.getColumns().add(colCompany);
-//		customerTable.getColumns().add(colName1);
-//		customerTable.getColumns().add(colName2);
-//		customerTable.getColumns().add(colStreet);
-//		customerTable.getColumns().add(colPlz);
-//		customerTable.getColumns().add(colLocation);
-//		customerTable.getColumns().add(colCountry);
-//		customerTable.getColumns().add(colPhone);
-//		customerTable.getColumns().add(colHandy);
-//		customerTable.getColumns().add(colFax);
-//		customerTable.getColumns().add(colEmail);
-//		customerTable.getColumns().add(colWebsite);
-//		customerTable.getColumns().add(colDiscount);
-		customerTable.getColumns().add(colAccountBalance);
+		customerTable.getColumns().add(colOpenCosts);
+		customerTable.getColumns().add(colPayedCosts);
 
+		// create root item for customer table with the customer data
 		final TreeItem<Customer> root = new RecursiveTreeItem<>(customerData, RecursiveTreeObject::getChildren);
 		customerTable.setRoot(root);
 		customerTable.setShowRoot(false);
 	}
-//
-//	public class PercentCell extends TreeTableCell<Customer, String> {
-//
-//		PercentCell() {
-//		}
-//
-//		@Override
-//		protected void updateItem(String t, boolean empty) {
-//			super.updateItem(t, empty);
-//			if (!empty) {
-//
-//			}
-//		}
-//	}
+
+	private void showCustomerInformations(Customer customer) {
+		lbKdNr.setText("Kundennummer  " + customer.getKdNr().getValue());
+		lbCompany.setText(validateExistingData(customer.getCompany().getValue()));
+		lbName.setText(customer.getName1().getValue() + " " + customer.getName2().getValue());
+		lbStreet.setText(validateExistingData(customer.getStreet().getValue()));
+		lbLocation.setText(validateExistingData(customer.getPlz().getValue() + " " + customer.getLocation().getValue()));
+		lbCountry.setText(validateExistingData(customer.getCountry().getValue()));
+		lbPhone.setText(validateExistingData(customer.getPhone().getValue()));
+		lbHandy.setText(validateExistingData(customer.getHandy().getValue()));
+		lbFax.setText(validateExistingData(customer.getFax().getValue()));
+		lbEmail.setText(validateExistingData(customer.getEmail().getValue()));
+		lbWebsite.setText(validateExistingData(customer.getWebsite().getValue()));
+		lbDiscount.setText(DoubleToPercentageString(customer.getDiscount()));
+
+		showCustomerDetails(true);
+	}
+
+	private void clearCustomerDetails() {
+		lbKdNr.setText("");
+		lbCompany.setText("");
+		lbName.setText("");
+		lbStreet.setText("");
+		lbLocation.setText("");
+		lbCountry.setText("");
+		lbPhone.setText("");
+		lbHandy.setText("");
+		lbFax.setText("");
+		lbEmail.setText("");
+		lbWebsite.setText("");
+		lbDiscount.setText("");
+
+		showCustomerDetails(false);
+	}
+
+	private void showCustomerDetails(boolean show) {
+		customerDetailsFilled.setVisible(show);
+		customerDetailsEmpty.setVisible(!show);
+	}
+
+	private String validateExistingData(String data) {
+		return data.isEmpty() ? "---" : data;
+	}
+
+	@FXML
+	private void onBtnNewCustomerClicked() {
+		//TODO New customer dialog
+		LOGGER.info("NEW CUSTOMER...");
+	}
+
+	@FXML
+	private void onBtnCloseDetailsClicked() {
+		customerTable.getSelectionModel().clearSelection();
+		clearCustomerDetails();
+	}
 }

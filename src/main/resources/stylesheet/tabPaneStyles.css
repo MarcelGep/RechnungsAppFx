@@ -6,15 +6,13 @@
     -fx-background-color: -fx-accent;
 }
 
-.tab-pane
-{
-    -fx-tab-min-width:120px;
-    -fx-tab-min-height:50px;
+.tab-pane {
+    -fx-tab-min-width: 100px;
+    -fx-tab-min-height: 45px;
     -fx-focus-color: transparent;
 }
 
-.tab-pane .tab
-{
+.tab-pane .tab {
     -fx-background-color: -fx-accent;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -23,16 +21,11 @@
 }
 
 .tab-pane .tab:hover {
-    -fx-background-color: derive(-fx-accent, -20%);
+    -fx-background-color: rgb(0, 158, 176); /*derive(-fx-accent, -15%);*/
 }
 
-.tab-pane .tab:selected
-{
-    -fx-background-color: derive(-fx-accent, -40%);
-}
-
-.tab:hover{
-    -fx-background-color: derive(-fx-base, 20%);
+.tab-pane .tab:selected {
+    -fx-background-color: #00869d; /*derive(-fx-accent, -30%);*/
 }
 
 .tab .tab-label {
@@ -53,6 +46,119 @@
     -fx-faint-focus-color: -fx-accent-faint;
 }
 
+/*custom tab-panes*/
+/*customer details*/
+#customer-details-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: lightgrey;
+}
+
+#customer-details-tab-pane {
+    /*-fx-tab-min-width:120px;*/
+    -fx-tab-max-height: 17;
+    -fx-focus-color: transparent;
+    -fx-background-color: transparent;
+}
+
+#customer-details-tab-pane .tab {
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: transparent;
+    -fx-padding: -10 0 -5 0;
+}
+
+#customer-details-tab-pane .tab .tab-label {
+    -fx-text-fill: black;
+    -fx-font-size: 12px;
+    -fx-cursor:hand;
+    -fx-font-weight: normal;
+}
+
+#customer-details-tab-pane .tab:selected {
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: black;
+}
+
+#customer-details-tab-pane .tab:selected,
+#customer-details-tab-pane .tab:hover,
+#customer-details-tab-pane .tab {
+    -fx-background-color: transparent;
+}
+
+#app-tab-pane {
+    -fx-tab-min-width:170px;
+    -fx-tab-min-height:60px;
+}
+
+#app-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #313237;
+}
+
+#app-tab-pane .tab-header-area  .tab-selected-line {
+    -fx-background-color: transparent;
+    /*-fx-pref-height: 5;*/
+}
+
+#app-tab-pane .tab-header-area .jfx-rippler{
+    -jfx-rippler-fill: #f0f0f0;
+    -fx-cursor:hand;
+}
+
+#app-tab-pane .tab .tab-label {
+    -fx-text-fill: gray;
+}
+
+#app-tab-pane .tab:selected .tab-label{
+    -fx-text-fill: white;
+}
+
+#app-tab-pane .tab:hover {
+    -fx-background-color: derive(#313237, 20%);
+}
+
+#app-tab-pane .tab:hover .tab-label {
+    -fx-text-fill: white;
+}
+
+#app-tab-pane .tab:selected {
+    -fx-background-color: -fx-accent;
+}
+
+/*guest dialog tab pane*/
+#guest-tab-pane {
+    -fx-tab-min-width:130px;
+    -fx-tab-min-height:60px;
+}
+
+#guest-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: #313237;
+}
+
+#guest-tab-pane .tab-header-area  .tab-selected-line {
+    -fx-background-color: -fx-accent;
+    -fx-pref-height: 3;
+}
+
+#guest-tab-pane .tab-header-area .jfx-rippler{
+    -jfx-rippler-fill: #f0f0f0;
+    -fx-cursor:hand;
+}
+
+#guest-tab-pane .tab .tab-label {
+    -fx-text-fill: gray;
+}
+
+#guest-tab-pane .tab:selected .tab-label{
+    -fx-text-fill: white;
+}
+
+#guest-tab-pane .tab:hover {
+    -fx-background-color: derive(#313237, 20%);
+}
+
+#guest-tab-pane .tab:hover .tab-label {
+    -fx-text-fill: white;
+}
 
 
 

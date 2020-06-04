@@ -1,83 +1,6 @@
 @import "mainStyles.css";
 
 /*JFoenix styles*/
-
-/*custom tab pane app*/
-#app-tab-pane {
-    -fx-tab-min-width:170px;
-    -fx-tab-min-height:60px;
-}
-
-#app-tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: #313237;
-}
-
-#app-tab-pane .tab-header-area  .tab-selected-line {
-    -fx-background-color: transparent;
-    /*-fx-pref-height: 5;*/
-}
-
-#app-tab-pane .tab-header-area .jfx-rippler{
-    -jfx-rippler-fill: #f0f0f0;
-    -fx-cursor:hand;
-}
-
-#app-tab-pane .tab .tab-label {
-    -fx-text-fill: gray;
-}
-
-#app-tab-pane .tab:selected .tab-label{
-	-fx-text-fill: white;
-}
-
-#app-tab-pane .tab:hover {
-	-fx-background-color: derive(#313237, 20%);
-}
-
-#app-tab-pane .tab:hover .tab-label {
-    -fx-text-fill: white;
-}
-
-#app-tab-pane .tab:selected {
-    -fx-background-color: -fx-accent;
-}
-
-/*guest dialog tab pane*/
-#guest-tab-pane {
-    -fx-tab-min-width:130px;
-    -fx-tab-min-height:60px;
-}
-
-#guest-tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: #313237;
-}
-
-#guest-tab-pane .tab-header-area  .tab-selected-line {
-    -fx-background-color: -fx-accent;
-    -fx-pref-height: 3;
-}
-
-#guest-tab-pane .tab-header-area .jfx-rippler{
-    -jfx-rippler-fill: #f0f0f0;
-    -fx-cursor:hand;
-}
-
-#guest-tab-pane .tab .tab-label {
-    -fx-text-fill: gray;
-}
-
-#guest-tab-pane .tab:selected .tab-label{
-	-fx-text-fill: white;
-}
-
-#guest-tab-pane .tab:hover {
-	-fx-background-color: derive(#313237, 20%);
-}
-
-#guest-tab-pane .tab:hover .tab-label {
-    -fx-text-fill: white;
-}
-
 /*text-field*/
 .jfx-text-field {
     -jfx-focus-color: -fx-accent;
@@ -93,20 +16,6 @@
 /*combo-box*/
 .jfx-combo-box {
     /*-fx-prompt-text-fill: -fx-accent;*/
-}
-
-/*button*/
-.jfx-button {
-    -jfx-disable-visual-focus: true;
-}
-
-.jfx-button {
-/*     -fx-padding: 0.7em 0.57em; */
-/*     -fx-font-size: 14px; */
-    -jfx-button-type: FLAT;
-    -fx-background-color: -fx-accent;
-    -fx-pref-width: 150;
-    -fx-text-fill: WHITE;
 }
 
 /*check-box*/
@@ -161,45 +70,6 @@
     -fx-background-color: -fx-secondary;
 }
 
-.jfx-tab-pane .tab-header-area .tab-header-background {
-    -fx-background-color: transparent;
-}
-
-.jfx-tab-pane
-{
-    -fx-tab-min-width:120px;
-    -fx-tab-min-height:14px;
-    -fx-focus-color: transparent;
-}
-
-
-
-/*.jfx-tab-pane .tab {*/
-/*    -fx-background-color: transparent;*/
-/*    -fx-text-fill: black;*/
-/*}*/
-
-.jfx-tab-pane .tab .tab-label {
-    -fx-text-fill: black;
-    -fx-font-size: 12px;
-    -fx-cursor:hand;
-    -fx-alignment: CENTER;
-}
-
-.jfx-tab-pane .tab:selected,
-.jfx-tab-pane .tab:hover,
-.jfx-tab-pane .tab {
-    -fx-background-color: transparent;
-}
-
-.jfx-tab-pane .tab-header-area .jfx-rippler{
-    -jfx-rippler-fill: transparent;
-}
-
-.jfx-tab-pane .tab-selected-line {
-    -fx-background-color:  black;
-}
-
 /*treeTableView styles*/
 .tree-table-view {
     /*-fx-border-width: 2;*/
@@ -218,11 +88,15 @@
 }
 
 .tree-table-view:focused .tree-table-row-cell:selected {
-    -fx-background-color: derive(-fx-accent, 50%);
+    -fx-background-color: derive(-fx-accent, 100%);
 }
 
 .tree-table-view:focused .tree-table-row-cell:selected .tree-table-cell {
     -fx-text-fill: black;
+}
+
+.tree-table-view .tree-table-row-cell:selected {
+    -fx-background-color: derive(-fx-accent, 100%);
 }
 
 .tree-table-view .tree-table-cell:empty {
@@ -234,13 +108,12 @@
     -fx-border-width: 0 0 1 0;
     -fx-border-color: lightgrey;
     -fx-text-fill: black;
-    -fx-padding: 0 20 0 20;
+    -fx-padding: 0 0 0 20;
 }
 
 .tree-table-view .column-header .label {
-    -fx-text-fill : derive(-fx-accent, 30%);
-    -fx-alignment: LEFT;
-    -fx-padding: 20;
+    -fx-text-fill : derive(-fx-accent, 20%);
+    -fx-alignment: CENTER-LEFT;
 }
 
 .tree-table-view .column-header ,
@@ -251,9 +124,14 @@
 .tree-table-view .column-header {
     -fx-border-width : 0 0 2 0;
     -fx-border-color: lightgrey;
+    -fx-padding: 20;
 }
 
-.tree-table-view .column-header-background{     /* border nach dem header */
-    -fx-border-width : 0 0 0 0;
-    -fx-background-color: transparent;
+.tree-table-view .scroll-bar * {
+    -fx-pref-height: 0;
 }
+
+/*.tree-table-view .column-header-background{     !* border nach dem header *!*/
+/*    -fx-border-width : 0 0 0 0;*/
+/*    -fx-background-color: transparent;*/
+/*}*/

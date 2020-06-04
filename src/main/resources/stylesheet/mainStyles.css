@@ -2,11 +2,12 @@
 /*
 orange		#E95F35 
 pink 		#E91E63 
-green		#4caf50 
+green		#4caf50
+blue        #00b4c2
 */
 * {
-   -fx-accent: #E95F35;
-   -fx-accent-faint: #E95F3522;
+   -fx-accent: #00b4c2;
+   -fx-accent-faint: #00b4c222;
 }
 
 /*font sizes*/
@@ -169,11 +170,15 @@ green		#4caf50
     -fx-background-color: #a0a0a0;
 }
 
+.hover-green:hover {
+    -fx-background-color: rgb(126, 220, 70);
+}
+
 /*card style with shadow*/
 .card {
-     -fx-background-radius: 4.0;
+     -fx-background-radius: 6.0;
      -fx-background-color: white;
-     -fx-effect: dropshadow(three-pass-box, derive(gray, -10%), 5, 0, 3, 3);
+     /*-fx-effect: dropshadow(three-pass-box, derive(gray, 40%), 5, 0, 3, 3);*/
  }
 
 /*error label for jfx-text-field*/

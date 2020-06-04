@@ -21,7 +21,8 @@ public class Customer extends RecursiveTreeObject<Customer> {
     private StringProperty website;
     private StringProperty informations;
     private double discount;
-    private double accountBalance;
+    private double openCosts;
+    private double payedCosts;
 
     public Customer()
     {
@@ -39,10 +40,11 @@ public class Customer extends RecursiveTreeObject<Customer> {
         this.website = new SimpleStringProperty("");
         this.informations = new SimpleStringProperty("");
         this.discount = 0.0;
-        this.accountBalance = 0.0;
+        this.openCosts = 0.0;
+        this.payedCosts = 0.0;
     }
 
-    public Customer(String kdNr, String company, String name1, String name2, String street, String plz, String location, String country, String phone, String handy, String fax, String email, String website, String informations, double discount, double accountBalance) {
+    public Customer(String kdNr, String company, String name1, String name2, String street, String plz, String location, String country, String phone, String handy, String fax, String email, String website, String informations, double discount, double openCosts, double payedCosts) {
         this.kdNr = new SimpleStringProperty(kdNr);
         this.company = new SimpleStringProperty(company);
         this.name1 = new SimpleStringProperty(name1);
@@ -58,7 +60,8 @@ public class Customer extends RecursiveTreeObject<Customer> {
         this.website = new SimpleStringProperty(website);
         this.informations = new SimpleStringProperty(informations);
         this.discount = discount;
-        this.accountBalance = accountBalance;
+        this.openCosts = openCosts;
+        this.payedCosts = payedCosts;
     }
 
     public StringProperty getLocation() {
@@ -181,11 +184,19 @@ public class Customer extends RecursiveTreeObject<Customer> {
         this.discount = discount;
     }
 
-    public double getAccountBalance() {
-        return accountBalance;
+    public double getOpenCosts() {
+        return openCosts;
     }
 
-    public void setAccountBalance(double accountBalance) {
-        this.accountBalance = accountBalance;
+    public void setOpenCosts(double openCosts) {
+        this.openCosts = openCosts;
+    }
+
+    public double getPayedCosts() {
+        return payedCosts;
+    }
+
+    public void setPayedCosts(double payedCosts) {
+        this.payedCosts = payedCosts;
     }
 }

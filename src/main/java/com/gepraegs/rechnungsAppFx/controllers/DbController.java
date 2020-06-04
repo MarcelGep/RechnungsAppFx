@@ -356,10 +356,11 @@ public class DbController {
 				String website = rs.getString( "Website" );
 				String informations = rs.getString( "Informations" );
 				double discount = rs.getDouble( "Discount" );
-				double accountBalance = rs.getDouble( "AccountBalance" );
+				double openCosts = rs.getDouble( "OpenCosts" );
+				double payedCosts = rs.getDouble( "PayedCosts" );
 
 				Customer customer = new Customer(kdNr, company, name1, name2, street, plz, location, country, phone, handy, fax,
-						email, website, informations, discount, accountBalance);
+						email, website, informations, discount, openCosts, payedCosts);
 
 				customerData.add( customer );
 			}
