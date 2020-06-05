@@ -174,37 +174,57 @@ public class DbController {
 //		}
 //	}
 
+	private boolean updateSqliteSeq()
+	{
+		int customerCount = readCustomerCount();
+		String query = "UPDATE sqlite_sequence SET seq = ? WHERE name = 'Customers'";
+
+		try{
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, customerCount);
+			ps.executeUpdate();
+
+			LOGGER.info("Update slite sequence from Customers to " + customerCount);
+
+			return true;
+		} catch (SQLException e){
+			LOGGER.warning(e.toString());
+			return false;
+		}
+	}
+
 	public boolean createCustomer(Customer customer ) {
-		// updateSqliteSeq();
+//		updateSqliteSeq();
 
-		String query = "INSERT INTO Customers(company, name1, name2, street, plz, location, country, phone, fax, email, website, discount, accountBalance, informations, handy) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		String query = "INSERT INTO Customers(Company, Name1, Name2, Street, Plz, Location, Country, Phone, Fax, Email, Website, Discount, PayedCosts, Handy, OpenCosts, Informations) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setString( 1, customer.getCompany() );
-//			ps.setString( 2, customer.getName1() );
-//			ps.setInt( 3, customer.getName2() );
-//			ps.setString( 4, customer.getStreet() );
-//			ps.setString( 4, customer.getPlz() );
-//			ps.setString( 4, customer.getLocation() );
-//			ps.setString( 5, customer.getPhone() );
-//			ps.setString( 6, customer.getHandy() );
-//			ps.setString( 7, customer.getEmail() );
-//			ps.setString( 8, customer.getStreet() );
-//			ps.setString( 9, customer.getPlz() );
-//			ps.setString( 10, customer.getOrt() );
-//			ps.setString( 11, customer.getComments() );
-//			ps.executeUpdate();
-//
-//			LOGGER.info( "New guest created!" );
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, customer.getCompany().getValue());
+			ps.setString( 2, customer.getName1().getValue());
+			ps.setString( 3, customer.getName2().getValue());
+			ps.setString( 4, customer.getStreet().getValue());
+			ps.setString( 5, customer.getPlz().getValue());
+			ps.setString( 6, customer.getLocation().getValue());
+			ps.setString( 7, customer.getCountry().getValue());
+			ps.setString( 8, customer.getPhone().getValue());
+			ps.setString( 9, customer.getFax().getValue());
+			ps.setString( 10, customer.getEmail().getValue());
+			ps.setString( 11, customer.getWebsite().getValue());
+			ps.setDouble( 12, customer.getDiscount());
+			ps.setDouble( 13, customer.getPayedCosts());
+			ps.setString( 14, customer.getHandy().getValue());
+			ps.setDouble( 15, customer.getOpenCosts());
+			ps.setString( 16, customer.getInformations().getValue());
+			ps.executeUpdate();
 
-//			return true;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
+			LOGGER.info( "New customer created!" );
 
-		return true;
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return false;
+		}
 	}
 
 	public boolean editGuest( Customer guest ) {
@@ -372,6 +392,31 @@ public class DbController {
 		}
 	}
 
+	public int readNextId()
+	{
+		String query = "SELECT * FROM sqlite_sequence";
+		int newId = -1;
+
+		try{
+			Statement st = connection.createStatement();
+			ResultSet rs = st.executeQuery(query);
+
+			while(rs.next())
+			{
+				newId = rs.getInt("seq");
+			}
+
+			newId++;
+
+			LOGGER.info("Read new id = " + newId);
+
+		} catch (SQLException e){
+			LOGGER.warning(e.toString());
+		}
+
+		return newId;
+	}
+
 	public int readNextId( String type ) {
 		String query = "SELECT seq FROM sqlite_sequence WHERE name = \"" + type + "\"";
 		int newId = -1;
@@ -395,8 +440,8 @@ public class DbController {
 		return newId;
 	}
 
-	public int readGuestCount() {
-		String query = "SELECT COUNT(*) FROM Guests";
+	public int readCustomerCount() {
+		String query = "SELECT COUNT(*) FROM Customers";
 
 		try {
 			Statement st = connection.createStatement();
@@ -408,7 +453,7 @@ public class DbController {
 				count = rs.getInt( "COUNT(*)" );
 			}
 
-			LOGGER.info( "Read count of Guests = " + count );
+			LOGGER.info( "Read count of Customers = " + count );
 
 			return count;
 		} catch ( SQLException e ) {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXTreeTableView?>
 <?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
@@ -10,6 +9,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -21,191 +21,214 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox prefHeight="750.0" prefWidth="1068.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomersController">
+<HBox prefHeight="750.0" prefWidth="1068.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomersController">
    <children>
-      <AnchorPane style="-fx-background-color: white;" HBox.hgrow="ALWAYS">
+      <GridPane HBox.hgrow="ALWAYS">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
          <children>
-            <JFXButton id="green-button" fx:id="btnNewCustomer" layoutX="349.0" layoutY="10.0" onAction="#onBtnNewCustomerClicked" text="Neuer Kunde" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="30.0">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-               <styleClass>
-                  <String fx:value="hover-hand" />
-                  <String fx:value="hover-green" />
-               </styleClass></JFXButton>
-            <Label layoutX="22.0" layoutY="30.0" styleClass="fn-24" text="Kunden" AnchorPane.leftAnchor="22.0" AnchorPane.topAnchor="30.0" />
-            <JFXTreeTableView fx:id="customerTable" layoutY="49.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
-         </children>
-      </AnchorPane>
-      <AnchorPane prefHeight="578.0" prefWidth="654.0" style="-fx-background-color: #dee5df;" HBox.hgrow="ALWAYS">
-         <children>
-            <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
+            <AnchorPane style="-fx-background-color: white;">
                <children>
-                  <VBox fx:id="customerDetailsFilled" spacing="15.0" style="-fx-background-color: white;" styleClass="card">
+                  <JFXButton id="green-button" fx:id="btnNewCustomer" layoutX="349.0" layoutY="10.0" onAction="#onBtnNewCustomerClicked" text="Neuer Kunde" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="30.0">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <styleClass>
+                        <String fx:value="hover-hand" />
+                        <String fx:value="hover-green" />
+                     </styleClass>
+                  </JFXButton>
+                  <Label layoutX="22.0" layoutY="23.0" text="Kunden" AnchorPane.leftAnchor="22.0" AnchorPane.topAnchor="23.0">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <TableView fx:id="customerTable" layoutX="-1.0" layoutY="108.0" prefHeight="643.0" prefWidth="643.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
+                  <Label layoutX="22.0" layoutY="58.0" text="Gespeicherte Kundenzahl:" />
+                  <Label fx:id="lbCustomerCount" layoutX="165.0" layoutY="58.0" text="XX">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="578.0" prefWidth="654.0" style="-fx-background-color: #dee5df;" GridPane.columnIndex="1">
+               <children>
+                  <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
                      <children>
-                        <HBox alignment="CENTER_LEFT">
+                        <VBox fx:id="customerDetailsFilled" spacing="15.0" style="-fx-background-color: white;" styleClass="card" visible="false">
                            <children>
-                              <Button id="close-button" mnemonicParsing="false" onAction="#onBtnCloseDetailsClicked">
-                                 <graphic>
-                                    <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@../icons/cancel.png" />
-                                       </image>
-                                    </ImageView>
-                                 </graphic>
-                              </Button>
-                              <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+                              <HBox alignment="CENTER_LEFT">
                                  <children>
-                                    <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Neue Rechnung" />
-                                    <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Neues Angebot" />
-                                    <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Bearbeiten" />
-                                    <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Löschen" />
-                                 </children>
-                                 <padding>
-                                    <Insets right="15.0" />
-                                 </padding>
-                              </HBox>
-                           </children>
-                           <padding>
-                              <Insets left="20.0" />
-                           </padding>
-                        </HBox>
-                        <Separator />
-                        <GridPane prefWidth="184.0">
-                          <columnConstraints>
-                            <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints maxHeight="82.6666259765625" minHeight="10.0" prefHeight="50.999969482421875" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="95.33334350585938" minHeight="6.666656494140625" prefHeight="51.33331298828125" vgrow="SOMETIMES" />
-                            <RowConstraints maxHeight="59.33331298828125" minHeight="0.0" prefHeight="25.66668701171875" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label fx:id="lbCompany" text="Firma" GridPane.columnSpan="2" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font name="System Bold" size="16.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="lbName" text="Name1 Name2" GridPane.rowIndex="2" />
-                              <Label fx:id="lbKdNr" style="-fx-text-fill: darkgrey;" text="Kundennummer">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <padding>
-                              <Insets left="30.0" right="30.0" />
-                           </padding>
-                        </GridPane>
-                        <TabPane id="customer-details-tab-pane" prefHeight="353.0" prefWidth="637.0" tabClosingPolicy="UNAVAILABLE">
-                           <tabs>
-                              <Tab closable="false" text="Information">
-                                 <content>
-                                    <VBox>
+                                    <Button id="close-button" mnemonicParsing="false" onAction="#onBtnCloseDetailsClicked">
+                                       <graphic>
+                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../icons/cancel.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                    <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
                                        <children>
-                                          <GridPane prefWidth="259.0" vgap="10.0">
-                                            <columnConstraints>
-                                              <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="228.333251953125" />
-                                              <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="418.666748046875" />
-                                            </columnConstraints>
-                                            <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
-                                            </rowConstraints>
-                                             <children>
-                                                <Label fx:id="lbPhone" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                                <Label text="Handy" GridPane.rowIndex="3" />
-                                                <Label fx:id="lbHandy" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                                <Label text="Fax" GridPane.rowIndex="4" />
-                                                <Label fx:id="lbFax" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                                                <Label text="Telefon" GridPane.rowIndex="2" />
-                                                <Label text="Rechnungsadresse" />
-                                                <Label text="E-Mail" GridPane.rowIndex="5" />
-                                                <Label text="Website" GridPane.rowIndex="6" />
-                                                <Label text="Rabatt" GridPane.rowIndex="7" />
-                                                <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
-                                                   <children>
-                                                      <Label fx:id="lbStreet" text="Strasse" />
-                                                      <Label fx:id="lbLocation" text="PLZ Ort" />
-                                                   </children>
-                                                </VBox>
-                                                <Label fx:id="lbEmail" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                                <Label fx:id="lbWebsite" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                                <Label fx:id="lbDiscount" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                                <Label text="Land" GridPane.rowIndex="1" />
-                                                <Label fx:id="lbCountry" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                             </children>
-                                          </GridPane>
+                                          <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Neue Rechnung" />
+                                          <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Neues Angebot" />
+                                          <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Bearbeiten" />
+                                          <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Löschen" />
                                        </children>
                                        <padding>
-                                          <Insets top="25.0" />
+                                          <Insets right="15.0" />
                                        </padding>
-                                    </VBox>
-                                 </content>
-                              </Tab>
-                              <Tab text="Rechnungen">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </Tab>
-                              <Tab text="Angebote">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </Tab>
-                              <Tab text="Notizen">
-                                 <content>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                                 </content>
-                              </Tab>
-                           </tabs>
+                                    </HBox>
+                                 </children>
+                                 <padding>
+                                    <Insets left="20.0" />
+                                 </padding>
+                              </HBox>
+                              <Separator />
+                              <GridPane prefWidth="184.0">
+                                <columnConstraints>
+                                  <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" />
+                                    <ColumnConstraints />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints maxHeight="82.6666259765625" minHeight="10.0" prefHeight="50.999969482421875" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="95.33334350585938" minHeight="6.666656494140625" prefHeight="51.33331298828125" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="59.33331298828125" minHeight="0.0" prefHeight="25.66668701171875" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label fx:id="lbCompany" text="Firma" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="System Bold" size="16.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lbName" text="Name1 Name2" GridPane.rowIndex="2" />
+                                    <Label fx:id="lbKdNr" style="-fx-text-fill: darkgrey;" text="Kundennummer">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <padding>
+                                    <Insets left="30.0" right="30.0" />
+                                 </padding>
+                              </GridPane>
+                              <TabPane id="customer-details-tab-pane" prefHeight="353.0" prefWidth="637.0" tabClosingPolicy="UNAVAILABLE">
+                                 <tabs>
+                                    <Tab closable="false" text="Information">
+                                       <content>
+                                          <VBox>
+                                             <children>
+                                                <GridPane prefWidth="259.0" vgap="10.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="228.333251953125" />
+                                                    <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="418.666748046875" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label fx:id="lbPhone" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <Label text="Handy" GridPane.rowIndex="3" />
+                                                      <Label fx:id="lbHandy" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                      <Label text="Fax" GridPane.rowIndex="4" />
+                                                      <Label fx:id="lbFax" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <Label text="Telefon" GridPane.rowIndex="2" />
+                                                      <Label text="Rechnungsadresse" />
+                                                      <Label text="E-Mail" GridPane.rowIndex="5" />
+                                                      <Label text="Website" GridPane.rowIndex="6" />
+                                                      <Label text="Rabatt" GridPane.rowIndex="7" />
+                                                      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                                                         <children>
+                                                            <Label fx:id="lbStreet" text="Strasse" />
+                                                            <Label fx:id="lbLocation" text="PLZ Ort" />
+                                                         </children>
+                                                      </VBox>
+                                                      <Label fx:id="lbEmail" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                                      <Label fx:id="lbWebsite" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                      <Label fx:id="lbDiscount" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                      <Label text="Land" GridPane.rowIndex="1" />
+                                                      <Label fx:id="lbCountry" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                   </children>
+                                                </GridPane>
+                                             </children>
+                                             <padding>
+                                                <Insets top="25.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Rechnungen">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Angebote">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Notizen">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                    </Tab>
+                                 </tabs>
+                                 <padding>
+                                    <Insets left="30.0" right="40.0" top="20.0" />
+                                 </padding>
+                              </TabPane>
+                           </children>
                            <padding>
-                              <Insets left="30.0" right="40.0" top="20.0" />
+                              <Insets top="15.0" />
                            </padding>
-                        </TabPane>
+                        </VBox>
+                        <VBox fx:id="customerDetailsEmpty" alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: white;" styleClass="card" StackPane.alignment="CENTER">
+                           <children>
+                              <Label text="Kunden">
+                                 <font>
+                                    <Font name="System Bold" size="24.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Wähle einen Kunden aus deiner Liste für mehr Informationen." />
+                              <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../icons/customers.png" />
+                                 </image>
+                                 <VBox.margin>
+                                    <Insets top="25.0" />
+                                 </VBox.margin>
+                              </ImageView>
+                           </children>
+                           <StackPane.margin>
+                              <Insets />
+                           </StackPane.margin>
+                           <padding>
+                              <Insets top="150.0" />
+                           </padding>
+                        </VBox>
                      </children>
-                     <padding>
-                        <Insets top="15.0" />
-                     </padding>
-                  </VBox>
-                  <VBox fx:id="customerDetailsEmpty" alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: white;" styleClass="card" visible="false" StackPane.alignment="CENTER">
-                     <children>
-                        <Label text="Kunden">
-                           <font>
-                              <Font name="System Bold" size="24.0" />
-                           </font>
-                        </Label>
-                        <Label text="Wähle einen Kunden aus deiner Liste für mehr Informationen." />
-                        <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../icons/guest_list2.png" />
-                           </image>
-                           <VBox.margin>
-                              <Insets top="50.0" />
-                           </VBox.margin>
-                        </ImageView>
-                     </children>
-                     <StackPane.margin>
-                        <Insets />
-                     </StackPane.margin>
-                     <padding>
-                        <Insets top="100.0" />
-                     </padding>
-                  </VBox>
+                  </StackPane>
                </children>
-            </StackPane>
+            </AnchorPane>
          </children>
-      </AnchorPane>
+      </GridPane>
    </children>
    <stylesheets>
-      <URL value="@../stylesheet/jfoenixStyles.css" />
       <URL value="@../stylesheet/tabPaneStyles.css" />
       <URL value="@../stylesheet/buttonStyles.css" />
+      <URL value="@../stylesheet/tableStyles.css" />
    </stylesheets>
 </HBox>

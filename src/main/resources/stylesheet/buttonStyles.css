@@ -48,14 +48,14 @@
 
 /*custom button*/
 #cancel_button {
-    -fx-background-color: #9eb1af;
+    -jfx-button-type: FLAT;
+    -fx-background-color: #afbab9;
     -fx-font-weight:bold;
-    -fx-background-radius: 4px;
     -fx-fill: white;
     -fx-text-fill: white;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
     -fx-min-width: 110px;
-    -fx-min-height: 30px;
+    -fx-min-height: 35px;
 }
 
 #cancel_button:focused {
@@ -67,14 +67,14 @@
 }
 
 #save_button {
+    -jfx-button-type: FLAT;
     -fx-background-color: -fx-accent;
     -fx-font-weight:bold;
-    -fx-background-radius: 4px;
     -fx-fill: white;
     -fx-text-fill: white;
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
     -fx-min-width: 110px;
-    -fx-min-height: 30px;
+    -fx-min-height: 35px;
 /*    -fx-focus-color: blue;
     -fx-faint-focus-color: yellow;*/
 }

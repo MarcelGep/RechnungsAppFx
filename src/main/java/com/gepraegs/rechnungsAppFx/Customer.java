@@ -32,6 +32,7 @@ public class Customer extends RecursiveTreeObject<Customer> {
         this.name2 = new SimpleStringProperty("");
         this.street = new SimpleStringProperty("");
         this.plz = new SimpleStringProperty("");
+        this.location = new SimpleStringProperty("");
         this.country = new SimpleStringProperty("");
         this.phone = new SimpleStringProperty("");
         this.handy = new SimpleStringProperty("");

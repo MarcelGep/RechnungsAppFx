@@ -1,43 +1,41 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
 import com.gepraegs.rechnungsAppFx.Customer;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTreeTableColumn;
-import com.jfoenix.controls.JFXTreeTableView;
-import com.jfoenix.controls.RecursiveTreeItem;
-import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showCustomerDialog;
 
 public class CustomersController implements Initializable {
 
 	private static final Logger LOGGER = Logger.getLogger( CustomersController.class.getName() );
+
 	private final DbController dbController = DbController.getInstance();
+
 	private final ObservableList<Customer> customerData = FXCollections.observableArrayList();
 
-	private final JFXTreeTableColumn<Customer, String> colKdNr = new JFXTreeTableColumn<>("NUMMER");
-	private final JFXTreeTableColumn<Customer, String> colCompany = new JFXTreeTableColumn<>("KUNDE");
-	private final JFXTreeTableColumn<Customer, String> colOpenCosts = new JFXTreeTableColumn<>("OFFENE RECHNUNGEN");
-	private final JFXTreeTableColumn<Customer, String> colPayedCosts = new JFXTreeTableColumn<>("BEZAHLTE RECHNUNGEN");
+	private final TableColumn<Customer, String> colKdNr = new TableColumn<>("NUMMER");
+	private final TableColumn<Customer, String> colCompany = new TableColumn<>("KUNDE");
+	private final TableColumn<Customer, String> colOpenCosts = new TableColumn<>("OFFENE\nRECHNUNGEN");
+	private final TableColumn<Customer, String> colPayedCosts = new TableColumn<>("BEZAHLTE\nRECHNUNGEN");
 
-	@FXML private JFXTreeTableView<Customer> customerTable;
-
-	@FXML private JFXButton btnNewCustomer;
+	@FXML private TableView<Customer> customerTable;
 
 	@FXML private Label lbCompany;
 	@FXML private Label lbName;
@@ -51,39 +49,19 @@ public class CustomersController implements Initializable {
 	@FXML private Label lbEmail;
 	@FXML private Label lbWebsite;
 	@FXML private Label lbDiscount;
+	@FXML private Label lbCustomerCount;
 
 	@FXML private VBox customerDetailsFilled;
 	@FXML private VBox customerDetailsEmpty;
 
 	@Override
 	public void initialize( URL location, ResourceBundle resources ) {
-
 		initializeColumns();
 		loadCustomersData();
-		showCustomerDetails(false);
-
-		//clear selection if table has no focus
-//		customerTable.focusedProperty().addListener((obs, oldVal, newVal) -> {
-//			if (!newVal) {
-//				customerTable.getSelectionModel().clearSelection();
-//				clearCustomerDetails();
-//			}
-//		});
-
-		customerTable.setRowFactory(tv -> {
-			TreeTableRow<Customer> row = new TreeTableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
-					Customer customer = customerData.get(row.getIndex());
-					showCustomerInformations(customer);
-				}
-			});
-			return row;
-		});
+		setupTableRows();
 	}
 
-	private void loadCustomersData()
-	{
+	private void loadCustomersData() {
 		//read guests from database
 		List<Customer> customers = dbController.readCustomers();
 
@@ -93,38 +71,67 @@ public class CustomersController implements Initializable {
 		} else {
 			LOGGER.warning("No customer data exist!");
 		}
+
+		// set customerData to customerTable
+		customerTable.getItems().setAll(customerData);
+
+		// set count of all customers
+		lbCustomerCount.setText(String.valueOf(customerData.size()));
+
+		clearTableSelection();
 	}
 
 	private void initializeColumns() {
 
 		// set size of columns
-		customerTable.setColumnResizePolicy( TreeTableView.CONSTRAINED_RESIZE_POLICY );
+		customerTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
 
-		colKdNr.setMaxWidth( 1f * Integer.MAX_VALUE * 10);
-		colCompany.setMaxWidth( 1f * Integer.MAX_VALUE * 62);
-		colCompany.setPrefWidth(900);
-		colOpenCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 13.5);
-		colPayedCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 14.5);
+		colKdNr.setMaxWidth( 1f * Integer.MAX_VALUE * 12);
+		colCompany.setMaxWidth( 1f * Integer.MAX_VALUE * 58);
+			colOpenCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
+		colPayedCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
 
 		// set cell value factory
-		colKdNr.setCellValueFactory(param -> param.getValue().getValue().getKdNr());
-		colCompany.setCellValueFactory(param -> param.getValue().getValue().getCompany());
-		colOpenCosts.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getValue().getOpenCosts())));
+		colKdNr.setCellValueFactory(param -> param.getValue().getKdNr());
+		colCompany.setCellValueFactory(param -> param.getValue().getCompany());
+			colCompany.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
+					new ReadOnlyStringWrapper(param.getValue().getCompany().getValue() + "\n" +
+														param.getValue().getName1().getValue() + " " +
+														param.getValue().getName2().getValue()));
+
+		colCompany.setCellFactory(column-> new TableCell<>() {
+			@Override
+			protected void updateItem(String item, boolean empty) {
+				super.updateItem(item, empty);
+				if(item == null || empty) {
+					setGraphic(null);
+				} else {
+					VBox vbox = new VBox();
+					vbox.setAlignment(Pos.CENTER_LEFT);
+					List<String> textList = Arrays.asList(item.split("\n"));
+					for(int i = 0; i < textList.size() ; i++) {
+						Text lbl = new Text(textList.get(i));
+						if (i % 2 == 0) {
+							lbl.setStyle("-fx-font-weight: bold");
+						}
+						vbox.getChildren().add(lbl);
+					}
+					setGraphic(vbox);
+				}
+			}
+		});
+
+		colOpenCosts.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
+				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getOpenCosts())));
 //		colOpenCosts.setStyle("-fx-alignment: CENTER-RIGHT;");
-		colPayedCosts.setCellValueFactory((TreeTableColumn.CellDataFeatures<Customer, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getValue().getPayedCosts())));
+		colPayedCosts.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
+				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getPayedCosts())));
 
 		// add columns to customer table
 		customerTable.getColumns().add(colKdNr);
 		customerTable.getColumns().add(colCompany);
 		customerTable.getColumns().add(colOpenCosts);
 		customerTable.getColumns().add(colPayedCosts);
-
-		// create root item for customer table with the customer data
-		final TreeItem<Customer> root = new RecursiveTreeItem<>(customerData, RecursiveTreeObject::getChildren);
-		customerTable.setRoot(root);
-		customerTable.setShowRoot(false);
 	}
 
 	private void showCustomerInformations(Customer customer) {
@@ -161,6 +168,24 @@ public class CustomersController implements Initializable {
 		showCustomerDetails(false);
 	}
 
+	private void setupTableRows() {
+		customerTable.setRowFactory(tv -> {
+			TableRow<Customer> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
+					Customer customer = customerTable.getSelectionModel().getSelectedItem();
+					showCustomerInformations(customer);
+				}
+			});
+			return row;
+		});
+	}
+
+	private void clearTableSelection() {
+		customerTable.getSelectionModel().clearSelection();
+		clearCustomerDetails();
+	}
+
 	private void showCustomerDetails(boolean show) {
 		customerDetailsFilled.setVisible(show);
 		customerDetailsEmpty.setVisible(!show);
@@ -170,15 +195,44 @@ public class CustomersController implements Initializable {
 		return data.isEmpty() ? "---" : data;
 	}
 
+	private void scrollToRow(int row)
+	{
+		customerTable.requestFocus();
+		customerTable.getSelectionModel().select(row);
+		customerTable.getFocusModel().focus(row);
+		customerTable.scrollTo(row);
+	}
+
 	@FXML
-	private void onBtnNewCustomerClicked() {
-		//TODO New customer dialog
-		LOGGER.info("NEW CUSTOMER...");
+	private void onBtnNewCustomerClicked() throws IOException {
+		try {
+			// Clear old selection on the customer table.
+			customerTable.getSelectionModel().clearSelection();
+
+			// Create Dialog
+			showCustomerDialog(customerData, null);
+
+			customerTable.refresh();
+			customerTable.sort();
+
+			int lastCustomerIKdNr = Integer.parseInt(customerData.get(customerData.size() - 1).getKdNr().getValue());
+
+			for (int i = 0; i < customerTable.getItems().size(); i++) {
+				if (Integer.parseInt(customerTable.getItems().get(i).getKdNr().getValue()) == lastCustomerIKdNr) {
+					scrollToRow(i);
+					break;
+				}
+			}
+
+		} catch (IOException e){
+			LOGGER.warning(e.toString());
+		}
 	}
 
 	@FXML
 	private void onBtnCloseDetailsClicked() {
 		customerTable.getSelectionModel().clearSelection();
-		clearCustomerDetails();
+		System.out.println(customerTable.getSelectionModel().getSelectedIndex());
+		clearTableSelection();
 	}
 }

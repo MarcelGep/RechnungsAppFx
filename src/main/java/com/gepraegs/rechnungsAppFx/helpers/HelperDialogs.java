@@ -3,7 +3,10 @@ package com.gepraegs.rechnungsAppFx.helpers;
 import java.awt.*;
 import java.io.IOException;
 
+import com.gepraegs.rechnungsAppFx.Customer;
+import com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -119,6 +122,36 @@ public class HelperDialogs {
 		alert.setResizable( true );
 		alert.onShownProperty().addListener( e -> Platform.runLater( () -> alert.setResizable( false ) ) );
 		alert.showAndWait();
+	}
+
+	public static void showCustomerDialog(ObservableList<Customer> customerData, Customer customer) throws IOException
+	{
+		FXMLLoader fxmlLoader = loadFXML(CUSTOMERDIALOGVIEW);
+
+		Parent page = fxmlLoader.load();
+
+		Stage dialogStage = new Stage();
+		dialogStage.setTitle("Kunde");
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setResizable(false);
+//		dialogStage.setMinWidth(560);
+//		dialogStage.setMinHeight(420);
+
+		Scene scene = new Scene(page);
+		dialogStage.setScene(scene);
+
+//		Image weddingPlanerIcon = new Image(HelperDialogs.class.getResource("/icons/weddingPlanerIcon.png").toString());
+//		dialogStage.getIcons().add(weddingPlanerIcon);
+
+		CustomerDialogController dialogController = fxmlLoader.getController();
+		dialogController.setDialogStage(dialogStage);
+		dialogController.setCustomerData(customerData);
+
+		if (customer != null) {
+			dialogController.setCustomer(customer);
+		}
+
+		dialogStage.showAndWait();
 	}
 
 //	public static void showGuestDialog( ObservableList<Guest> guestData, Guest guest ) throws IOException {
