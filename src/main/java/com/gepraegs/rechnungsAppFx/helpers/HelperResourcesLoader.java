@@ -10,6 +10,6 @@ public class HelperResourcesLoader {
 
     public static FXMLLoader loadFXML(String resource)
     {
-        return new FXMLLoader(new HelperResourcesLoader().getClass().getResource(resource));
+        return new FXMLLoader(HelperResourcesLoader.class.getResource(resource));
     }
 }

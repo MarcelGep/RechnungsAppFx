@@ -352,7 +352,7 @@ public class DbController {
 	}
 
 	public List<Customer> readCustomers() {
-		String query = "SELECT * FROM Customers ORDER BY LOWER(\"Company\") ASC, LOWER(\"Kd-Nr.\") ASC";
+		String query = "SELECT * FROM Customers";
 
 		try {
 			Statement st = connection.createStatement();

@@ -22,9 +22,9 @@
     -fx-text-fill: black;
 }
 
-/*.table-view .table-row-cell:selected {*/
-/*    -fx-background-color: derive(-fx-accent, 100%);*/
-/*}*/
+.table-view .table-row-cell:selected {
+    -fx-background-color: derive(-fx-accent, 100%);
+}
 
 .table-view .table-cell:empty {
     -fx-border-width: 0 0 0 0;

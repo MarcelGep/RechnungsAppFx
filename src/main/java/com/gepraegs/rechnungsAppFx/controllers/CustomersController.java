@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
 import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showCustomerDialog;
@@ -58,7 +59,8 @@ public class CustomersController implements Initializable {
 	public void initialize( URL location, ResourceBundle resources ) {
 		initializeColumns();
 		loadCustomersData();
-		setupTableRows();
+		setRowSelectionListener();
+		setTableSortOrder();
 	}
 
 	private void loadCustomersData() {
@@ -73,7 +75,7 @@ public class CustomersController implements Initializable {
 		}
 
 		// set customerData to customerTable
-		customerTable.getItems().setAll(customerData);
+		customerTable.setItems(customerData);
 
 		// set count of all customers
 		lbCustomerCount.setText(String.valueOf(customerData.size()));
@@ -168,19 +170,6 @@ public class CustomersController implements Initializable {
 		showCustomerDetails(false);
 	}
 
-	private void setupTableRows() {
-		customerTable.setRowFactory(tv -> {
-			TableRow<Customer> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 1) {
-					Customer customer = customerTable.getSelectionModel().getSelectedItem();
-					showCustomerInformations(customer);
-				}
-			});
-			return row;
-		});
-	}
-
 	private void clearTableSelection() {
 		customerTable.getSelectionModel().clearSelection();
 		clearCustomerDetails();
@@ -203,27 +192,40 @@ public class CustomersController implements Initializable {
 		customerTable.scrollTo(row);
 	}
 
+	private void setTableSortOrder() {
+		colCompany.setSortType(TableColumn.SortType.ASCENDING);
+		colKdNr.setSortType(TableColumn.SortType.ASCENDING);
+		customerTable.getSortOrder().add(colCompany);
+//		customerTable.getSortOrder().add(colKdNr);
+	}
+
+	private void setRowSelectionListener() {
+		customerTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+			if (newSelection != null) {
+				showCustomerInformations(newSelection);
+			}
+		});
+	}
+
 	@FXML
-	private void onBtnNewCustomerClicked() throws IOException {
+	private void onBtnNewCustomerClicked() {
 		try {
-			// Clear old selection on the customer table.
-			customerTable.getSelectionModel().clearSelection();
-
 			// Create Dialog
-			showCustomerDialog(customerData, null);
+			Customer customer = showCustomerDialog(customerData, null);
 
-			customerTable.refresh();
-			customerTable.sort();
+			if (customer != null) {
+				customerTable.sort();
 
-			int lastCustomerIKdNr = Integer.parseInt(customerData.get(customerData.size() - 1).getKdNr().getValue());
-
-			for (int i = 0; i < customerTable.getItems().size(); i++) {
-				if (Integer.parseInt(customerTable.getItems().get(i).getKdNr().getValue()) == lastCustomerIKdNr) {
-					scrollToRow(i);
-					break;
+				// scroll to last added customer, select it and show detail informations
+				int lastCustomerKdNr = dbController.readNextId("Customers") - 1;
+				for (int i = 0; i < customerTable.getItems().size(); i++) {
+					if (Integer.parseInt(customerTable.getItems().get(i).getKdNr().getValue()) == lastCustomerKdNr) {
+						scrollToRow(i);
+						customerTable.getSelectionModel().select(i);
+						break;
+					}
 				}
 			}
-
 		} catch (IOException e){
 			LOGGER.warning(e.toString());
 		}

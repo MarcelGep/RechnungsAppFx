@@ -17,6 +17,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javafx.stage.StageStyle;
 import org.ini4j.Ini;
 
 import com.gepraegs.rechnungsAppFx.controllers.AppViewController;
@@ -26,7 +27,7 @@ import static com.gepraegs.rechnungsAppFx.Constants.*;
 import static com.gepraegs.rechnungsAppFx.helpers.HelperResourcesLoader.*;
 
 public class HelperDialogs {
-	
+
 	public static void showStartDialog( Stage stage ) throws IOException {
 		FXMLLoader fxmlLoader = loadFXML( STARTVIEW );
 
@@ -124,34 +125,42 @@ public class HelperDialogs {
 		alert.showAndWait();
 	}
 
-	public static void showCustomerDialog(ObservableList<Customer> customerData, Customer customer) throws IOException
+	private static Parent initParent(FXMLLoader fxmlLoader, Stage stage) throws IOException {
+		Parent parent = fxmlLoader.load();
+		parent.setOnMousePressed(pressEvent -> {
+			parent.setOnMouseDragged(dragEvent -> {
+				stage.setX(dragEvent.getScreenX() - pressEvent.getSceneX());
+				stage.setY(dragEvent.getScreenY() - pressEvent.getSceneY());
+			});
+		});
+		return parent;
+	}
+
+	public static Customer showCustomerDialog(ObservableList<Customer> customerData, Customer customer) throws IOException
 	{
 		FXMLLoader fxmlLoader = loadFXML(CUSTOMERDIALOGVIEW);
 
-		Parent page = fxmlLoader.load();
-
 		Stage dialogStage = new Stage();
-		dialogStage.setTitle("Kunde");
+
+		Parent parent = initParent(fxmlLoader, dialogStage);
+
+		dialogStage.setTitle("Neuer Kunde");
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setResizable(false);
-//		dialogStage.setMinWidth(560);
-//		dialogStage.setMinHeight(420);
-
-		Scene scene = new Scene(page);
-		dialogStage.setScene(scene);
-
-//		Image weddingPlanerIcon = new Image(HelperDialogs.class.getResource("/icons/weddingPlanerIcon.png").toString());
-//		dialogStage.getIcons().add(weddingPlanerIcon);
+		dialogStage.initStyle(StageStyle.UNDECORATED);
+		dialogStage.setScene(new Scene(parent));
 
 		CustomerDialogController dialogController = fxmlLoader.getController();
 		dialogController.setDialogStage(dialogStage);
 		dialogController.setCustomerData(customerData);
 
 		if (customer != null) {
-			dialogController.setCustomer(customer);
+			dialogController.setSelectedCustomer(customer);
 		}
 
 		dialogStage.showAndWait();
+
+		return dialogController.getSavedCustomer();
 	}
 
 //	public static void showGuestDialog( ObservableList<Guest> guestData, Guest guest ) throws IOException {

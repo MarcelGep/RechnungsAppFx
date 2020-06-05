@@ -21,18 +21,15 @@ public class CustomerDialogController implements Initializable {
     @FXML private JFXTextField tfCompany;
     @FXML private TextField tfFirstName;
 
-//    private static final Logger LOGGER = Logger.getLogger(CustomerDialogController.class.getName());
-    private DbController dbController = DbController.getInstance();
-
-    private Stage dialogStage;
-
+    private static final Logger LOGGER = Logger.getLogger(CustomerDialogController.class.getName());
+    private final DbController dbController = DbController.getInstance();
     private ObservableList<Customer> customerData = FXCollections.observableArrayList();
-
+    private Stage dialogStage = new Stage();
     private Customer selectedCustomer;
+    private Customer savedCustomer;
     
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle)
-    {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         cbCustomerTyp.getItems().addAll("Neuer Firmenkunde", "Neuer Privatkunde");
         cbCustomerTyp.getSelectionModel().selectFirst();
 
@@ -49,15 +46,58 @@ public class CustomerDialogController implements Initializable {
 //        setupFocusedProperty();
     }
 
-    @FXML
-    public void handleCancel()
-    {
-    	dialogStage.close();
+    public Customer getSavedCustomer() {
+        return savedCustomer;
     }
 
+    public void setDialogStage(Stage dialogStage) {
+        this.dialogStage = dialogStage;
+    }
+
+    public void setSelectedCustomer(Customer selectedCustomer) {
+        this.selectedCustomer = selectedCustomer;
+
+//        tfFirstName.setText(selectedCustomer.getName1().getValue());
+//        tfCompany.setText(selectedCustomer.getCompany().getValue());
+//        tfAge.setText(String.valueOf(selectedGuest.getAge()));
+//        cbState.getSelectionModel().select(GuestStatus.getByCode(selectedGuest.getStatus()));
+//        tfPhone.setText(selectedGuest.getPhone());
+//        tfHandy.setText(selectedGuest.getHandy());
+//        tfEmail.setText(selectedGuest.getEmail());
+//        tfStreet.setText(selectedGuest.getStreet());
+//        tfPlz.setText(selectedGuest.getPlz() == null ? "" : selectedGuest.getPlz());
+//        tfOrt.setText(selectedGuest.getOrt());
+//        taComments.setText(selectedGuest.getComments());
+    }
+
+    public void setCustomerData(ObservableList<Customer> customerData) {
+        this.customerData = customerData;
+    }
+
+//    private boolean validateInputs()
+//    {
+//        boolean isInputCorrect = true;
+//
+//        if (!tfFirstName.validate()) isInputCorrect = false;
+//        if (!tfLastName.validate()) isInputCorrect = false;
+//        if (!tfAge.validate()) isInputCorrect = false;
+//        if (!tfPlz.validate()) isInputCorrect = false;
+//        if (!tfPhone.validate()) isInputCorrect = false;
+//        if (!tfHandy.validate()) isInputCorrect = false;
+//        if (!tfEmail.validate()) isInputCorrect = false;
+//        if (!cbState.validate()) {
+//            isInputCorrect = false;
+//            LOGGER.warning("cbstate error");
+//        }
+//
+//        // TODO
+////            tpGuestData.getSelectionModel().select(PERSON);
+//
+//        return isInputCorrect;
+//    }
+
     @FXML
-    public void handleSave()
-    {
+    public void handleSave() {
 //        if (!validateInputs())
 //        {
 //            return;
@@ -85,17 +125,23 @@ public class CustomerDialogController implements Initializable {
 
         if (selectedCustomer != null)
         {
-            // Edit selected guest
+            // Edit selected customer
             customerData.set(this.customerData.indexOf(selectedCustomer), newCustomer);
             dbController.editGuest(newCustomer);
         }
         else
         {
-            // Add new guest to list
+            // Add new customer to customerData
             customerData.add(newCustomer);
             dbController.createCustomer(newCustomer);
+            savedCustomer = newCustomer;
         }
 
+        dialogStage.close();
+    }
+
+    @FXML
+    public void handleCancel() {
         dialogStage.close();
     }
 
@@ -107,53 +153,5 @@ public class CustomerDialogController implements Initializable {
 //                tf.setText(s);
 //            }
 //        });
-//    }
-
-    public void setDialogStage(Stage dialogStage)
-    {
-        this.dialogStage = dialogStage;
-    }
-
-    public void setCustomer(Customer selectedCustomer)
-    {
-        this.selectedCustomer = selectedCustomer;
-
-        tfFirstName.setText(selectedCustomer.getName1().getValue());
-        tfCompany.setText(selectedCustomer.getCompany().getValue());
-//        tfAge.setText(String.valueOf(selectedGuest.getAge()));
-//        cbState.getSelectionModel().select(GuestStatus.getByCode(selectedGuest.getStatus()));
-//        tfPhone.setText(selectedGuest.getPhone());
-//        tfHandy.setText(selectedGuest.getHandy());
-//        tfEmail.setText(selectedGuest.getEmail());
-//        tfStreet.setText(selectedGuest.getStreet());
-//        tfPlz.setText(selectedGuest.getPlz() == null ? "" : selectedGuest.getPlz());
-//        tfOrt.setText(selectedGuest.getOrt());
-//        taComments.setText(selectedGuest.getComments());
-    }
-
-    public void setCustomerData(ObservableList<Customer> customerList) {
-        this.customerData = customerList;
-    }
-
-//    private boolean validateInputs()
-//    {
-//        boolean isInputCorrect = true;
-//
-//        if (!tfFirstName.validate()) isInputCorrect = false;
-//        if (!tfLastName.validate()) isInputCorrect = false;
-//        if (!tfAge.validate()) isInputCorrect = false;
-//        if (!tfPlz.validate()) isInputCorrect = false;
-//        if (!tfPhone.validate()) isInputCorrect = false;
-//        if (!tfHandy.validate()) isInputCorrect = false;
-//        if (!tfEmail.validate()) isInputCorrect = false;
-//        if (!cbState.validate()) {
-//            isInputCorrect = false;
-//            LOGGER.warning("cbstate error");
-//        }
-//
-//        // TODO
-////            tpGuestData.getSelectionModel().select(PERSON);
-//
-//        return isInputCorrect;
 //    }
 }
