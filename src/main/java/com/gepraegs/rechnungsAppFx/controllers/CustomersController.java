@@ -55,12 +55,16 @@ public class CustomersController implements Initializable {
 	@FXML private VBox customerDetailsFilled;
 	@FXML private VBox customerDetailsEmpty;
 
+	@FXML private VBox showDialogLayer;
+
 	@Override
 	public void initialize( URL location, ResourceBundle resources ) {
 		initializeColumns();
 		loadCustomersData();
 		setRowSelectionListener();
 		setTableSortOrder();
+
+		showDialogLayer.setVisible(false);
 	}
 
 	private void loadCustomersData() {
@@ -211,6 +215,7 @@ public class CustomersController implements Initializable {
 	private void onBtnNewCustomerClicked() {
 		try {
 			// Create Dialog
+			showDialogLayer.setVisible(true);
 			Customer customer = showCustomerDialog(customerData, null);
 
 			if (customer != null) {
@@ -226,6 +231,8 @@ public class CustomersController implements Initializable {
 					}
 				}
 			}
+
+			showDialogLayer.setVisible(false);
 		} catch (IOException e){
 			LOGGER.warning(e.toString());
 		}

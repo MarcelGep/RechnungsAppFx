@@ -3,23 +3,46 @@ package com.gepraegs.rechnungsAppFx.controllers;
 import com.gepraegs.rechnungsAppFx.Customer;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
+
 import java.net.URL;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //import static com.gepraegs.rechnungsAppFx.helpers.InputValidHelper.isInputInvalid;
 
 public class CustomerDialogController implements Initializable {
 
-    @FXML private JFXComboBox<String> cbCustomerTyp;
-    @FXML private JFXTextField tfCompany;
+    @FXML private ComboBox<String> cbCustomerTyp;
+    @FXML private ComboBox<String> cbCountry;
+
+    @FXML private TextField tfCompany;
     @FXML private TextField tfFirstName;
+    @FXML private TextField tfLastName;
+    @FXML private TextField tfStreet;
+    @FXML private TextField tfPlz;
+    @FXML private TextField tfLocation;
+    @FXML private TextField tfPhone;
+    @FXML private TextField tfFax;
+    @FXML private TextField tfHandy;
+    @FXML private TextField tfEmail;
+    @FXML private TextField tfWebsite;
+
+    @FXML private Spinner<Integer> spDiscount;
 
     private static final Logger LOGGER = Logger.getLogger(CustomerDialogController.class.getName());
     private final DbController dbController = DbController.getInstance();
@@ -30,8 +53,8 @@ public class CustomerDialogController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        cbCustomerTyp.getItems().addAll("Neuer Firmenkunde", "Neuer Privatkunde");
-        cbCustomerTyp.getSelectionModel().selectFirst();
+        initSpinner();
+        initComboBox();
 
 //        addTextLimiter(tfFirstName, 29);
 //        addTextLimiter(tfLastName, 29);
@@ -54,47 +77,81 @@ public class CustomerDialogController implements Initializable {
         this.dialogStage = dialogStage;
     }
 
+    private void initSpinner() {
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
+        valueFactory.setConverter(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer value) {
+                return value.toString() + " %";
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                String valueWithoutUnits = string.replaceAll("%", "").trim();
+                if (valueWithoutUnits.isEmpty()) {
+                    return 0 ;
+                } else {
+                    return Integer.valueOf(valueWithoutUnits);
+                }
+            }
+        });
+        spDiscount.setValueFactory(valueFactory);
+    }
+
+    private void initComboBox() {
+        // countries
+        ObservableList<String> countries = Stream.of(Locale.getISOCountries())
+                .map(locales -> new Locale("", locales))
+                .map(Locale::getDisplayCountry)
+                .collect(Collectors.toCollection(FXCollections::observableArrayList));
+
+        FilteredList<String> filteredItems = new FilteredList<>(countries, p -> true);
+
+        cbCountry.getSelectionModel().select("Deutschland");
+        cbCountry.setItems(filteredItems);
+        cbCountry.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+            final TextField editor = cbCountry.getEditor();
+            final String selected = cbCountry.getSelectionModel().getSelectedItem();
+
+            Platform.runLater(() -> {
+                if (selected == null || !selected.equals(editor.getText())) {
+                    filteredItems.setPredicate(item -> {
+                        if (item.toUpperCase().startsWith(newValue.toUpperCase())) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                }
+            });
+        });
+
+        // customer type
+        cbCustomerTyp.getItems().addAll("Neuer Firmenkunde", "Neuer Privatkunde");
+        cbCustomerTyp.getSelectionModel().selectFirst();
+    }
+
     public void setSelectedCustomer(Customer selectedCustomer) {
         this.selectedCustomer = selectedCustomer;
 
-//        tfFirstName.setText(selectedCustomer.getName1().getValue());
-//        tfCompany.setText(selectedCustomer.getCompany().getValue());
-//        tfAge.setText(String.valueOf(selectedGuest.getAge()));
-//        cbState.getSelectionModel().select(GuestStatus.getByCode(selectedGuest.getStatus()));
-//        tfPhone.setText(selectedGuest.getPhone());
-//        tfHandy.setText(selectedGuest.getHandy());
-//        tfEmail.setText(selectedGuest.getEmail());
-//        tfStreet.setText(selectedGuest.getStreet());
-//        tfPlz.setText(selectedGuest.getPlz() == null ? "" : selectedGuest.getPlz());
-//        tfOrt.setText(selectedGuest.getOrt());
-//        taComments.setText(selectedGuest.getComments());
+        tfCompany.setText(selectedCustomer.getCompany().getValue());
+        tfFirstName.setText(selectedCustomer.getName1().getValue());
+        tfLastName.setText(selectedCustomer.getName2().getValue());
+        tfStreet.setText(selectedCustomer.getStreet().getValue());
+        tfPlz.setText(selectedCustomer.getPlz().getValue());
+        tfLocation.setText(selectedCustomer.getLocation().getValue());
+        tfPhone.setText(selectedCustomer.getPhone().getValue());
+        tfFax.setText(selectedCustomer.getFax().getValue());
+        tfHandy.setText(selectedCustomer.getHandy().getValue());
+        tfEmail.setText(selectedCustomer.getEmail().getValue());
+        tfWebsite.setText(selectedCustomer.getWebsite().getValue());
+        cbCountry.getSelectionModel().select(selectedCustomer.getCountry().getValue());
+        spDiscount.getValueFactory().setValue(selectedCustomer.getDiscount());
     }
 
     public void setCustomerData(ObservableList<Customer> customerData) {
         this.customerData = customerData;
     }
-
-//    private boolean validateInputs()
-//    {
-//        boolean isInputCorrect = true;
-//
-//        if (!tfFirstName.validate()) isInputCorrect = false;
-//        if (!tfLastName.validate()) isInputCorrect = false;
-//        if (!tfAge.validate()) isInputCorrect = false;
-//        if (!tfPlz.validate()) isInputCorrect = false;
-//        if (!tfPhone.validate()) isInputCorrect = false;
-//        if (!tfHandy.validate()) isInputCorrect = false;
-//        if (!tfEmail.validate()) isInputCorrect = false;
-//        if (!cbState.validate()) {
-//            isInputCorrect = false;
-//            LOGGER.warning("cbstate error");
-//        }
-//
-//        // TODO
-////            tpGuestData.getSelectionModel().select(PERSON);
-//
-//        return isInputCorrect;
-//    }
 
     @FXML
     public void handleSave() {
@@ -105,32 +162,26 @@ public class CustomerDialogController implements Initializable {
 
         int newKdNr = dbController.readNextId("Customers");
 
-        Customer newCustomer = new Customer();
-        newCustomer.setKdNr(String.valueOf(newKdNr));
-        newCustomer.setName1(tfFirstName.getText());
-        newCustomer.setCompany(tfCompany.getText());
+        Customer newCustomer = new Customer(String.valueOf(newKdNr),
+                                            tfCompany.getText(),
+                                            tfFirstName.getText(),
+                                            tfLastName.getText(),
+                                            tfStreet.getText(),
+                                            tfPlz.getText(),
+                                            tfLocation.getText(),
+                                            cbCountry.getSelectionModel().getSelectedItem(),
+                                            tfPhone.getText(),
+                                            tfFax.getText(),
+                                            tfHandy.getText(),
+                                            tfEmail.getText(),
+                                            tfWebsite.getText(),
+                                            spDiscount.getValue());
 
-//        Customer customer = new Customer(newKdNr,
-//                                tfCompany.getText(),
-//                                tfFirstName.getText(),
-//            					Integer.parseInt(tfAge.getText()),
-//                                Objects.requireNonNull(GuestStatus.getByName(cbState.getSelectionModel().getSelectedItem().toString())).getCode(),
-//                                tfPhone.getText(),
-//                                tfHandy.getText(),
-//                                tfEmail.getText(),
-//                                tfStreet.getText(),
-//                                tfPlz.getText(),
-//                                tfOrt.getText(),
-//                                "No comment!");
-
-        if (selectedCustomer != null)
-        {
+        if (selectedCustomer != null) {
             // Edit selected customer
             customerData.set(this.customerData.indexOf(selectedCustomer), newCustomer);
             dbController.editGuest(newCustomer);
-        }
-        else
-        {
+        } else {
             // Add new customer to customerData
             customerData.add(newCustomer);
             dbController.createCustomer(newCustomer);
@@ -153,5 +204,26 @@ public class CustomerDialogController implements Initializable {
 //                tf.setText(s);
 //            }
 //        });
+//    }
+
+//    private boolean validateInputs() {
+//        boolean isInputCorrect = true;
+//
+//        if (!tfFirstName.validate()) isInputCorrect = false;
+//        if (!tfLastName.validate()) isInputCorrect = false;
+//        if (!tfAge.validate()) isInputCorrect = false;
+//        if (!tfPlz.validate()) isInputCorrect = false;
+//        if (!tfPhone.validate()) isInputCorrect = false;
+//        if (!tfHandy.validate()) isInputCorrect = false;
+//        if (!tfEmail.validate()) isInputCorrect = false;
+//        if (!cbState.validate()) {
+//            isInputCorrect = false;
+//            LOGGER.warning("cbstate error");
+//        }
+//
+//        // TODO
+////            tpGuestData.getSelectionModel().select(PERSON);
+//
+//        return isInputCorrect;
 //    }
 }

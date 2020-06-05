@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
-<?import com.jfoenix.controls.JFXTextField?>
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="490.0" spacing="20.0" stylesheets="@../../stylesheet/buttonStyles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="743.0" prefWidth="490.0" spacing="20.0" styleClass="dialog" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController">
    <children>
       <Pane prefHeight="43.0" prefWidth="600.0" style="-fx-background-color: -fx-accent;">
          <children>
@@ -26,37 +27,81 @@
             </Label>
          </children>
       </Pane>
-      <GridPane VBox.vgrow="ALWAYS">
+      <GridPane>
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.33331298828125" minWidth="10.0" prefWidth="166.3333536783854" />
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="393.33331298828125" minWidth="10.0" prefWidth="264.999979654948" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="Kundentyp" />
-            <Label text="Firmenname" GridPane.rowIndex="2" />
-            <Label text="Vorname" GridPane.rowIndex="3" />
-            <Label text="Nachname" GridPane.rowIndex="4" />
-            <Label text="E-Mail" GridPane.rowIndex="5">
+            <Label text="Firmenname *" GridPane.rowIndex="3" />
+            <Label text="Vorname" GridPane.rowIndex="4" />
+            <Label text="Nachname" GridPane.rowIndex="5" />
+            <Label text="E-Mail" GridPane.rowIndex="9">
                <padding>
                   <Insets right="25.0" />
                </padding>
             </Label>
-            <JFXComboBox fx:id="cbCustomerTyp" prefHeight="25.0" prefWidth="354.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" />
-            <JFXTextField fx:id="tfCompany" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="tfFirstName" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="KONTAKTDATEN" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
+            <TextField fx:id="tfLastName" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <Label text="KONTAKTDATEN" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="System Bold" size="14.0" />
                </font>
             </Label>
+            <TextField fx:id="tfPhone" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="Telefon" GridPane.rowIndex="6" />
+            <Label text="Fax" GridPane.rowIndex="7" />
+            <Label text="Handy" GridPane.rowIndex="8" />
+            <Label text="Website" GridPane.rowIndex="10" />
+            <Label text="RECHNUNGSADRESSE" GridPane.columnIndex="1" GridPane.rowIndex="12">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label text="Strasse" GridPane.rowIndex="13" />
+            <Label text="PLZ" GridPane.rowIndex="14" />
+            <Label text="Ort" GridPane.rowIndex="15" />
+            <Label text="Land" GridPane.rowIndex="16" />
+            <TextField fx:id="tfCompany" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="tfFirstName" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <TextField fx:id="tfFax" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <TextField fx:id="tfHandy" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="tfEmail" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+            <TextField fx:id="tfWebsite" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+            <TextField fx:id="tfStreet" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+            <TextField fx:id="tfPlz" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+            <TextField fx:id="tfLocation" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+            <ComboBox fx:id="cbCountry" editable="true" prefHeight="25.0" prefWidth="319.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="16" />
+            <ComboBox fx:id="cbCustomerTyp" prefHeight="25.0" prefWidth="286.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+            <Label text="RECHNUNGSDETAILS" GridPane.columnIndex="1" GridPane.rowIndex="18">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Label text="Rabatt" GridPane.rowIndex="19" />
+            <Spinner fx:id="spDiscount" GridPane.columnIndex="1" GridPane.rowIndex="19" />
          </children>
          <padding>
             <Insets left="30.0" right="30.0" top="5.0" />
@@ -73,4 +118,8 @@
          </VBox.margin>
       </HBox>
    </children>
+   <stylesheets>
+      <URL value="@../../stylesheet/buttonStyles.css" />
+      <URL value="@../../stylesheet/boxStyles.css" />
+   </stylesheets>
 </VBox>

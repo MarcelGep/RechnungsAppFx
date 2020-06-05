@@ -375,12 +375,16 @@ public class DbController {
 				String email = rs.getString( "Email" );
 				String website = rs.getString( "Website" );
 				String informations = rs.getString( "Informations" );
-				double discount = rs.getDouble( "Discount" );
+				int discount = rs.getInt( "Discount" );
 				double openCosts = rs.getDouble( "OpenCosts" );
 				double payedCosts = rs.getDouble( "PayedCosts" );
 
 				Customer customer = new Customer(kdNr, company, name1, name2, street, plz, location, country, phone, handy, fax,
-						email, website, informations, discount, openCosts, payedCosts);
+						email, website, discount);
+
+				customer.setInformations(informations);
+				customer.setOpenCosts(openCosts);
+				customer.setPayedCosts(payedCosts);
 
 				customerData.add( customer );
 			}
