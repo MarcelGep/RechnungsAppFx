@@ -260,25 +260,24 @@ public class DbController {
 		return true;
 	}
 
-	public boolean deleteGuest( Customer guest ) {
-//		String query = "DELETE FROM Guests WHERE ID = ?";
-//		int id = guest.getId();
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setInt( 1, id );
-//			ps.executeUpdate();
-//
-//			LOGGER.info( "Guest " + guest.getFirstName() + " " + guest.getLastName() + " with ID: " + guest.getId()
-//				+ " deleted!" );
-//
-//			return true;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
+	public boolean deleteCustomer(Customer customer ) {
+		try {
+			String query = "DELETE FROM Customers WHERE \"Kd-Nr.\" = ?";
+			int kdNr = Integer.parseInt(customer.getKdNr().getValue());
 
-		return true;
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setInt(1, kdNr);
+			ps.executeUpdate();
+
+			LOGGER.info( "Customer \"" + customer.getCompany().getValue() +
+							 "\" with KdNr \"" + customer.getKdNr().getValue() +
+					  	     "\" was deleted!" );
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return false;
+		}
 	}
 
 	public boolean setInvite( Customer guest ) {

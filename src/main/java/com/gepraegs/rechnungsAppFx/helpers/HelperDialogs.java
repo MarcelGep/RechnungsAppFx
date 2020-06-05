@@ -2,8 +2,11 @@ package com.gepraegs.rechnungsAppFx.helpers;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.gepraegs.rechnungsAppFx.Customer;
+import com.gepraegs.rechnungsAppFx.controllers.ConfirmDialogController;
 import com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -163,72 +166,26 @@ public class HelperDialogs {
 		return dialogController.getSavedCustomer();
 	}
 
-//	public static void showGuestDialog( ObservableList<Guest> guestData, Guest guest ) throws IOException {
-//		FXMLLoader fxmlLoader = loadFXML( GUESTDIALOGVIEW );
-//
-//		Parent page = fxmlLoader.load();
-//
-//		Stage dialogStage = new Stage();
-//		dialogStage.setTitle( "Gast" );
-//		dialogStage.initModality( Modality.APPLICATION_MODAL );
-//		dialogStage.setResizable( false );
-//		dialogStage.setMinWidth( 560 );
-//		dialogStage.setMinHeight( 420 );
-//
-//		Scene scene = new Scene( page );
-//		dialogStage.setScene( scene );
-//
-//		Image weddingPlanerIcon = new Image(
-//			HelperDialogs.class.getResource( "/icons/weddingPlanerIcon.png" ).toString() );
-//		dialogStage.getIcons().add( weddingPlanerIcon );
-//
-//		GuestDialogController dialogController = fxmlLoader.getController();
-//		dialogController.setDialogStage( dialogStage );
-//		dialogController.setGuestData( guestData );
-//
-//		if ( guest != null ) {
-//			dialogController.setGuest( guest );
-//		}
-//
-//		dialogStage.showAndWait();
-//	}
+	public static boolean showConfirmDialog(String content, List<String> buttons) throws IOException {
+		FXMLLoader fxmlLoader = loadFXML(CONFIRMDIALOGVIEW);
 
-//	public static boolean showDeleteGuestDialog( String text ) {
-//		ButtonType yes = new ButtonType( "Ja" );
-//		ButtonType no = new ButtonType( "Nein" );
-//
-//		Alert alert = new Alert( Alert.AlertType.CONFIRMATION );
-//		alert.setTitle( "Löschen" );
-//		alert.setHeaderText( text );
-//		alert.setContentText( "Möchten Sie die Auswahl wirklich aus der Gästeliste löschen?" );
-//		alert.getDialogPane().getStylesheets()
-//			.add( HelperDialogs.class.getResource( "/stylesheet/tabPaneStyles.css" ).toExternalForm() );
-//		alert.getDialogPane().getStyleClass().add( "alertDialog" );
-//		alert.getDialogPane().setPrefHeight( 180 );
-//		alert.setResizable( true );
-//		alert.getButtonTypes().clear();
-//		alert.getButtonTypes().addAll( yes, no );
-//		alert.onShownProperty().addListener( e -> Platform.runLater( () -> alert.setResizable( false ) ) );
-//
-//		Button yesBtn = ( Button ) alert.getDialogPane().lookupButton( alert.getButtonTypes().get( 0 ) );
-//		yesBtn.setId( "save_button" );
-//		Button noBtn = ( Button ) alert.getDialogPane().lookupButton( alert.getButtonTypes().get( 1 ) );
-//		noBtn.setId( "cancel_button" );
-//
-//		Image image = new Image( HelperDialogs.class.getResource( "/icons/customer_delete.png" ).toString() );
-//		ImageView imageView = new ImageView( image );
-//		imageView.setFitHeight( 50 );
-//		imageView.setFitWidth( 50 );
-//		alert.setGraphic( imageView );
-//
-//		Image weddingPlanerIcon = new Image(
-//			HelperDialogs.class.getResource( "/icons/weddingPlanerIcon.png" ).toString() );
-//		Stage stage = ( Stage ) alert.getDialogPane().getScene().getWindow();
-//		stage.getIcons().add( weddingPlanerIcon );
-//
-//		Optional<ButtonType> option = alert.showAndWait();
-//
-//		return option.isPresent() && option.get() == yes;
-//	}
+		Stage dialogStage = new Stage();
 
+		Parent parent = initParent(fxmlLoader, dialogStage);
+
+		dialogStage.setTitle("Neuer Kunde");
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setResizable(false);
+		dialogStage.initStyle(StageStyle.UNDECORATED);
+		dialogStage.setScene(new Scene(parent));
+
+		ConfirmDialogController dialogController = fxmlLoader.getController();
+		dialogController.setDialogStage(dialogStage);
+		dialogController.setContent(content);
+		dialogController.setButtons(buttons);
+
+		dialogStage.showAndWait();
+
+		return dialogController.isDialogConfirmed();
+	}
 }

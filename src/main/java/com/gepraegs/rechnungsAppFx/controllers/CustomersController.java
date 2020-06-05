@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -18,10 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
-import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showCustomerDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
 
 public class CustomersController implements Initializable {
 
@@ -243,5 +241,20 @@ public class CustomersController implements Initializable {
 		customerTable.getSelectionModel().clearSelection();
 		System.out.println(customerTable.getSelectionModel().getSelectedIndex());
 		clearTableSelection();
+	}
+
+	@FXML
+	private void onBtnDeleteCustomerClicked() {
+		try {
+			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
+							 "Möchtest du den Kunden \"" + customerTable.getSelectionModel().getSelectedItem().getCompany().getValue()  + "\" löschen?";
+
+			if (showConfirmDialog(content, Arrays.asList("Löschen", "Abbrechen"))) {
+				dbController.deleteCustomer(customerTable.getSelectionModel().getSelectedItem());
+				customerData.remove(customerTable.getSelectionModel().getSelectedItem());
+			}
+		} catch (IOException e) {
+			LOGGER.warning(e.toString());
+		}
 	}
 }

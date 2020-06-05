@@ -182,7 +182,7 @@ blue        #00b4c2
  }
 
 .dialog {
-    -fx-border-color: gray;
+    -fx-border-color: grey;
     -fx-border-width: 1;
     /*-fx-background-radius: 6.0;*/
     /*-fx-background-color: white;*/

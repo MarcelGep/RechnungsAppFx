@@ -11,22 +11,27 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="743.0" prefWidth="490.0" spacing="20.0" styleClass="dialog" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="490.0" spacing="20.0" styleClass="dialog" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController">
    <children>
-      <Pane prefHeight="43.0" prefWidth="600.0" style="-fx-background-color: -fx-accent;">
+      <VBox alignment="CENTER" style="-fx-background-color: -fx-accent;">
          <children>
-            <Label layoutX="203.0" layoutY="13.0" text="NEUER KUNDE" textFill="WHITE">
+            <Label alignment="TOP_LEFT" text="NEUER KUNDE" textFill="WHITE">
                <font>
-                  <Font name="System Bold" size="12.0" />
+                  <Font name="System Bold" size="14.0" />
                </font>
             </Label>
          </children>
-      </Pane>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="15.0" top="15.0" />
+         </padding>
+      </VBox>
       <GridPane>
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.33331298828125" minWidth="10.0" prefWidth="166.3333536783854" />
@@ -106,6 +111,9 @@
          <padding>
             <Insets left="30.0" right="30.0" top="5.0" />
          </padding>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
       </GridPane>
       <Separator prefWidth="200.0" />
       <HBox alignment="CENTER" spacing="20.0">

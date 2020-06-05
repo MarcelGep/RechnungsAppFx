@@ -56,6 +56,7 @@
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
     -fx-min-width: 110px;
     -fx-min-height: 35px;
+    -fx-background-radius: 0;
 }
 
 #cancel_button:focused {
@@ -75,8 +76,9 @@
     -fx-background-insets: 0 0 0 0, 0, 1, 2;
     -fx-min-width: 110px;
     -fx-min-height: 35px;
-/*    -fx-focus-color: blue;
-    -fx-faint-focus-color: yellow;*/
+    -fx-background-radius: 0;
+    /*    -fx-focus-color: blue;
+        -fx-faint-focus-color: yellow;*/
 }
 
 #save_button:focused {
@@ -118,6 +120,7 @@
     -fx-pref-height: 35;
     -fx-text-fill: white;
     -jfx-disable-visual-focus: true;
+    -fx-background-radius: 0;
 }
 
 #green-button:hover {
