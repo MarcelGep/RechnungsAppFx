@@ -55,6 +55,10 @@
     -fx-pref-height: 0;
 }
 
+.table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: derive(-fx-accent, 100%);
+}
+
 /* Selected row */
 /*.table-row-cell:selected {*/
 /*    -fx-table-cell-border-color: transparent;*/
@@ -62,10 +66,7 @@
 /*    -fx-text-background-color: -fx-text-inner-color;*/
 /*}*/
 
-/* Row hovered */
-/*.table-view:row-selection .table-row-cell:filled:hover {*/
-/*    -fx-background-color: #f0f0f0;*/
-/*}*/
+
 
 /* Selected row */
 /*.table-view:focused .table-row-cell:filled:focused:selected {
