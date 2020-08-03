@@ -56,6 +56,10 @@
 }
 
 .table-view:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: #f0f0f0; /*derive(-fx-accent, 100%);*/
+}
+
+.table-view:row-selection .table-row-cell:selected:hover {
     -fx-background-color: derive(-fx-accent, 100%);
 }
 

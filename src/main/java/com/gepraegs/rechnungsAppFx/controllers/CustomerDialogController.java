@@ -160,9 +160,9 @@ public class CustomerDialogController implements Initializable {
 //            return;
 //        }
 
-        int newKdNr = dbController.readNextId("Customers");
+        String newKdNr = selectedCustomer != null ? selectedCustomer.getKdNr().getValue() : String.valueOf(dbController.readNextId("Customers"));
 
-        Customer newCustomer = new Customer(String.valueOf(newKdNr),
+        Customer newCustomer = new Customer(newKdNr,
                                             tfCompany.getText(),
                                             tfFirstName.getText(),
                                             tfLastName.getText(),
@@ -185,8 +185,9 @@ public class CustomerDialogController implements Initializable {
             // Add new customer to customerData
             customerData.add(newCustomer);
             dbController.createCustomer(newCustomer);
-            savedCustomer = newCustomer;
         }
+
+        savedCustomer = newCustomer;
 
         dialogStage.close();
     }

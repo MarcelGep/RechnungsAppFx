@@ -194,8 +194,6 @@ public class DbController {
 	}
 
 	public boolean createCustomer(Customer customer ) {
-//		updateSqliteSeq();
-
 		String query = "INSERT INTO Customers(Company, Name1, Name2, Street, Plz, Location, Country, Phone, Fax, Email, Website, Discount, PayedCosts, Handy, OpenCosts, Informations) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		try {
@@ -223,46 +221,47 @@ public class DbController {
 			return true;
 		} catch ( SQLException e ) {
 			LOGGER.warning( e.toString() );
-			return false;
 		}
+		return false;
 	}
 
-	public boolean editGuest( Customer guest ) {
-//		String query = "UPDATE Guests SET LastName = ?, FirstName = ?, Age = ?, Status = ?, Phone = ?, Handy = ?, "
-//			+ "Email = ?, Street = ?, Plz = ?, Ort = ?, Comments = ? WHERE ID = ?";
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setString( 1, guest.getLastName() );
-//			ps.setString( 2, guest.getFirstName() );
-//			ps.setInt( 3, guest.getAge() );
-//			ps.setString( 4, guest.getStatus() );
-//			ps.setString( 5, guest.getPhone() );
-//			ps.setString( 6, guest.getHandy() );
-//			ps.setString( 7, guest.getEmail() );
-//			ps.setString( 8, guest.getStreet() );
-//			ps.setString( 9, guest.getPlz() );
-//			ps.setString( 10, guest.getOrt() );
-//			ps.setString( 11, guest.getComments() );
-//			ps.setInt( 12, guest.getId() );
-//			ps.executeUpdate();
-//
-//			LOGGER.info( "Guest with ID: " + guest.getId() + " updated to: " + guest.getFirstName() + ", "
-//				+ guest.getLastName() + ", " + guest.getAge() + ", " + guest.getStatus() + ", " + guest.getPhone()
-//				+ ", " + guest.getHandy() + ", " + guest.getEmail() + ", " + guest.getStreet() + ", " + guest.getPlz()
-//				+ ", " + guest.getOrt() + ", " + guest.getComments() );
-//
-//			return true;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
-		return true;
+	public boolean editGuest( Customer customer ) {
+		String query = "UPDATE Customers SET Company = ?, Name1 = ?, Name2 = ?, Street = ?, Plz = ?, Location = ?," +
+				       "Country = ?, Phone = ?, Fax = ?, Email = ?, Website = ?, Discount = ?, PayedCosts = ?, OpenCosts = ?, Handy = ?, Informations = ? WHERE KdNr = ?";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, customer.getCompany().getValue());
+			ps.setString( 2, customer.getName1().getValue());
+			ps.setString( 3, customer.getName2().getValue());
+			ps.setString( 4, customer.getStreet().getValue());
+			ps.setString( 5, customer.getPlz().getValue());
+			ps.setString( 6, customer.getLocation().getValue());
+			ps.setString( 7, customer.getCountry().getValue());
+			ps.setString( 8, customer.getPhone().getValue());
+			ps.setString( 9, customer.getFax().getValue());
+			ps.setString( 10, customer.getEmail().getValue());
+			ps.setString( 11, customer.getWebsite().getValue());
+			ps.setDouble( 12, customer.getDiscount());
+			ps.setDouble( 13, customer.getPayedCosts());
+			ps.setDouble( 15, customer.getOpenCosts());
+			ps.setString( 14, customer.getHandy().getValue());
+			ps.setString( 16, customer.getInformations().getValue());
+			ps.setString(17, customer.getKdNr().getValue());
+			ps.executeUpdate();
+
+			LOGGER.info("Customer with KdNr: " + customer.getKdNr().getValue() + " updated!");
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+		return false;
 	}
 
 	public boolean deleteCustomer(Customer customer ) {
 		try {
-			String query = "DELETE FROM Customers WHERE \"Kd-Nr.\" = ?";
+			String query = "DELETE FROM Customers WHERE KdNr = ?";
 			int kdNr = Integer.parseInt(customer.getKdNr().getValue());
 
 			PreparedStatement ps = connection.prepareStatement( query );
@@ -360,7 +359,7 @@ public class DbController {
 			List<Customer> customerData = new ArrayList<>();
 
 			while ( rs.next() ) {
-				String kdNr = rs.getString( "Kd-Nr." );
+				String kdNr = rs.getString( "KdNr" );
 				String company = rs.getString( "Company" );
 				String name1 = rs.getString( "Name1" );
 				String name2 = rs.getString( "Name2" );

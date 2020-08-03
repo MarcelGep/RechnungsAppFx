@@ -4,6 +4,8 @@ import com.gepraegs.rechnungsAppFx.Customer;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -16,6 +18,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
@@ -36,6 +39,8 @@ public class CustomersController implements Initializable {
 
 	@FXML private TableView<Customer> customerTable;
 
+	@FXML private TextField tfSearchCustomer;
+
 	@FXML private Label lbCompany;
 	@FXML private Label lbName;
 	@FXML private Label lbKdNr;
@@ -55,12 +60,16 @@ public class CustomersController implements Initializable {
 
 	@FXML private VBox showDialogLayer;
 
+	@FXML private Button btnClearSearch;
+
 	@Override
 	public void initialize( URL location, ResourceBundle resources ) {
 		initializeColumns();
 		loadCustomersData();
 		setRowSelectionListener();
 		setTableSortOrder();
+
+		setupCustomerFilter();
 
 		showDialogLayer.setVisible(false);
 	}
@@ -209,6 +218,55 @@ public class CustomersController implements Initializable {
 		});
 	}
 
+	private void setupCustomerFilter() {
+		FilteredList<Customer> filteredData = new FilteredList<>(customerData, e -> true);
+
+		tfSearchCustomer.textProperty().addListener((observableValue, oldValue, newValue) ->
+		{
+			filteredData.setPredicate((Predicate<? super Customer>) customer ->
+			{
+				if (newValue == null) {
+					return true;
+				}
+
+				btnClearSearch.setVisible(!newValue.isEmpty());
+
+				String lowerCaseFilter = newValue.toLowerCase();
+
+				String firstLastName = customer.getName1().toString().toLowerCase() + " " +
+						               customer.getName2().toString().toLowerCase();
+				String lastFirstName = customer.getName2().toString().toLowerCase() + " " +
+						               customer.getName1().toString().toLowerCase();
+				String companyName = customer.getCompany().toString().toLowerCase();
+
+				if (firstLastName.contains(lowerCaseFilter) ||
+					lastFirstName.contains(lowerCaseFilter) ||
+					companyName.contains(lowerCaseFilter)) {
+					return true;
+				}
+
+				return false;
+			});
+
+			SortedList<Customer> sortedData = new SortedList<>(filteredData);
+			sortedData.comparatorProperty().bind(customerTable.comparatorProperty());
+			customerTable.setItems(sortedData);
+		});
+	}
+
+	@FXML
+	private void onClearSearchButtonClicked() {
+		tfSearchCustomer.clear();
+		btnClearSearch.setVisible(false);
+	}
+
+	@FXML
+	private void onBtnCloseDetailsClicked() {
+		customerTable.getSelectionModel().clearSelection();
+		System.out.println(customerTable.getSelectionModel().getSelectedIndex());
+		clearTableSelection();
+	}
+
 	@FXML
 	private void onBtnNewCustomerClicked() {
 		try {
@@ -237,13 +295,6 @@ public class CustomersController implements Initializable {
 	}
 
 	@FXML
-	private void onBtnCloseDetailsClicked() {
-		customerTable.getSelectionModel().clearSelection();
-		System.out.println(customerTable.getSelectionModel().getSelectedIndex());
-		clearTableSelection();
-	}
-
-	@FXML
 	private void onBtnDeleteCustomerClicked() {
 		try {
 			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
@@ -252,8 +303,31 @@ public class CustomersController implements Initializable {
 			if (showConfirmDialog(content, Arrays.asList("Löschen", "Abbrechen"))) {
 				dbController.deleteCustomer(customerTable.getSelectionModel().getSelectedItem());
 				customerData.remove(customerTable.getSelectionModel().getSelectedItem());
+				clearTableSelection();
 			}
 		} catch (IOException e) {
+			LOGGER.warning(e.toString());
+		}
+	}
+
+	@FXML
+	private void onBtnEditCustomerClicked() {
+		try {
+			// Create Dialog
+			int selectedIndex = customerTable.getSelectionModel().getSelectedIndex();
+			if (selectedIndex != -1) {
+				showDialogLayer.setVisible(true);
+				Customer customer = customerTable.getItems().get(selectedIndex);
+				customer = showCustomerDialog(customerData, customer);
+
+				if (customer != null) {
+					showCustomerInformations(customer);
+					customerTable.getSelectionModel().select(selectedIndex);
+				}
+
+				showDialogLayer.setVisible(false);
+			}
+		} catch (IOException e){
 			LOGGER.warning(e.toString());
 		}
 	}
