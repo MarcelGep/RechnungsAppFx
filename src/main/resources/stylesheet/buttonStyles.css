@@ -69,7 +69,7 @@
 
 #save_button {
     -jfx-button-type: FLAT;
-    -fx-background-color: -fx-accent;
+    -fx-background-color: limegreen;
     -fx-font-weight:bold;
     -fx-fill: white;
     -fx-text-fill: white;

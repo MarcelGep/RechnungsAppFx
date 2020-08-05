@@ -1,18 +1,13 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
 import com.gepraegs.rechnungsAppFx.Customer;
-import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -42,6 +37,8 @@ public class CustomerDialogController implements Initializable {
     @FXML private TextField tfEmail;
     @FXML private TextField tfWebsite;
 
+    @FXML private Label lbTitle;
+
     @FXML private Spinner<Integer> spDiscount;
 
     private static final Logger LOGGER = Logger.getLogger(CustomerDialogController.class.getName());
@@ -67,6 +64,10 @@ public class CustomerDialogController implements Initializable {
 //        addTextLimiter(tfOrt, 22);
 
 //        setupFocusedProperty();
+    }
+
+    public void setDialogTitle(String title) {
+        lbTitle.setText(title);
     }
 
     public Customer getSavedCustomer() {
@@ -180,7 +181,7 @@ public class CustomerDialogController implements Initializable {
         if (selectedCustomer != null) {
             // Edit selected customer
             customerData.set(this.customerData.indexOf(selectedCustomer), newCustomer);
-            dbController.editGuest(newCustomer);
+            dbController.editCustomer(newCustomer);
         } else {
             // Add new customer to customerData
             customerData.add(newCustomer);

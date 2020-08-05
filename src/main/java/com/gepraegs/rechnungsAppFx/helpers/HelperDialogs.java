@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gepraegs.rechnungsAppFx.Customer;
-import com.gepraegs.rechnungsAppFx.controllers.ConfirmDialogController;
-import com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController;
+import com.gepraegs.rechnungsAppFx.Product;
+import com.gepraegs.rechnungsAppFx.controllers.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -22,9 +22,6 @@ import javafx.stage.Stage;
 
 import javafx.stage.StageStyle;
 import org.ini4j.Ini;
-
-import com.gepraegs.rechnungsAppFx.controllers.AppViewController;
-import com.gepraegs.rechnungsAppFx.controllers.StartViewController;
 
 import static com.gepraegs.rechnungsAppFx.Constants.*;
 import static com.gepraegs.rechnungsAppFx.helpers.HelperResourcesLoader.*;
@@ -147,7 +144,6 @@ public class HelperDialogs {
 
 		Parent parent = initParent(fxmlLoader, dialogStage);
 
-		dialogStage.setTitle("Neuer Kunde");
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setResizable(false);
 		dialogStage.initStyle(StageStyle.UNDECORATED);
@@ -158,12 +154,46 @@ public class HelperDialogs {
 		dialogController.setCustomerData(customerData);
 
 		if (customer != null) {
+			dialogController.setDialogTitle("KUNDE BEARBEITEN");
 			dialogController.setSelectedCustomer(customer);
+		}
+		else {
+			dialogController.setDialogTitle("NEUER KUNDE");
 		}
 
 		dialogStage.showAndWait();
 
 		return dialogController.getSavedCustomer();
+	}
+
+	public static Product showProductDialog(ObservableList<Product> productData, Product product) throws IOException
+	{
+		FXMLLoader fxmlLoader = loadFXML(PRODUCTDIALOGVIEW);
+
+		Stage dialogStage = new Stage();
+
+		Parent parent = initParent(fxmlLoader, dialogStage);
+
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setResizable(false);
+		dialogStage.initStyle(StageStyle.UNDECORATED);
+		dialogStage.setScene(new Scene(parent));
+
+		ProductDialogController dialogController = fxmlLoader.getController();
+		dialogController.setDialogStage(dialogStage);
+		dialogController.setProductData(productData);
+
+		if (product != null) {
+			dialogController.setDialogTitle("PRODUKT BEARBEITEN");
+			dialogController.setSelectedProduct(product);
+		}
+		else {
+			dialogController.setDialogTitle("NEUES PRODUKT");
+		}
+
+		dialogStage.showAndWait();
+
+		return dialogController.getSavedProduct();
 	}
 
 	public static boolean showConfirmDialog(String content, List<String> buttons) throws IOException {

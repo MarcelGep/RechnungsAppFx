@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="750.0" prefWidth="1409.0" stylesheets="@../stylesheet/boxStyles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.ProductsController">
+   <children>
+      <HBox prefHeight="750.0" prefWidth="1068.0">
+         <children>
+            <GridPane HBox.hgrow="ALWAYS">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <AnchorPane prefWidth="778.0" style="-fx-background-color: white;">
+                     <children>
+                        <JFXButton id="green-button" fx:id="btnNewProduct" layoutX="349.0" layoutY="10.0" onAction="#onBtnNewProductClicked" ripplerFill="#bdff67" text="Neues Produkt" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="30.0">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <styleClass>
+                              <String fx:value="hover-hand" />
+                              <String fx:value="hover-green" />
+                           </styleClass>
+                        </JFXButton>
+                        <Label layoutX="23.0" layoutY="30.0" text="Produkte und Dienstleistungen" AnchorPane.leftAnchor="23.0" AnchorPane.topAnchor="30.0">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="productTable" layoutX="-1.0" layoutY="108.0" prefHeight="643.0" prefWidth="643.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
+                        <AnchorPane layoutX="243.0" layoutY="30.0" maxWidth="-Infinity" prefHeight="35.0" prefWidth="245.0" scaleZ="2.0" AnchorPane.rightAnchor="150.0">
+                           <children>
+                              <TextField fx:id="tfSearchProduct" prefWidth="300.0" promptText="In Liste suchen" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <padding>
+                                    <Insets left="33.0" />
+                                 </padding>
+                              </TextField>
+                              <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearchButtonClicked" styleClass="back-transparent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fx:id="btnSearchClear" fitHeight="16.0" fitWidth="16.0" onMouseClicked="#onClearSearchButtonClicked" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/cancel.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button layoutX="30.0" mnemonicParsing="false" opacity="0.8" styleClass="back-transparent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onClearSearchButtonClicked" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/search.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets left="15.0" />
+                           </padding>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <AnchorPane prefHeight="578.0" prefWidth="654.0" style="-fx-background-color: #dee5df;" GridPane.columnIndex="1">
+                     <children>
+                        <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
+                           <children>
+                              <VBox fx:id="productDetailsFilled" spacing="15.0" style="-fx-background-color: white;" styleClass="card">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Button id="close-button" mnemonicParsing="false" onAction="#onBtnCloseDetailsClicked">
+                                             <graphic>
+                                                <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../icons/cancel.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                          </Button>
+                                          <HBox alignment="CENTER_RIGHT" spacing="15.0" HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Button id="light-button" mnemonicParsing="false" onAction="#onBtnEditProductClicked" styleClass="hover-hand" text="Bearbeiten" />
+                                                <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Als neu kopieren" />
+                                                <Button id="light-button" mnemonicParsing="false" onAction="#onBtnDeleteCustomerClicked" styleClass="hover-hand" text="Löschen" />
+                                             </children>
+                                             <padding>
+                                                <Insets right="15.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets left="20.0" />
+                                       </padding>
+                                    </HBox>
+                                    <Separator />
+                                    <Label fx:id="lbProduct" text="Produktname">
+                                       <font>
+                                          <Font name="System Bold" size="16.0" />
+                                       </font>
+                                       <padding>
+                                          <Insets bottom="20.0" left="30.0" right="30.0" top="10.0" />
+                                       </padding>
+                                    </Label>
+                                    <GridPane prefWidth="259.0" vgap="3.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="NEVER" maxWidth="284.3333740234375" minWidth="-Infinity" prefWidth="284.3333740234375" />
+                                          <ColumnConstraints hgrow="NEVER" maxWidth="414.333251953125" minWidth="-Infinity" prefWidth="363.6666259765625" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="lbUnit" text="unit" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <Label text="Preis exkl. USt." GridPane.rowIndex="2" />
+                                          <Label fx:id="lbPriceExcl" text="priceExcl" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label text="USt. 19 %" GridPane.rowIndex="3" />
+                                          <Label fx:id="lbUst" text="ust" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <Label text="Einheit" GridPane.rowIndex="1" />
+                                          <Label text="Preis inkl. USt." GridPane.rowIndex="4">
+                                             <styleClass>
+                                                <String fx:value="fn-bold" />
+                                                <String fx:value="fn-14" />
+                                             </styleClass></Label>
+                                          <Label fx:id="lbPriceIncl" text="priceIncl" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                             <styleClass>
+                                                <String fx:value="fn-bold" />
+                                                <String fx:value="fn-14" />
+                                             </styleClass></Label>
+                                          <Label text="Art. Nr." />
+                                          <Label fx:id="lbArtNr" text="artNr" GridPane.columnIndex="1" />
+                                       </children>
+                                       <padding>
+                                          <Insets left="30.0" right="30.0" />
+                                       </padding>
+                                    </GridPane>
+                                 </children>
+                                 <padding>
+                                    <Insets top="15.0" />
+                                 </padding>
+                              </VBox>
+                              <VBox fx:id="productDetailsEmpty" alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: white;" styleClass="card" visible="false" StackPane.alignment="CENTER">
+                                 <children>
+                                    <Label text="Produkte und Dienstleistungen">
+                                       <font>
+                                          <Font name="System Bold" size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Wähle aus der Liste auf der linken Seite ein Produkt oder eine Dienstleistung, um detaillierte Informationen darüber anzuzeigen." />
+                                    <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/customers.png" />
+                                       </image>
+                                       <VBox.margin>
+                                          <Insets top="25.0" />
+                                       </VBox.margin>
+                                    </ImageView>
+                                 </children>
+                                 <StackPane.margin>
+                                    <Insets />
+                                 </StackPane.margin>
+                                 <padding>
+                                    <Insets top="150.0" />
+                                 </padding>
+                              </VBox>
+                           </children>
+                        </StackPane>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </GridPane>
+         </children>
+         <stylesheets>
+            <URL value="@../stylesheet/tabPaneStyles.css" />
+            <URL value="@../stylesheet/buttonStyles.css" />
+            <URL value="@../stylesheet/tableStyles.css" />
+         </stylesheets>
+      </HBox>
+      <VBox fx:id="showDialogLayer" style="-fx-background-color: #525252; -fx-opacity: 0.8;" visible="false" />
+   </children>
+</StackPane>

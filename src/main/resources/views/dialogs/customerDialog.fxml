@@ -15,11 +15,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="490.0" spacing="20.0" styleClass="dialog" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="490.0" spacing="20.0" styleClass="dialog" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomerDialogController">
    <children>
       <VBox alignment="CENTER" style="-fx-background-color: -fx-accent;">
          <children>
-            <Label alignment="TOP_LEFT" text="NEUER KUNDE" textFill="WHITE">
+            <Label fx:id="lbTitle" alignment="TOP_LEFT" text="TITLE" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

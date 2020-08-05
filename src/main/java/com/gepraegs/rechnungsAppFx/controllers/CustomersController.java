@@ -95,6 +95,7 @@ public class CustomersController implements Initializable {
 	}
 
 	private void initializeColumns() {
+		customerTable.setPlaceholder(new Label("Keine Einträge vorhanden"));
 
 		// set size of columns
 		customerTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );

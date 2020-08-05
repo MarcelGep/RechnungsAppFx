@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.gepraegs.rechnungsAppFx.*;
-import javafx.beans.property.StringProperty;
 
 public class DbController {
 
@@ -225,7 +224,7 @@ public class DbController {
 		return false;
 	}
 
-	public boolean editGuest( Customer customer ) {
+	public boolean editCustomer(Customer customer ) {
 		String query = "UPDATE Customers SET Company = ?, Name1 = ?, Name2 = ?, Street = ?, Plz = ?, Location = ?," +
 				       "Country = ?, Phone = ?, Fax = ?, Email = ?, Website = ?, Discount = ?, PayedCosts = ?, OpenCosts = ?, Handy = ?, Informations = ? WHERE KdNr = ?";
 
@@ -392,6 +391,96 @@ public class DbController {
 			LOGGER.warning( e.toString() );
 			return null;
 		}
+	}
+
+	public boolean deleteProduct(Product product) {
+		try {
+			String query = "DELETE FROM Products WHERE ArtNr = ?";
+			int artNr = Integer.parseInt(product.getArtNr());
+
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setInt(1, artNr);
+			ps.executeUpdate();
+
+			LOGGER.info( "Product \"" + product.getName() +
+					"\" with KdNr \"" + product.getArtNr() +
+					"\" was deleted!" );
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return false;
+		}
+	}
+
+	public List<Product> readProducts() {
+		String query = "SELECT * FROM Products";
+
+		try {
+			Statement st = connection.createStatement();
+			ResultSet rs = st.executeQuery( query );
+
+			List<Product> productData = new ArrayList<>();
+
+			while ( rs.next() ) {
+				String artNr = rs.getString( "ArtNr" );
+				String name = rs.getString( "Name" );
+				String unit = rs.getString( "Unit" );
+				double price = rs.getDouble( "Price" );
+				double ust = rs.getDouble( "Ust" );
+
+				Product product = new Product(artNr, name, unit, ust, price);
+
+				productData.add( product );
+			}
+			LOGGER.info( "Read all products!" );
+			return productData;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return null;
+		}
+	}
+
+	public boolean createProduct(Product product) {
+		String query = "INSERT INTO Products(Name, Unit, Price, Ust) VALUES(?,?,?,?)";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, product.getName());
+			ps.setString( 2, product.getUnit());
+			ps.setDouble( 3, product.getPriceExcl());
+			ps.setDouble( 4, product.getUst());
+
+			ps.executeUpdate();
+
+			LOGGER.info( "New customer created!" );
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+		return false;
+	}
+
+	public boolean editProduct( Product product ) {
+		String query = "UPDATE Products SET Name = ?, Unit = ?, Price = ?, Ust = ? WHERE ArtNr = ?";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, product.getName());
+			ps.setString( 2, product.getUnit());
+			ps.setDouble( 3, product.getPriceExcl());
+			ps.setDouble( 4, product.getUst());
+			ps.setString(5, product.getArtNr());
+			ps.executeUpdate();
+
+			LOGGER.info("Product with ArtNr: " + product.getArtNr() + " updated!");
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+		return false;
 	}
 
 	public int readNextId()

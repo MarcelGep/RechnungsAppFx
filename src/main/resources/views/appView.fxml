@@ -71,8 +71,13 @@
                     </VBox>
                 </content>
             </Tab>
-           
-            <Tab text="Artikel" />
+            <Tab closable="false" text="Produkte">
+                <content>
+                    <VBox minHeight="0.0" minWidth="0.0">
+                        <fx:include fx:id="products" source="products.fxml" VBox.vgrow="ALWAYS" />
+                    </VBox>
+                </content>
+            </Tab>
             <Tab text="Rechnungen" />
             <Tab text="Einstellungen" />
         </tabs>
