@@ -93,10 +93,10 @@ public class ProductsController implements Initializable {
 		productTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		colArtNr.setMaxWidth(1f * Integer.MAX_VALUE * 12);
-		colProductName.setMaxWidth(1f * Integer.MAX_VALUE * 60);
-		colPriceExcl.setMaxWidth(1f * Integer.MAX_VALUE * 10);
-		colUst.setMaxWidth(1f * Integer.MAX_VALUE * 8);
-		colPriceIncl.setMaxWidth(1f * Integer.MAX_VALUE * 10);
+		colProductName.setMaxWidth(1f * Integer.MAX_VALUE * 58);
+		colPriceExcl.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+		colUst.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+		colPriceIncl.setMaxWidth(1f * Integer.MAX_VALUE * 12);
 
 		// set cell value factory
 		colArtNr.setCellValueFactory(param -> param.getValue().artNrProperty());
