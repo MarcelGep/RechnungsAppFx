@@ -3,15 +3,18 @@ package com.gepraegs.rechnungsAppFx.controllers;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.ini4j.Wini;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
@@ -41,7 +44,7 @@ public class StartViewController {
 
     @FXML private Label lbDbPath;
 
-    @FXML private StackPane stackPane;
+    @FXML private VBox showDialogLayer;
 
     @FXML
     private void onStartButtonClicked() throws Exception
@@ -98,32 +101,9 @@ public class StartViewController {
         }
     }
 
-    public void showJfxDialog(){
-        JFXDialogLayout content = new JFXDialogLayout();
-        content.setHeading(new Text("WeddingPlaner"));
-        content.setBody(new Text("Möchten Sie das Programm wirklich beenden?"));
-
-        JFXDialog dialog = new JFXDialog(stackPane, content, JFXDialog.DialogTransition.CENTER);
-        dialog.setOverlayClose(false);
-
-        JFXButton btnCancel = new JFXButton("Nein");
-        btnCancel.setOnAction(event -> dialog.close());
-        btnCancel.setId("cancel_button");
-
-        JFXButton btnSave = new JFXButton("Ja");
-        btnSave.setOnAction(event -> dialog.close());
-        btnSave.setId("save_button");
-
-        content.getActions().add(btnSave);
-        content.getActions().add(btnCancel);
-
-        dialog.show();
-    }
-
     @FXML
-    private void onExitButtonClicked()
-    {
-        AppViewController.exitProgram();
+    private void onExitButtonClicked() {
+        exitProgram();
     }
 
     @FXML
@@ -253,5 +233,18 @@ public class StartViewController {
     {
         DB_PATH = "";
         lbDbPath.setText(DB_PATH);
+    }
+
+    public void exitProgram() {
+        try {
+            showDialogLayer.setVisible(true);
+            String content = "Möchten Sie RechnungsAppFx wirklich beenden?";
+            if (showConfirmDialog(content, Arrays.asList("Ja", "Nein"))) {
+                Platform.exit();
+            }
+            showDialogLayer.setVisible(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -92,10 +93,10 @@ public class ProductsController implements Initializable {
 		productTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 		colArtNr.setMaxWidth(1f * Integer.MAX_VALUE * 12);
-		colProductName.setMaxWidth(1f * Integer.MAX_VALUE * 58);
-		colPriceExcl.setMaxWidth(1f * Integer.MAX_VALUE * 15);
-		colUst.setMaxWidth(1f * Integer.MAX_VALUE * 15);
-		colPriceIncl.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+		colProductName.setMaxWidth(1f * Integer.MAX_VALUE * 60);
+		colPriceExcl.setMaxWidth(1f * Integer.MAX_VALUE * 10);
+		colUst.setMaxWidth(1f * Integer.MAX_VALUE * 8);
+		colPriceIncl.setMaxWidth(1f * Integer.MAX_VALUE * 10);
 
 		// set cell value factory
 		colArtNr.setCellValueFactory(param -> param.getValue().artNrProperty());
@@ -162,8 +163,8 @@ public class ProductsController implements Initializable {
 	private void setTableSortOrder() {
 		colProductName.setSortType(TableColumn.SortType.ASCENDING);
 		colArtNr.setSortType(TableColumn.SortType.ASCENDING);
-		productTable.getSortOrder().add(colProductName);
-//		productTable.getSortOrder().add(colArtNr);
+//		productTable.getSortOrder().add(colProductName);
+		productTable.getSortOrder().add(colArtNr);
 	}
 
 	private void setRowSelectionListener() {
@@ -250,11 +251,15 @@ public class ProductsController implements Initializable {
 			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
 							 "Möchtest du das Produkt \"" + productTable.getSelectionModel().getSelectedItem().getName() + "\" löschen?";
 
+			showDialogLayer.setVisible(true);
+
 			if (showConfirmDialog(content, Arrays.asList("Löschen", "Abbrechen"))) {
 				dbController.deleteProduct(productTable.getSelectionModel().getSelectedItem());
 				productData.remove(productTable.getSelectionModel().getSelectedItem());
 				clearTableSelection();
 			}
+
+			showDialogLayer.setVisible(false);
 		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}

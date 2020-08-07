@@ -60,11 +60,11 @@
 }
 
 #cancel_button:focused {
-    -fx-background-color: derive(#9eb1af, -40%);
+    -fx-background-color: derive(#9eb1af, -10%);
 }
 
 #cancel_button:pressed {
-    -fx-background-color: derive(#9eb1af, 40%);
+    -fx-background-color: derive(#9eb1af, 10%);
 }
 
 #save_button {
@@ -82,11 +82,33 @@
 }
 
 #save_button:focused {
-    -fx-background-color: derive(-fx-accent, -40%);
+    -fx-background-color: derive(limegreen, -10%);
 }
 
 #save_button:pressed {
-    -fx-background-color: derive(-fx-accent, 40%);
+    -fx-background-color: derive(limegreen, 10%);
+}
+
+#confirm_button {
+    -jfx-button-type: FLAT;
+    -fx-background-color: -fx-accent;
+    -fx-font-weight:bold;
+    -fx-fill: white;
+    -fx-text-fill: white;
+    -fx-background-insets: 0 0 0 0, 0, 1, 2;
+    -fx-min-width: 110px;
+    -fx-min-height: 35px;
+    -fx-background-radius: 0;
+    /*    -fx-focus-color: blue;
+        -fx-faint-focus-color: yellow;*/
+}
+
+#confirm_button:focused {
+    -fx-background-color: derive(-fx-accent, -10%);
+}
+
+#confirm_button:pressed {
+    -fx-background-color: derive(-fx-accent, 10%);
 }
 
 #tabButton {

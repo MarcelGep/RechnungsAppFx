@@ -48,11 +48,11 @@
             <Label text="Name" />
             <Label text="Einheit" GridPane.rowIndex="1" />
             <Label text="Preis ohne USt." GridPane.rowIndex="3" />
-            <TextField fx:id="tfPriceExcl" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="tfPriceExcl" onAction="#onPriceExclEnter" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label text="USt." GridPane.rowIndex="4" />
             <Label text="Preis inkl. USt." GridPane.rowIndex="5" />
             <TextField fx:id="tfName" GridPane.columnIndex="1" />
-            <TextField fx:id="tfPriceIncl" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TextField fx:id="tfPriceIncl" onAction="#onPriceInclEnter" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <ComboBox fx:id="cbUnit" prefHeight="25.0" prefWidth="286.0" promptText="Auswahl..." GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
             <ComboBox fx:id="cbUst" prefHeight="25.0" prefWidth="286.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label text="Preis basierend auf" GridPane.rowIndex="2" />

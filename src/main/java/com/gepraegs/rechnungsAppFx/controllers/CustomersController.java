@@ -301,11 +301,15 @@ public class CustomersController implements Initializable {
 			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
 							 "Möchtest du den Kunden \"" + customerTable.getSelectionModel().getSelectedItem().getCompany().getValue()  + "\" löschen?";
 
+			showDialogLayer.setVisible(true);
+
 			if (showConfirmDialog(content, Arrays.asList("Löschen", "Abbrechen"))) {
 				dbController.deleteCustomer(customerTable.getSelectionModel().getSelectedItem());
 				customerData.remove(customerTable.getSelectionModel().getSelectedItem());
 				clearTableSelection();
 			}
+
+			showDialogLayer.setVisible(false);
 		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}

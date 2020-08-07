@@ -3,11 +3,15 @@ package com.gepraegs.rechnungsAppFx.helpers;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.gepraegs.rechnungsAppFx.Customer;
 import com.gepraegs.rechnungsAppFx.Product;
 import com.gepraegs.rechnungsAppFx.controllers.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXDialogLayout;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +21,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -43,7 +49,7 @@ public class HelperDialogs {
 		stage.setMinHeight( 590 );
 		stage.setTitle( "RechnungsAppFx Start" );
 		stage.setScene( mainScene );
-//		stage.getIcons().add( icon );
+		stage.initStyle(StageStyle.UNDECORATED);
 
 		Ini ini = new Ini( HelperDialogs.class.getClassLoader().getResourceAsStream( "config.ini" ) );
 		String lastPath = ini.get( "database-path", "last_path" );
@@ -55,33 +61,28 @@ public class HelperDialogs {
 
 		stage.setOnCloseRequest( e -> {
 			e.consume();
-			AppViewController.exitProgram();
+			controller.exitProgram();
 		} );
 
 		stage.show();
 	}
 
 	public static void showMainWindow() throws IOException {
-		Parent root = loadFXML( MAINVIEW ).load();
-
-//		Image weddingPlanerIcon = new Image(
-//			HelperDialogs.class.getResource( "/icons/weddingPlanerIcon.png" ).toString() );
-
-		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-
-		Scene mainScene = new Scene( root, width, height );
-		mainScene.getStylesheets()
-			.add( HelperDialogs.class.getResource( "/stylesheet/tabPaneStyles.css" ).toExternalForm() );
+		FXMLLoader fxmlLoader = loadFXML(MAINVIEW);
 
 		Stage mainWindow = new Stage();
-		mainWindow.setScene( mainScene );
-		mainWindow.setTitle( "RechnungsAppFx" );
+
+		Parent root = initParent(fxmlLoader, mainWindow);
+
 		mainWindow.setMaximized( true );
-//		mainWindow.getIcons().add( weddingPlanerIcon );
+		mainWindow.setScene(new Scene(root));
+		mainWindow.setTitle( "RechnungsAppFx" );
+
+		AppViewController appViewController = fxmlLoader.getController();
+
 		mainWindow.setOnCloseRequest( e -> {
 			e.consume();
-			AppViewController.exitProgram();
+			appViewController.exitProgram();
 		} );
 
 		mainWindow.show();
@@ -203,7 +204,6 @@ public class HelperDialogs {
 
 		Parent parent = initParent(fxmlLoader, dialogStage);
 
-		dialogStage.setTitle("Neuer Kunde");
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setResizable(false);
 		dialogStage.initStyle(StageStyle.UNDECORATED);

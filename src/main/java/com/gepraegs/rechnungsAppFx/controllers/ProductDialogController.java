@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -47,18 +48,7 @@ public class ProductDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initComboBoxes();
-
-        tfPriceExcl.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (cbPriceType.getSelectionModel().getSelectedIndex() == 1) {
-                tfPriceIncl.setText(DoubleToCurrencyString(calculateInclPrice()));
-            }
-        });
-
-        tfPriceIncl.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (cbPriceType.getSelectionModel().getSelectedIndex() == 0) {
-                tfPriceExcl.setText(DoubleToCurrencyString(calculateExclPrice()));
-            }
-        });
+        initTextFields();
 
 //        addTextLimiter(tfFirstName, 29);
 //        addTextLimiter(tfLastName, 29);
@@ -125,15 +115,9 @@ public class ProductDialogController implements Initializable {
             if (cbPriceType.getSelectionModel().getSelectedIndex() == 0) {
                 tfPriceIncl.setDisable(false);
                 tfPriceExcl.setDisable(true);
-//                if (!tfPriceIncl.getText().isEmpty()) {
-//                    tfPriceExcl.setText(DoubleToCurrencyString(calculateExclPrice()));
-//                }
             } else {
                 tfPriceIncl.setDisable(true);
                 tfPriceExcl.setDisable(false);
-//                if (!tfPriceExcl.getText().isEmpty()) {
-//                    tfPriceIncl.setText(DoubleToCurrencyString(calculateInclPrice()));
-//                }
             }
         });
         cbPriceType.getSelectionModel().selectFirst();
@@ -144,14 +128,47 @@ public class ProductDialogController implements Initializable {
         // ust
         cbUst.getItems().addAll("19 %", "16 %", "7 %", "5 %", "0 %");
         cbUst.getSelectionModel().selectFirst();
+        cbUst.valueProperty().addListener((ov, oldValue, newValue) -> {
+            if (cbPriceType.getSelectionModel().getSelectedIndex() == 0) {
+                tfPriceExcl.setText(DoubleToCurrencyString(calculateExclPrice()));
+            } else {
+                tfPriceIncl.setText(DoubleToCurrencyString(calculateInclPrice()));
+            }
+        });
+    }
+
+    private void initTextFields() {
+        tfPriceIncl.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                tfPriceIncl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceIncl.getText())));
+            }
+        });
+
+        tfPriceExcl.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                tfPriceExcl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceExcl.getText())));
+            }
+        });
+
+        tfPriceExcl.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (cbPriceType.getSelectionModel().getSelectedIndex() == 1) {
+                tfPriceIncl.setText(DoubleToCurrencyString(calculateInclPrice()));
+            }
+        });
+
+        tfPriceIncl.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (cbPriceType.getSelectionModel().getSelectedIndex() == 0) {
+                tfPriceExcl.setText(DoubleToCurrencyString(calculateExclPrice()));
+            }
+        });
     }
 
     public void setSelectedProduct(Product selectedProduct) {
         this.selectedProduct = selectedProduct;
 
         tfName.setText(selectedProduct.getName());
-        tfPriceExcl.setText(String.valueOf(selectedProduct.getPriceExcl()));
-        tfPriceIncl.setText(String.valueOf(selectedProduct.getPriceIncl()));
+        tfPriceExcl.setText(DoubleToCurrencyString(selectedProduct.getPriceExcl()));
+        tfPriceIncl.setText(DoubleToCurrencyString(selectedProduct.getPriceIncl()));
         cbUnit.getSelectionModel().select(selectedProduct.getUnit());
     }
 
@@ -192,6 +209,16 @@ public class ProductDialogController implements Initializable {
     @FXML
     public void handleCancel() {
         dialogStage.close();
+    }
+
+    @FXML
+    private void onPriceInclEnter(ActionEvent ae){
+        tfPriceIncl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceIncl.getText())));
+    }
+
+    @FXML
+    private void onPriceExclEnter(ActionEvent ae){
+        tfPriceExcl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceExcl.getText())));
     }
 
 //    public void addTextLimiter(final TextField tf, final int maxLength) {
