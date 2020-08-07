@@ -95,7 +95,7 @@ public class ProductsController implements Initializable {
 		colArtNr.setMaxWidth(1f * Integer.MAX_VALUE * 12);
 		colProductName.setMaxWidth(1f * Integer.MAX_VALUE * 58);
 		colPriceExcl.setMaxWidth(1f * Integer.MAX_VALUE * 12);
-		colUst.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+		colUst.setMaxWidth(1f * Integer.MAX_VALUE * 8);
 		colPriceIncl.setMaxWidth(1f * Integer.MAX_VALUE * 12);
 
 		// set cell value factory
