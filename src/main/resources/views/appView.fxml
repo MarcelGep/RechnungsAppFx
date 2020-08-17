@@ -90,7 +90,13 @@
                                 </VBox>
                             </content>
                         </Tab>
-                        <Tab text="Rechnungen" />
+                        <Tab closable="false" text="Rechnungen">
+                            <content>
+                                <VBox minHeight="0.0" minWidth="0.0">
+                                    <fx:include fx:id="invoices" source="invoices.fxml" VBox.vgrow="ALWAYS" />
+                                </VBox>
+                            </content>
+                        </Tab>
                         <Tab text="Einstellungen" />
                     </tabs>
                   </TabPane>

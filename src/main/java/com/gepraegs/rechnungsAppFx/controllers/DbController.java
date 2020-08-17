@@ -508,6 +508,86 @@ public class DbController {
 		return newId;
 	}
 
+	public List<Invoice> readInvoices() {
+		String query = "SELECT * FROM Invoices";
+
+		try {
+			Statement st = connection.createStatement();
+			ResultSet rs = st.executeQuery( query );
+
+			List<Invoice> invoiceData = new ArrayList<>();
+
+			while ( rs.next() ) {
+				String reNr = rs.getString( "ReNr" );
+				String kdNr = rs.getString( "KdNr" );
+				String createdDate = rs.getString( "CreatedDate" );
+				String dueDate = rs.getString( "DueDate" );
+				String payedDate = rs.getString( "PayedDate" );
+				String skonto = rs.getString( "Skonto" );
+				boolean state = rs.getInt( "State" ) == 1 ? true : false;
+				double totalPrice = rs.getDouble( "TotalPrice" );
+				double ust = rs.getDouble( "USt" );
+
+				Invoice invoice = new Invoice(reNr, kdNr, createdDate, dueDate, payedDate, state, totalPrice,  ust);
+
+				invoiceData.add(invoice);
+			}
+			LOGGER.info( "Read all invoices!" );
+			return invoiceData;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return null;
+		}
+	}
+
+	public boolean createInvoice(Invoice invoice) {
+		String query = "INSERT INTO Invoices(KdNr, CreatedDate, DueDate, PayedDate, State, USt, TotalPrice) VALUES(?,?,?,?,?,?,?,?)";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, invoice.getKdNr());
+			ps.setString( 2, invoice.getCreateDate());
+			ps.setString( 3, invoice.getDueDate());
+			ps.setString( 3, invoice.getPayedDate());
+			ps.setBoolean( 3, invoice.isState());
+			ps.setDouble( 4, invoice.getUst());
+			ps.setDouble( 4, invoice.getTotalPrice());
+
+			ps.executeUpdate();
+
+			LOGGER.info( "New invoice created!" );
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+		return false;
+	}
+
+	public boolean editInvoice(Invoice invoice) {
+		String query = "UPDATE Invoices SET KdNr = ?, CreatedDate = ?, DueDate = ?, PayedDate = ?, State = ?, USt = ?, TotalPrice = ? WHERE ReNr = ?";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, invoice.getKdNr());
+			ps.setString( 2, invoice.getCreateDate());
+			ps.setString( 3, invoice.getDueDate());
+			ps.setString( 3, invoice.getPayedDate());
+			ps.setBoolean( 3, invoice.isState());
+			ps.setDouble( 4, invoice.getUst());
+			ps.setDouble( 4, invoice.getTotalPrice());
+			ps.setString( 4, invoice.getReNr());
+			ps.executeUpdate();
+
+			LOGGER.info("Invoice with ReNr: " + invoice.getReNr() + " updated!");
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+		return false;
+	}
+
 	public int readNextId( String type ) {
 		String query = "SELECT seq FROM sqlite_sequence WHERE name = \"" + type + "\"";
 		int newId = -1;

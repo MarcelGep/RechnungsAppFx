@@ -1,17 +1,12 @@
 package com.gepraegs.rechnungsAppFx.helpers;
 
-import java.awt.*;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.gepraegs.rechnungsAppFx.Customer;
+import com.gepraegs.rechnungsAppFx.Invoice;
 import com.gepraegs.rechnungsAppFx.Product;
 import com.gepraegs.rechnungsAppFx.controllers.*;
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXDialogLayout;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -21,8 +16,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -217,5 +210,35 @@ public class HelperDialogs {
 		dialogStage.showAndWait();
 
 		return dialogController.isDialogConfirmed();
+	}
+
+	public static Invoice showInvoiceDialog(ObservableList<Invoice> invoiceData, Invoice invoice) throws IOException
+	{
+		FXMLLoader fxmlLoader = loadFXML(INVOICEDIALOGVIEW);
+
+		Stage dialogStage = new Stage();
+
+		Parent parent = initParent(fxmlLoader, dialogStage);
+
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setResizable(false);
+		dialogStage.initStyle(StageStyle.UNDECORATED);
+		dialogStage.setScene(new Scene(parent));
+
+		InvoiceDialogController dialogController = fxmlLoader.getController();
+		dialogController.setDialogStage(dialogStage);
+		dialogController.setInvoiceData(invoiceData);
+
+		if (invoice != null) {
+			dialogController.setDialogTitle("RECHNUNG BEARBEITEN");
+			dialogController.setSelectedInvoice(invoice);
+		}
+		else {
+			dialogController.setDialogTitle("NEUE RECHNUNG");
+		}
+
+		dialogStage.showAndWait();
+
+		return dialogController.getSavedInvoice();
 	}
 }

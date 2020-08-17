@@ -9,4 +9,5 @@ public class Constants {
     public static final String CUSTOMERDIALOGVIEW    = "/views/dialogs/customerDialog.fxml";
     public static final String PRODUCTDIALOGVIEW    = "/views/dialogs/productDialog.fxml";
     public static final String CONFIRMDIALOGVIEW    = "/views/dialogs/confirmDialog.fxml";
+    public static final String INVOICEDIALOGVIEW    = "/views/dialogs/invoiceDialog.fxml";
 }
