@@ -222,7 +222,7 @@ public class HelperDialogs {
 
 		dialogStage.initModality(Modality.APPLICATION_MODAL);
 		dialogStage.setResizable(false);
-		dialogStage.setMaximized(true);
+		dialogStage.setMaximized(false);
 		dialogStage.initStyle(StageStyle.UNDECORATED);
 		dialogStage.setScene(new Scene(parent));
 

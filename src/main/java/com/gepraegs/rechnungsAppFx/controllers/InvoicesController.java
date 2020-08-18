@@ -1,6 +1,5 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
-import com.gepraegs.rechnungsAppFx.Customer;
 import com.gepraegs.rechnungsAppFx.Invoice;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -14,7 +13,6 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -62,7 +60,7 @@ public class InvoicesController implements Initializable {
 	@Override
 	public void initialize( URL location, ResourceBundle resources ) {
 		initializeColumns();
-		loadCustomersData();
+		loadInvoiceData();
 		setRowSelectionListener();
 		setTableSortOrder();
 
@@ -71,7 +69,7 @@ public class InvoicesController implements Initializable {
 		showDialogLayer.setVisible(false);
 	}
 
-	private void loadCustomersData() {
+	private void loadInvoiceData() {
 		//read guests from database
 		List<Invoice> invoices = dbController.readInvoices();
 
@@ -79,7 +77,7 @@ public class InvoicesController implements Initializable {
 		if (invoices != null && !invoices.isEmpty()) {
 			invoiceData.addAll(invoices);
 		} else {
-			LOGGER.warning("No customer data exist!");
+			LOGGER.warning("No invoice data exist!");
 		}
 
 		// set customerData to customerTable

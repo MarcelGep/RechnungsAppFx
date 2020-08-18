@@ -8,8 +8,9 @@ import java.util.Locale;
 public class FormatterHelper {
 
     public static String DoubleToPercentageString(double value) {
-        NumberFormat percent = NumberFormat.getPercentInstance(Locale.GERMANY);
-        return percent.format(value/100);
+        NumberFormat nf = DecimalFormat.getInstance();
+        nf.setMaximumFractionDigits(0);
+        return nf.format(value) + " %";
     }
 
     public static String DoubleToCurrencyString(double value) {
