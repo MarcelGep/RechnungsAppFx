@@ -5,19 +5,20 @@ import com.gepraegs.rechnungsAppFx.Product;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
@@ -45,6 +46,8 @@ public class InvoiceDialogController implements Initializable {
     @FXML private Label lbPriceUst;
     @FXML private Label lbUst;
 
+    @FXML private GridPane gpPositions;
+
     private static final Logger LOGGER = Logger.getLogger(InvoiceDialogController.class.getName());
 
     private final DbController dbController = DbController.getInstance();
@@ -59,9 +62,11 @@ public class InvoiceDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initComboBoxes();
-        initTextFields();
         initCreatedDate();
         initDueDate();
+        initLabels();
+
+        addPosition();
 
 //        addTextLimiter(tfFirstName, 29);
 //        addTextLimiter(tfLastName, 29);
@@ -74,6 +79,13 @@ public class InvoiceDialogController implements Initializable {
 //        addTextLimiter(tfOrt, 22);
 
 //        setupFocusedProperty();
+    }
+
+    private void initLabels() {
+        lbPriceExcl.setText(DoubleToCurrencyString(0.0));
+        lbPriceIncl.setText(DoubleToCurrencyString(0.0));
+        lbPriceUst.setText(DoubleToCurrencyString(0.0));
+        lbUst.setText(DoubleToPercentageString(19));
     }
 
     private void initCreatedDate() {
@@ -123,12 +135,12 @@ public class InvoiceDialogController implements Initializable {
         });
 
         // product unit
-        cbUnit.getItems().addAll("Stk.", "cm", "h", "kg", "km", "m", "L", "ml");
-        cbUnit.getSelectionModel().selectFirst();
+//        cbUnit.getItems().addAll("Stk.", "cm", "h", "kg", "km", "m", "L", "ml");
+//        cbUnit.getSelectionModel().selectFirst();
 
         // ust
-        cbUst.getItems().addAll("19 %", "16 %", "7 %", "5 %", "0 %");
-        cbUst.getSelectionModel().selectFirst();
+//        cbUst.getItems().addAll("19 %", "16 %", "7 %", "5 %", "0 %");
+//        cbUst.getSelectionModel().selectFirst();
     }
 
     private void initTextFields() {
@@ -212,6 +224,136 @@ public class InvoiceDialogController implements Initializable {
     @FXML
     private void onPriceExclEnter(ActionEvent ae){
         tfPriceExcl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceExcl.getText())));
+    }
+
+    @FXML
+    private void onBtnAddPositionClicked() {
+        addPosition();
+    }
+
+    private void addPosition() {
+        int rowCount = gpPositions.getRowCount();
+        gpPositions.addRow(rowCount, createCbProduct(), createTfAmount(),
+                createCbUnit(), createTfPriceExcl(),
+                createCbUst(), createTfPriceIncl(), createDeleteBtn());
+    }
+
+    private void deletePosition(int row) {
+        Set<Node> deleteNodes = new HashSet<>();
+        for (Node child : gpPositions.getChildren()) {
+            // get index from child
+            Integer rowIndex = GridPane.getRowIndex(child);
+
+            // handle null values for index=0
+            int r = rowIndex == null ? 0 : rowIndex;
+
+            if (r > row) {
+                // decrement rows for rows after the deleted row
+                GridPane.setRowIndex(child, r-1);
+            } else if (r == row) {
+                // collect matching rows for deletion
+                deleteNodes.add(child);
+            }
+        }
+
+        gpPositions.getChildren().removeAll(deleteNodes);
+
+        updatePrice();
+    }
+
+    private void updatePrice() {
+        double priceExclTotal = 0.0;
+        double priceInclTotal = 0.0;
+
+        for (Node child : gpPositions.getChildren()) {
+            // handle null values for index=0
+            if (child instanceof TextField && child.getId() != null ) {
+                System.out.println("ID: " + child.getId());
+                if (child.getId().equals("tfPriceExcl")) {
+                    TextField tf = (TextField) child;
+                    priceExclTotal += CurrencyStringToDouble(tf.getText());
+                } else if (child.getId().equals("tfPriceIncl")) {
+                    priceInclTotal += CurrencyStringToDouble(((TextField) child).getText());
+                }
+            }
+        }
+
+        lbPriceExcl.setText(DoubleToCurrencyString(priceExclTotal));
+        lbPriceIncl.setText(DoubleToCurrencyString(priceInclTotal));
+    }
+
+    private Button createDeleteBtn() {
+        ImageView imageView = new ImageView(new Image(getClass().getResource("/icons/cancel.png").toString()));
+        imageView.setFitHeight(15);
+        imageView.setFitWidth(15);
+        Button deleteBtn = new Button();
+        deleteBtn.getStyleClass().clear();
+        deleteBtn.getStyleClass().add("back-transparent");
+        deleteBtn.setGraphic(imageView);
+        deleteBtn.setOnAction(e -> deletePosition(GridPane.getRowIndex(deleteBtn)));
+        deleteBtn.setPrefHeight(30);
+        return deleteBtn;
+    }
+
+    private ComboBox createCbUnit() {
+        List<String> unit = Arrays.asList(new String[]{"Stk.", "cm", "h", "kg", "km", "m", "L", "ml"});
+        return createCBox(null, unit, 0);
+    }
+
+    private TextField createTfPriceExcl() {
+        TextField tfPrice = createTextField(DoubleToCurrencyString(0.0));
+        tfPrice.setId("tfPriceExcl");
+        return tfPrice;
+    }
+
+    private TextField createTfPriceIncl() {
+        TextField tfPrice = createTextField(DoubleToCurrencyString(0.0));
+        tfPrice.setId("tfPriceIncl");
+        return tfPrice;
+    }
+
+    private TextField createTfAmount() {
+        return createTextField("1,00");
+    }
+
+    private ComboBox createCbProduct() {
+        return createCBox("Beschreibe oder wähle ein Produkt", null, -1 );
+    }
+
+    private ComboBox createCbUst() {
+        List<String> ust = Arrays.asList(new String[]{"19 %", "16 %", "7 %", "5 %", "0 %"});
+        return createCBox(null, ust, 0);
+    }
+
+    private ComboBox createCBox(String prompt, List<String> content, int selectedIndex) {
+        ComboBox cBox = new ComboBox<String>();
+        cBox.setEditable(true);
+
+        if (prompt != null) {
+            cBox.setPromptText(prompt);
+        }
+
+        if (content != null) {
+            cBox.getItems().addAll(content);
+        }
+
+        if (selectedIndex != -1) {
+            cBox.getSelectionModel().select(selectedIndex);
+        }
+
+        return cBox;
+    }
+
+    private TextField createTextField(String text) {
+        TextField tF = new TextField(text);
+        tF.setStyle("-fx-alignment: CENTER-RIGHT;");
+        tF.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                tF.setText(DoubleToCurrencyString(CurrencyStringToDouble(tF.getText())));
+                updatePrice();
+            }
+        });
+        return tF;
     }
 
 //    public void addTextLimiter(final TextField tf, final int maxLength) {

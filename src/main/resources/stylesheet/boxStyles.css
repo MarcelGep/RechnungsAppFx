@@ -29,3 +29,9 @@
     -fx-background-radius: 0;
     -fx-pref-height: 30px;
 }
+
+#separator-custom *.line {
+    -fx-border-style: solid;
+    -fx-border-width: 1px; /* its make really one-pixel-border */
+    -fx-border-color: #0f9faf;
+}

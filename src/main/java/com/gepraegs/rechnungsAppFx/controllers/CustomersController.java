@@ -102,13 +102,13 @@ public class CustomersController implements Initializable {
 
 		colKdNr.setMaxWidth( 1f * Integer.MAX_VALUE * 12);
 		colCompany.setMaxWidth( 1f * Integer.MAX_VALUE * 58);
-			colOpenCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
+		colOpenCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
 		colPayedCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
 
 		// set cell value factory
 		colKdNr.setCellValueFactory(param -> param.getValue().getKdNr());
 		colCompany.setCellValueFactory(param -> param.getValue().getCompany());
-			colCompany.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
+		colCompany.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
 					new ReadOnlyStringWrapper(param.getValue().getCompany().getValue() + "\n" +
 														param.getValue().getName1().getValue() + " " +
 														param.getValue().getName2().getValue()));

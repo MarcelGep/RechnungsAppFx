@@ -94,9 +94,9 @@ public class InvoicesController implements Initializable {
 		// set size of columns
 		invoiceTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
 
-		colReNr.setMaxWidth( 1f * Integer.MAX_VALUE * 12);
-		colCustomer.setMaxWidth( 1f * Integer.MAX_VALUE * 58);
-		colCreatedDate.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
+		colReNr.setMaxWidth( 1f * Integer.MAX_VALUE * 16);
+		colCustomer.setMaxWidth( 1f * Integer.MAX_VALUE * 43);
+		colCreatedDate.setMaxWidth( 1f * Integer.MAX_VALUE * 18);
 		colDueDate.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
 		colPayedDate.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
 		colTotalPrice.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
