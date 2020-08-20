@@ -3,6 +3,7 @@ package com.gepraegs.rechnungsAppFx.controllers;
 import com.gepraegs.rechnungsAppFx.Customer;
 import com.gepraegs.rechnungsAppFx.Invoice;
 import com.gepraegs.rechnungsAppFx.Product;
+import com.gepraegs.rechnungsAppFx.helpers.HelperDialogs;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,6 +17,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +27,7 @@ import java.util.logging.Logger;
 import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.*;
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
 
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialog;
 import static java.lang.Integer.MAX_VALUE;
 
 public class InvoiceDialogController implements Initializable {
@@ -49,6 +52,8 @@ public class InvoiceDialogController implements Initializable {
     @FXML private Label lbPlzOrt;
     @FXML private Label lbMessageCount;
     @FXML private Label lbMessageMax;
+    @FXML private Label lbFooterCount;
+    @FXML private Label lbFooterMax;
 
     @FXML private GridPane gpPositions;
     @FXML private VBox vBoxContact;
@@ -57,6 +62,7 @@ public class InvoiceDialogController implements Initializable {
     @FXML private Button btnCancel;
 
     @FXML private TextArea taMessage;
+    @FXML private TextArea taFooter;
 
     private static final Logger LOGGER = Logger.getLogger(InvoiceDialogController.class.getName());
 
@@ -74,6 +80,7 @@ public class InvoiceDialogController implements Initializable {
     private Invoice savedInvoice;
 
     private final int MESSAGE_MAX_COUNT = 3000;
+    private final int FOOTER_MAX_COUNT = 250;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -86,6 +93,7 @@ public class InvoiceDialogController implements Initializable {
         productData = dbController.readProducts();
 
         addTextLimiter(taMessage, MESSAGE_MAX_COUNT);
+        addTextLimiter(taFooter, FOOTER_MAX_COUNT);
 
         initComboBoxes();
         initDatePicker();
@@ -113,13 +121,21 @@ public class InvoiceDialogController implements Initializable {
         lbMessageCount.setText(String.valueOf(taMessage.getText().length()));
     }
 
+    @FXML
+    private void onFooterTextChanged() {
+        lbFooterCount.setText(String.valueOf(taFooter.getText().length()));
+    }
+
     private void initLabels() {
         lbPriceExcl.setText(DoubleToCurrencyString(0.0));
         lbPriceIncl.setText(DoubleToCurrencyString(0.0));
         lbPriceUst.setText(DoubleToCurrencyString(0.0));
         lbUst.setText(DoubleToPercentageString(19.0));
         lbReNr.setText(String.valueOf(dbController.readNextId("Invoices")));
+        lbMessageCount.setText(String.valueOf(taMessage.getText().length()));
         lbMessageMax.setText(String.valueOf(MESSAGE_MAX_COUNT));
+        lbFooterCount.setText(String.valueOf(taFooter.getText().length()));
+        lbFooterMax.setText(String.valueOf(FOOTER_MAX_COUNT));
     }
 
     private void initDatePicker() {
@@ -216,8 +232,15 @@ public class InvoiceDialogController implements Initializable {
     }
 
     @FXML
-    public void handleCancel() {
-        dialogStage.close();
+    public void handleCancel() throws IOException {
+        String content = "RECHNUNG VOR DEM VERLASSEN SPEICHERN?\n\n" +
+                         "Du verlässt nun den Rechnungseditor mit ungesicherten Änderungen an der Rechnung. " +
+                         "Möchtest du die Änderungen speichern?";
+        if (showConfirmDialog(content, Arrays.asList("Ja", "Nein"))) {
+            handleSave();
+        } else {
+            dialogStage.close();
+        }
     }
 
     @FXML

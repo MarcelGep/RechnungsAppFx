@@ -197,7 +197,7 @@
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="lbMessageCount" text="0">
+                                          <Label fx:id="lbMessageCount" text="count">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -207,7 +207,7 @@
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="lbMessageMax" text="3000">
+                                          <Label fx:id="lbMessageMax" text="max">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
@@ -357,14 +357,38 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="(0/250)">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
-                              </Label>
+                              <HBox>
+                                 <children>
+                                    <Label text="(">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lbFooterCount" text="count">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="/">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="lbFooterMax" text="max">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text=")">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
                            </children>
                         </HBox>
-                        <TextArea minHeight="-Infinity" prefHeight="80.0" />
+                        <TextArea fx:id="taFooter" minHeight="-Infinity" onKeyTyped="#onFooterTextChanged" prefHeight="80.0" />
                      </children>
                      <padding>
                         <Insets bottom="30.0" top="10.0" />

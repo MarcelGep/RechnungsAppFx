@@ -3,9 +3,12 @@ package com.gepraegs.rechnungsAppFx.controllers;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+
+import javax.swing.text.Position;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -39,6 +42,7 @@ public class ConfirmDialogController implements Initializable {
 
     public void setContent(String content) {
         lbContent.setText(content);
+        lbContent.setWrapText(true);
     }
 
     public void setDialogStage(Stage dialogStage) {
