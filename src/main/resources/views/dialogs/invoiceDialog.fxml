@@ -5,6 +5,7 @@
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -121,13 +122,15 @@
                   <Separator prefWidth="200.0" />
                   <HBox spacing="80.0">
                      <children>
-                        <GridPane minHeight="-Infinity" prefHeight="173.0" prefWidth="753.0">
+                        <GridPane minHeight="-Infinity" prefHeight="230.0" prefWidth="694.0">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" maxWidth="293.33331298828125" minWidth="10.0" prefWidth="266.33331298828125" />
                             <ColumnConstraints hgrow="ALWAYS" maxWidth="393.33331298828125" minWidth="10.0" prefWidth="365.66668701171875" />
                           </columnConstraints>
                           <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -143,12 +146,12 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Fälligkeitsdatum" GridPane.rowIndex="3">
+                              <Label text="Fälligkeitsdatum" GridPane.rowIndex="5">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label text="Zahlungsbedingungen" GridPane.rowIndex="2">
+                              <Label text="Zahlungsbedingungen" GridPane.rowIndex="4">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
@@ -158,13 +161,24 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="lbDueDate" text="dueDate" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                              <Label fx:id="lbDueDate" text="dueDate" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
                               <DatePicker fx:id="dpCreatedDate" prefHeight="30.0" prefWidth="394.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <ComboBox fx:id="cbPayConditions" prefHeight="25.0" prefWidth="394.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="cbPayConditions" prefHeight="25.0" prefWidth="394.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Label text="Lieferdatum" GridPane.rowIndex="3">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <DatePicker fx:id="dpDeliveryDate" prefHeight="30.0" prefWidth="394.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <CheckBox fx:id="cbDate" mnemonicParsing="false" onAction="#onCbDateAction" prefHeight="30.0" selected="true" text="Lieferdatum gleich Rechnungsdatum?" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
                            </children>
                         </GridPane>
                         <VBox spacing="10.0" HBox.hgrow="ALWAYS">
@@ -176,14 +190,38 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Label>
-                                    <Label text="(0/3000)">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
+                                    <HBox>
+                                       <children>
+                                          <Label text="(">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lbMessageCount" text="0">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text="/">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="lbMessageMax" text="3000">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Label text=")">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </HBox>
-                              <TextArea prefHeight="108.0" prefWidth="794.0" />
+                              <TextArea fx:id="taMessage" onKeyTyped="#onMessageTextChanged" prefHeight="108.0" prefWidth="794.0" />
                            </children>
                            <padding>
                               <Insets top="8.0" />

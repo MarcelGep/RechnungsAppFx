@@ -12,11 +12,9 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -35,6 +33,9 @@ public class InvoiceDialogController implements Initializable {
     @FXML private ComboBox<Customer> cbCustomer;
 
     @FXML private DatePicker dpCreatedDate;
+    @FXML private DatePicker dpDeliveryDate;
+
+    @FXML private CheckBox cbDate;
 
     @FXML private Label lbTitle;
     @FXML private Label lbReNr;
@@ -46,12 +47,16 @@ public class InvoiceDialogController implements Initializable {
     @FXML private Label lbCompany;
     @FXML private Label lbStreet;
     @FXML private Label lbPlzOrt;
+    @FXML private Label lbMessageCount;
+    @FXML private Label lbMessageMax;
 
     @FXML private GridPane gpPositions;
     @FXML private VBox vBoxContact;
 
     @FXML private Button btnChooseCustomer;
     @FXML private Button btnCancel;
+
+    @FXML private TextArea taMessage;
 
     private static final Logger LOGGER = Logger.getLogger(InvoiceDialogController.class.getName());
 
@@ -61,30 +66,29 @@ public class InvoiceDialogController implements Initializable {
 
     private List<Product> productData;
 
-    private final SimpleBooleanProperty customerSelected = new SimpleBooleanProperty();
+    private final SimpleBooleanProperty customerSelected = new SimpleBooleanProperty(false);
 
     private Stage dialogStage = new Stage();
 
     private Invoice selectedInvoice;
     private Invoice savedInvoice;
 
+    private final int MESSAGE_MAX_COUNT = 3000;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        customerSelected.setValue(false);
-
         vBoxContact.visibleProperty().bind(customerSelected);
         vBoxContact.managedProperty().bind(customerSelected);
-
-        cbCustomer.visibleProperty().bind(customerSelected.not());
-        cbCustomer.managedProperty().bind(customerSelected.not());
 
         btnChooseCustomer.visibleProperty().bind(customerSelected);
         btnChooseCustomer.managedProperty().bind(customerSelected);
 
         productData = dbController.readProducts();
 
+        addTextLimiter(taMessage, MESSAGE_MAX_COUNT);
+
         initComboBoxes();
-        initCreatedDate();
+        initDatePicker();
         initDueDate();
         initLabels();
         addPosition();
@@ -97,20 +101,38 @@ public class InvoiceDialogController implements Initializable {
         btnCancel.requestFocus();
     }
 
+    @FXML
+    private void onCbDateAction() {
+        if (cbDate.isSelected()) {
+            dpDeliveryDate.setValue(dpCreatedDate.getValue());
+        }
+    }
+
+    @FXML
+    private void onMessageTextChanged() {
+        lbMessageCount.setText(String.valueOf(taMessage.getText().length()));
+    }
+
     private void initLabels() {
         lbPriceExcl.setText(DoubleToCurrencyString(0.0));
         lbPriceIncl.setText(DoubleToCurrencyString(0.0));
         lbPriceUst.setText(DoubleToCurrencyString(0.0));
         lbUst.setText(DoubleToPercentageString(19.0));
         lbReNr.setText(String.valueOf(dbController.readNextId("Invoices")));
+        lbMessageMax.setText(String.valueOf(MESSAGE_MAX_COUNT));
     }
 
-    private void initCreatedDate() {
+    private void initDatePicker() {
         LocalDate createdDate = LocalDate.now();
         dpCreatedDate.setValue(createdDate);
         dpCreatedDate.valueProperty().addListener((ov, oldValue, newValue) -> {
             initDueDate();
         });
+
+        dpDeliveryDate.disableProperty().bind(cbDate.selectedProperty());
+        if (cbDate.isSelected()) {
+            dpDeliveryDate.setValue(createdDate);
+        }
     }
 
     private void initDueDate() {
@@ -156,6 +178,8 @@ public class InvoiceDialogController implements Initializable {
 
         List<Customer> customerData = dbController.readCustomers();
         cbCustomer.getItems().addAll(customerData);
+        cbCustomer.visibleProperty().bind(customerSelected.not());
+        cbCustomer.managedProperty().bind(customerSelected.not());
     }
 
     public void setSelectedInvoice(Invoice selectedInvoice) {
@@ -424,15 +448,33 @@ public class InvoiceDialogController implements Initializable {
         return tf;
     }
 
-//    public void addTextLimiter(final TextField tf, final int maxLength) {
-//        tf.textProperty().addListener((ov, oldValue, newValue) ->
-//        {
-//            if (tf.getText().length() > maxLength && !tf.getText().equals(INPUT_ERROR)) {
-//                String s = tf.getText().substring(0, maxLength);
-//                tf.setText(s);
-//            }
-//        });
-//    }
+    public void addTextLimiter(final Object obj, final int maxLength) {
+        if (obj instanceof TextField) {
+            TextField tf = (TextField) obj;
+            tf.textProperty().addListener((ov, oldValue, newValue) -> {
+                if (tf.getText().length() > maxLength) {
+                    String s = tf.getText().substring(0, maxLength);
+                    tf.setText(s);
+                }
+            });
+        } else if (obj instanceof TextArea) {
+            TextArea ta = (TextArea) obj;
+            ta.textProperty().addListener((ov, oldValue, newValue) -> {
+                String currentText = ta.getText();
+                if(newValue != null) {
+                    if (ta.getText().length() > maxLength) {
+                        String s = ta.getText().substring(0, maxLength);
+                        ta.setText(s);
+                    }
+
+//                    if(newValue.length() <= 5){
+//                        ta.setText(currentText.substring(0, ta.getText().length()-1));
+//                    }
+                }
+
+            });
+        }
+    }
 
 //    private boolean validateInputs() {
 //        boolean isInputCorrect = true;
