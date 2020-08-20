@@ -55,9 +55,9 @@
             <Insets left="10.0" />
          </padding>
       </HBox>
-      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-insets: 0;" VBox.vgrow="ALWAYS">
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-insets: 0; -fx-border-color: lightgray;" VBox.vgrow="ALWAYS">
         <content>
-            <VBox alignment="TOP_CENTER" spacing="15.0" style="-fx-background-color: white; -fx-border-color: lightgray;">
+            <VBox alignment="TOP_CENTER" spacing="15.0" style="-fx-background-color: white;">
                <children>
                   <HBox alignment="CENTER_RIGHT">
                      <children>
@@ -73,15 +73,49 @@
                   </HBox>
                   <VBox maxHeight="-Infinity" minHeight="-Infinity" spacing="15.0">
                      <children>
-                        <Label text="Kunde">
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label text="Kunde">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="btnChooseCustomer" mnemonicParsing="false" onAction="#onBtnChooseCustomerClicked" style="-fx-text-fill: -fx-accent;" text="Anderen Kunden auswählen">
+                                 <styleClass>
+                                    <String fx:value="back-transparent" />
+                                    <String fx:value="hover-hand" />
+                                    <String fx:value="fn-bold" />
+                                    <String fx:value="fn-14" />
+                                 </styleClass>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <ComboBox fx:id="cbCustomer" editable="true" prefHeight="47.0" prefWidth="348.0" promptText="Kunde auswählen oder erstellen" />
+                     </children>
+                     <padding>
+                        <Insets bottom="25.0" />
+                     </padding>
+                  </VBox>
+                  <VBox fx:id="vBoxContact" spacing="2.0">
+                     <children>
+                        <Label fx:id="lbCompany" text="customerCompany">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="cbCustomer" editable="true" prefHeight="47.0" prefWidth="348.0" promptText="Kunde auswählen" />
+                        <Label fx:id="lbStreet" text="customerStreet">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="lbPlzOrt" text="customerPlzOrt">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
                      </children>
                      <padding>
-                        <Insets bottom="20.0" />
+                        <Insets bottom="25.0" />
                      </padding>
                   </VBox>
                   <Separator prefWidth="200.0" />

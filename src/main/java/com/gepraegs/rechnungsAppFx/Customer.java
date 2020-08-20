@@ -65,6 +65,11 @@ public class Customer extends RecursiveTreeObject<Customer> {
         this.payedCosts = 0.0;
     }
 
+    @Override
+    public String toString() {
+        return this.getCompany().getValue();
+    }
+
     public StringProperty getLocation() {
         return location;
     }
