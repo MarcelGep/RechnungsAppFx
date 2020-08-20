@@ -90,7 +90,7 @@
                               </Button>
                            </children>
                         </HBox>
-                        <ComboBox fx:id="cbCustomer" editable="true" prefHeight="47.0" prefWidth="348.0" promptText="Kunde auswählen oder erstellen" />
+                        <ComboBox fx:id="cbCustomer" editable="true" onAction="#handleCbCustomerAction" prefHeight="47.0" prefWidth="348.0" promptText="Kunde auswählen oder erstellen" />
                      </children>
                      <padding>
                         <Insets bottom="25.0" />

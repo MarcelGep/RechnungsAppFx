@@ -51,6 +51,7 @@ public class InvoiceDialogController implements Initializable {
     @FXML private VBox vBoxContact;
 
     @FXML private Button btnChooseCustomer;
+    @FXML private Button btnCancel;
 
     private static final Logger LOGGER = Logger.getLogger(InvoiceDialogController.class.getName());
 
@@ -92,6 +93,8 @@ public class InvoiceDialogController implements Initializable {
     @FXML
     private void onBtnChooseCustomerClicked() {
         customerSelected.setValue(false);
+        cbCustomer.setValue(null);
+        btnCancel.requestFocus();
     }
 
     private void initLabels() {
@@ -128,6 +131,21 @@ public class InvoiceDialogController implements Initializable {
         this.dialogStage = dialogStage;
     }
 
+    @FXML
+    private void handleCbCustomerAction() {
+        int selectedIndex = cbCustomer.getSelectionModel().getSelectedIndex();
+        if (selectedIndex != -1) {
+            Customer customer = cbCustomer.getSelectionModel().getSelectedItem();
+            if (customer != null) {
+                customerSelected.setValue(true);
+
+                lbCompany.setText(customer.getCompany().getValue());
+                lbStreet.setText(customer.getStreet().getValue());
+                lbPlzOrt.setText(customer.getPlz().getValue() + " " + customer.getLocation().getValue());
+            }
+        }
+    }
+
     private void initComboBoxes() {
         // pay conditions
         cbPayConditions.getItems().addAll("0 Tage", "7 Tage", "14 Tage", "30 Tage", "60 Tage", "90 Tage");
@@ -136,33 +154,8 @@ public class InvoiceDialogController implements Initializable {
             initDueDate();
         });
 
-        ObservableList<Customer> customerData = FXCollections.observableArrayList();
-        customerData.addAll(dbController.readCustomers());
-
-        cbCustomer.setItems(customerData);
-        cbCustomer.valueProperty().addListener((ov, oldValue, newValue) -> {
-
-            String oldVal = "NULL";
-            String newVal = "NULL";
-
-            if (oldValue != null) {
-                oldVal = oldValue.getCompany().getValue();
-            }
-            if (newValue != null) {
-                newVal = newValue.getCompany().getValue();
-            }
-
-            System.out.println("Old: " + oldVal + " - New: " + newVal);
-
-            customerSelected.setValue(true);
-            cbCustomer.getSelectionModel().clearSelection();
-
-            if (newValue != null) {
-                lbCompany.setText(newValue.getCompany().getValue());
-                lbStreet.setText(newValue.getStreet().getValue());
-                lbPlzOrt.setText(newValue.getPlz().getValue() + " " + newValue.getLocation().getValue());
-            }
-        });
+        List<Customer> customerData = dbController.readCustomers();
+        cbCustomer.getItems().addAll(customerData);
     }
 
     public void setSelectedInvoice(Invoice selectedInvoice) {
