@@ -76,6 +76,8 @@ public class InvoiceDialogController implements Initializable {
 
     private Stage dialogStage = new Stage();
 
+    private Customer selectedCustomer;
+
     private Invoice selectedInvoice;
     private Invoice savedInvoice;
 
@@ -107,6 +109,7 @@ public class InvoiceDialogController implements Initializable {
         customerSelected.setValue(false);
         cbCustomer.setValue(null);
         btnCancel.requestFocus();
+        selectedCustomer = null;
     }
 
     @FXML
@@ -153,8 +156,7 @@ public class InvoiceDialogController implements Initializable {
 
     private void initDueDate() {
         long days = Long.parseLong(cbPayConditions.getSelectionModel().getSelectedItem().split(" ")[0]);
-        String dueDate = dpCreatedDate.getValue().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-        lbDueDate.setText(dueDate);
+        lbDueDate.setText(dateFormatter(dpCreatedDate.getValue().plusDays(days)));
     }
 
     public void setDialogTitle(String title) {
@@ -175,6 +177,7 @@ public class InvoiceDialogController implements Initializable {
         if (selectedIndex != -1) {
             Customer customer = cbCustomer.getSelectionModel().getSelectedItem();
             if (customer != null) {
+                selectedCustomer = customer;
                 customerSelected.setValue(true);
 
                 lbCompany.setText(customer.getCompany().getValue());
@@ -214,7 +217,15 @@ public class InvoiceDialogController implements Initializable {
 //        }
 
         String newReNr = selectedInvoice != null ? selectedInvoice.getReNr() : String.valueOf(dbController.readNextId("Invoices"));
-        Invoice newInvoice = new Invoice();
+
+        Invoice newInvoice = new Invoice(newReNr,
+                                         selectedCustomer,
+                                         dateFormatter(dpCreatedDate.getValue()),
+                                         lbDueDate.getText(),
+                                         null,
+                                         false,
+                                         CurrencyStringToDouble(lbPriceIncl.getText()),
+                                         PercentageStringToDouble(lbUst.getText()));
 
         if (selectedInvoice != null) {
             // Edit selected customer
@@ -320,6 +331,13 @@ public class InvoiceDialogController implements Initializable {
         tfPriceExcl.setText(DoubleToCurrencyString(priceExcl));
     }
 
+    private void setProductData(int row, Product product) {
+        TextField tfPriceExcl = getTextFieldById(row, "tfPriceExcl");
+        TextField tfPriceIncl = getTextFieldById(row, "tfPriceIncl");
+        tfPriceExcl.setText(DoubleToCurrencyString(product.getPriceExcl()));
+        tfPriceIncl.setText(DoubleToCurrencyString(product.getPriceIncl()));
+    }
+
     private Button createDeleteBtn() {
         ImageView imageView = new ImageView(new Image(getClass().getResource("/icons/cancel.png").toString()));
         imageView.setFitHeight(15);
@@ -422,7 +440,13 @@ public class InvoiceDialogController implements Initializable {
     private ComboBox createCbProduct() {
         ComboBox cb = createCBox("Beschreibe oder wähle ein Produkt", null, -1 );
         cb.setMaxWidth(MAX_VALUE);
-//        cb.getItems().setAll(productData);
+        cb.getItems().setAll(productData);
+        cb.valueProperty().addListener((ov, oldValue, newValue) -> {
+            if (newValue instanceof Product) {
+                setProductData(GridPane.getRowIndex(cb), (Product) newValue);
+                updateTotalPrices();
+            }
+        });
         return cb;
     }
 

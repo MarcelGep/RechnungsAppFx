@@ -15,4 +15,7 @@ public class CalculateHelper {
         return valueExcl * ( (100 + ust) / 100);
     }
 
+    public static double calculateUst(double valueIncl, double ust) {
+        return (valueIncl * ust) / (100 + ust);
+    }
 }

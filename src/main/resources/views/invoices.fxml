@@ -103,7 +103,7 @@
                                              <children>
                                                 <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Bearbeiten" />
                                                 <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Anzeigen" />
-                                                <Button id="light-button" mnemonicParsing="false" styleClass="hover-hand" text="Löschen" />
+                                                <Button id="light-button" mnemonicParsing="false" onAction="#onBtnDeleteInvoiceClicked" styleClass="hover-hand" text="Löschen" />
                                              </children>
                                              <padding>
                                                 <Insets right="15.0" />
@@ -132,18 +132,18 @@
                                           </Label>
                                        </children>
                                        <padding>
-                                          <Insets bottom="20.0" left="30.0" right="30.0" top="25.0" />
+                                          <Insets bottom="30.0" left="30.0" right="30.0" top="25.0" />
                                        </padding>
                                     </HBox>
                                     <Label fx:id="lbCustomer" text="customer">
                                        <padding>
-                                          <Insets bottom="10.0" left="30.0" right="30.0" />
+                                          <Insets bottom="20.0" left="30.0" right="30.0" />
                                        </padding>
                                        <font>
                                           <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Label>
-                                    <GridPane prefHeight="125.0" prefWidth="709.0" vgap="8.0">
+                                    <GridPane>
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="NEVER" maxWidth="284.3333740234375" minWidth="-Infinity" prefWidth="284.3333740234375" />
                                           <ColumnConstraints hgrow="NEVER" maxWidth="414.333251953125" minWidth="-Infinity" prefWidth="363.6666259765625" />
@@ -176,7 +176,7 @@
                                           <Insets bottom="12.0" left="30.0" right="30.0" top="15.0" />
                                        </padding>
                                     </Separator>
-                                    <GridPane prefHeight="109.0" prefWidth="709.0" vgap="8.0">
+                                    <GridPane>
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="NEVER" maxWidth="284.3333740234375" minWidth="-Infinity" prefWidth="284.3333740234375" />
                                           <ColumnConstraints hgrow="NEVER" maxWidth="414.333251953125" minWidth="-Infinity" prefWidth="363.6666259765625" />
@@ -198,7 +198,7 @@
                                           <Insets left="30.0" right="30.0" />
                                        </padding>
                                     </GridPane>
-                                    <Label text="Einträge">
+                                    <Label text="Positionen">
                                        <padding>
                                           <Insets left="30.0" right="30.0" top="30.0" />
                                        </padding>
@@ -211,7 +211,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Separator>
-                                    <TableView fx:id="invoiceEntiesTable">
+                                    <TableView fx:id="invoiceEntiesTable" VBox.vgrow="ALWAYS">
                                        <VBox.margin>
                                           <Insets left="30.0" right="30.0" />
                                        </VBox.margin>
@@ -223,12 +223,12 @@
                               </VBox>
                               <VBox fx:id="invoiceDetailsEmpty" alignment="TOP_CENTER" spacing="10.0" style="-fx-background-color: white;" styleClass="card" visible="false" StackPane.alignment="CENTER">
                                  <children>
-                                    <Label text="Produkte und Dienstleistungen">
+                                    <Label text="Rechnungen">
                                        <font>
                                           <Font name="System Bold" size="24.0" />
                                        </font>
                                     </Label>
-                                    <Label text="Wähle aus der Liste auf der linken Seite ein Produkt oder eine Dienstleistung, um detaillierte Informationen darüber anzuzeigen." />
+                                    <Label text="Wähle eine Rechnung aus der Liste für Details" />
                                     <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                                        <image>
                                           <Image url="@../icons/customers.png" />

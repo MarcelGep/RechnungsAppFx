@@ -5,6 +5,8 @@ import javafx.scene.control.TextField;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class FormatterHelper {
@@ -71,5 +73,9 @@ public class FormatterHelper {
             tf.setText("0,00 €");
             tf.setStyle("-fx-border-color: red; -fx-alignment: CENTER-RIGHT;");
         }
+    }
+
+    public static String dateFormatter(LocalDate date) {
+        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 }

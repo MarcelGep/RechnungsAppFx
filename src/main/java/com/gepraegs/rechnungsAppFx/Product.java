@@ -32,6 +32,11 @@ public class Product extends RecursiveTreeObject<Product> {
         this.priceIncl = ((100 + this.ust) / 100) * this.priceExcl;
     }
 
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+
     public String getArtNr() {
         return artNr.get();
     }

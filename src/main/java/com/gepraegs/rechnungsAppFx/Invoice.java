@@ -12,7 +12,7 @@ import java.util.List;
 public class Invoice extends RecursiveTreeObject<Invoice> {
 
     private StringProperty reNr;
-    private StringProperty kdNr;
+    private Customer customer;
     private StringProperty createDate;
     private StringProperty dueDate;
     private StringProperty payedDate;
@@ -23,7 +23,7 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
     public Invoice()
     {
         this.reNr = new SimpleStringProperty("");
-        this.kdNr = new SimpleStringProperty("");
+        this.customer = new Customer();
         this.createDate = new SimpleStringProperty("");
         this.dueDate = new SimpleStringProperty("");
         this.payedDate = new SimpleStringProperty("");
@@ -32,9 +32,9 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
         this.ust = 0.0;
     }
 
-    public Invoice(String reNr, String kdNr, String createDate, String dueDate, String payedDate, boolean state, double totalPrice, double ust) {
+    public Invoice(String reNr, Customer customer, String createDate, String dueDate, String payedDate, boolean state, double totalPrice, double ust) {
         this.reNr = new SimpleStringProperty(reNr);
-        this.kdNr = new SimpleStringProperty(kdNr);
+        this.customer = customer;
         this.createDate = new SimpleStringProperty(createDate);
         this.dueDate = new SimpleStringProperty(dueDate);
         this.payedDate = new SimpleStringProperty(payedDate);
@@ -55,16 +55,12 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
         this.reNr.set(reNr);
     }
 
-    public String getKdNr() {
-        return kdNr.get();
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public StringProperty kdNrProperty() {
-        return kdNr;
-    }
-
-    public void setKdNr(String kdNr) {
-        this.kdNr.set(kdNr);
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getCreateDate() {

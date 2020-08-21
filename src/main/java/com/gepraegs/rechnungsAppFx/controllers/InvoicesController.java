@@ -1,6 +1,7 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
 import com.gepraegs.rechnungsAppFx.Invoice;
+import com.gepraegs.rechnungsAppFx.helpers.CalculateHelper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,13 +14,15 @@ import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToCurrencyString;
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToPercentageString;
+import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateExclUst;
+import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateUst;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
 import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
 
 public class InvoicesController implements Initializable {
@@ -102,13 +105,15 @@ public class InvoicesController implements Initializable {
 
 		// set cell value factory
 		colReNr.setCellValueFactory(param -> param.getValue().reNrProperty());
-		colCustomer.setCellValueFactory(param -> param.getValue().kdNrProperty());
+		colCustomer.setCellValueFactory(param -> param.getValue().getCustomer().getCompany());
 		colCreatedDate.setCellValueFactory(param -> param.getValue().createDateProperty());
 		colDueDate.setCellValueFactory(param -> param.getValue().dueDateProperty());
-		colPayedDate.setCellValueFactory(param -> param.getValue().payedDateProperty());
-		colState.setCellValueFactory(param -> param.getValue().payedDateProperty());
+		colPayedDate.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
+				new ReadOnlyStringWrapper(param.getValue().getPayedDate() == null ? "" : param.getValue().getPayedDate()));
 		colTotalPrice.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
 				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getTotalPrice())));
+		colState.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
+				new ReadOnlyStringWrapper(param.getValue().isState() ? "Bezahlt" : "Nicht bezahlt"));
 
 		// add columns to customer table
 		invoiceTable.getColumns().add(colReNr);
@@ -122,18 +127,18 @@ public class InvoicesController implements Initializable {
 
 	private void showInvoiceInformations(Invoice invoice) {
 		lbReNr.setText(invoice.getReNr());
-		lbCustomer.setText(validateExistingData(invoice.getKdNr()));
+		lbCustomer.setText(validateExistingData(invoice.getCustomer().getCompany().getValue()));
 		lbCreatedDate.setText(validateExistingData(invoice.getCreateDate()));
 		lbDueDate.setText(validateExistingData(invoice.getDueDate()));
 		lbPayedDate.setText(validateExistingData(invoice.getPayedDate()));
-		lbUst.setText(DoubleToPercentageString(invoice.getUst()));
+		lbUst.setText(DoubleToCurrencyString(calculateUst(invoice.getTotalPrice(), invoice.getUst())));
 		lbPriceIncl.setText(DoubleToCurrencyString(invoice.getTotalPrice()));
-		lbPriceExcl.setText(DoubleToCurrencyString(invoice.getTotalPrice() / ((100 + invoice.getUst()) / 100)));
+		lbPriceExcl.setText(DoubleToCurrencyString(calculateExclUst(invoice.getTotalPrice(), invoice.getUst())));
 
 		showInvoiceDetails(true);
 	}
 
-	private void clearCustomerDetails() {
+	private void clearInvoiceDetails() {
 		lbReNr.setText("");
 		lbCustomer.setText("");
 		lbCreatedDate.setText("");
@@ -148,7 +153,7 @@ public class InvoicesController implements Initializable {
 
 	private void clearTableSelection() {
 		invoiceTable.getSelectionModel().clearSelection();
-		clearCustomerDetails();
+		clearInvoiceDetails();
 	}
 
 	private void showInvoiceDetails(boolean show) {
@@ -157,7 +162,7 @@ public class InvoicesController implements Initializable {
 	}
 
 	private String validateExistingData(String data) {
-		return data.isEmpty() ? "---" : data;
+		return data == null || data.isEmpty() ? "---" : data;
 	}
 
 	private void scrollToRow(int row)
@@ -198,7 +203,7 @@ public class InvoicesController implements Initializable {
 
 				String lowerCaseFilter = newValue.toLowerCase();
 
-				String customerName = invoice.getKdNr().toLowerCase();
+				String customerName = invoice.getCustomer().getCompany().getValue().toLowerCase();
 
 				if (customerName.contains(lowerCaseFilter)) {
 					return true;
@@ -237,15 +242,15 @@ public class InvoicesController implements Initializable {
 			if (invoice != null) {
 				invoiceTable.sort();
 
-				//scroll to last added customer, select it and show detail informations
-				int lastInvoiceReNr = dbController.readNextId("Customers") - 1;
-				for (int i = 0; i < invoiceTable.getItems().size(); i++) {
-					if (Integer.parseInt(invoiceTable.getItems().get(i).getReNr()) == lastInvoiceReNr) {
-						scrollToRow(i);
-						invoiceTable.getSelectionModel().select(i);
-						break;
-					}
-				}
+				//scroll to last added invoice, select it and show detail informations
+//				int lastInvoiceReNr = dbController.readNextId("Invoices") - 1;
+//				for (int i = 0; i < invoiceTable.getItems().size(); i++) {
+//					if (Integer.parseInt(invoiceTable.getItems().get(i).getReNr()) == lastInvoiceReNr) {
+//						scrollToRow(i);
+//						invoiceTable.getSelectionModel().select(i);
+//						break;
+//					}
+//				}
 			}
 		} catch (IOException e){
 			LOGGER.warning(e.toString());
@@ -256,22 +261,24 @@ public class InvoicesController implements Initializable {
 
 	@FXML
 	private void onBtnDeleteInvoiceClicked() {
-//		try {
-//			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
-//							 "Möchtest du den Kunden \"" + customerTable.getSelectionModel().getSelectedItem().getCompany().getValue()  + "\" löschen?";
-//
-//			showDialogLayer.setVisible(true);
-//
-//			if (showConfirmDialog(content, Arrays.asList("Löschen", "Abbrechen"))) {
-//				dbController.deleteCustomer(customerTable.getSelectionModel().getSelectedItem());
-//				customerData.remove(customerTable.getSelectionModel().getSelectedItem());
-//				clearTableSelection();
-//			}
-//
-//			showDialogLayer.setVisible(false);
-//		} catch (IOException e) {
-//			LOGGER.warning(e.toString());
-//		}
+		try {
+			Invoice selectedInvoice = invoiceTable.getSelectionModel().getSelectedItem();
+			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
+							 "Möchtest du die Rechnung mit der Nr. " + selectedInvoice.getReNr() +
+							 " für den Kunden \"" + selectedInvoice.getCustomer().getCompany().getValue()  + "\" löschen?";
+
+			showDialogLayer.setVisible(true);
+
+			if (showConfirmDialog(content, Arrays.asList("Löschen", "Abbrechen"))) {
+				dbController.deleteInvoice(selectedInvoice);
+				invoiceData.remove(selectedInvoice);
+				clearTableSelection();
+			}
+
+			showDialogLayer.setVisible(false);
+		} catch (IOException e) {
+			LOGGER.warning(e.toString());
+		}
 	}
 
 	@FXML

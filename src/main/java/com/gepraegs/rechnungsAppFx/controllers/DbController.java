@@ -348,6 +348,49 @@ public class DbController {
 		return id;
 	}
 
+	public Customer readCustomer(int kdNr) {
+		String query = "SELECT * FROM Customers WHERE KdNr = ?";
+		Customer customer = null;
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setInt( 1, kdNr );
+
+			ResultSet rs = ps.executeQuery();
+
+			while ( rs.next() ) {
+				String company = rs.getString("Company");
+				String name1 = rs.getString("Name1");
+				String name2 = rs.getString("Name2");
+				String street = rs.getString("Street");
+				String plz = rs.getString("Plz");
+				String location = rs.getString("Location");
+				String country = rs.getString("Country");
+				String phone = rs.getString("Phone");
+				String handy = rs.getString("Handy");
+				String fax = rs.getString("Fax");
+				String email = rs.getString("Email");
+				String website = rs.getString("Website");
+				String informations = rs.getString("Informations");
+				int discount = rs.getInt("Discount");
+				double openCosts = rs.getDouble("OpenCosts");
+				double payedCosts = rs.getDouble("PayedCosts");
+
+				customer = new Customer(String.valueOf(kdNr), company, name1, name2, street, plz, location, country, phone, handy, fax,
+										email, website, discount);
+
+				customer.setInformations(informations);
+				customer.setOpenCosts(openCosts);
+				customer.setPayedCosts(payedCosts);
+			}
+
+			LOGGER.info( "Read customer with KdNr: " + kdNr );
+			return customer;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return null;
+		}
+	}
+
 	public List<Customer> readCustomers() {
 		String query = "SELECT * FROM Customers";
 
@@ -519,7 +562,7 @@ public class DbController {
 
 			while ( rs.next() ) {
 				String reNr = rs.getString( "ReNr" );
-				String kdNr = rs.getString( "KdNr" );
+				int kdNr = rs.getInt( "KdNr" );
 				String createdDate = rs.getString( "CreatedDate" );
 				String dueDate = rs.getString( "DueDate" );
 				String payedDate = rs.getString( "PayedDate" );
@@ -528,7 +571,7 @@ public class DbController {
 				double totalPrice = rs.getDouble( "TotalPrice" );
 				double ust = rs.getDouble( "USt" );
 
-				Invoice invoice = new Invoice(reNr, kdNr, createdDate, dueDate, payedDate, state, totalPrice,  ust);
+				Invoice invoice = new Invoice(reNr, readCustomer(kdNr), createdDate, dueDate, payedDate, state, totalPrice,  ust);
 
 				invoiceData.add(invoice);
 			}
@@ -541,17 +584,18 @@ public class DbController {
 	}
 
 	public boolean createInvoice(Invoice invoice) {
-		String query = "INSERT INTO Invoices(KdNr, CreatedDate, DueDate, PayedDate, State, USt, TotalPrice) VALUES(?,?,?,?,?,?,?,?)";
+		String query = "INSERT INTO Invoices(ReNr, KdNr, CreatedDate, DueDate, PayedDate, State, USt, TotalPrice) VALUES(?,?,?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, invoice.getKdNr());
-			ps.setString( 2, invoice.getCreateDate());
-			ps.setString( 3, invoice.getDueDate());
-			ps.setString( 3, invoice.getPayedDate());
-			ps.setBoolean( 3, invoice.isState());
-			ps.setDouble( 4, invoice.getUst());
-			ps.setDouble( 4, invoice.getTotalPrice());
+			ps.setString( 1, invoice.getReNr());
+			ps.setString( 2, invoice.getCustomer().getKdNr().getValue());
+			ps.setString( 3, invoice.getCreateDate());
+			ps.setString( 4, invoice.getDueDate());
+			ps.setString( 5, invoice.getPayedDate());
+			ps.setBoolean( 6, invoice.isState());
+			ps.setDouble( 7, invoice.getUst());
+			ps.setDouble( 8, invoice.getTotalPrice());
 
 			ps.executeUpdate();
 
@@ -569,7 +613,7 @@ public class DbController {
 
 		try {
 			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, invoice.getKdNr());
+			ps.setString( 1, invoice.getCustomer().getKdNr().getValue());
 			ps.setString( 2, invoice.getCreateDate());
 			ps.setString( 3, invoice.getDueDate());
 			ps.setString( 3, invoice.getPayedDate());
@@ -586,6 +630,24 @@ public class DbController {
 			LOGGER.warning( e.toString() );
 		}
 		return false;
+	}
+
+	public boolean deleteInvoice(Invoice invoice) {
+		try {
+			String query = "DELETE FROM Invoices WHERE ReNr = ?";
+			int reNr = Integer.parseInt(invoice.getReNr());
+
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setInt(1, reNr);
+			ps.executeUpdate();
+
+			LOGGER.info( "Invoice with ReNr \"" + invoice.getReNr() + "\" was deleted!" );
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return false;
+		}
 	}
 
 	public int readNextId( String type ) {
