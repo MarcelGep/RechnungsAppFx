@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="750.0" prefWidth="1409.0" stylesheets="@../stylesheet/boxStyles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.InvoicesController">
+<StackPane prefHeight="750.0" prefWidth="1409.0" stylesheets="@../stylesheet/boxStyles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.InvoicesController">
    <children>
       <HBox prefHeight="750.0" prefWidth="1068.0">
          <children>
@@ -143,15 +143,19 @@
                                           <Font name="System Bold" size="16.0" />
                                        </font>
                                     </Label>
-                                    <GridPane>
+                                    <GridPane vgap="5.0">
                                        <columnConstraints>
-                                          <ColumnConstraints hgrow="NEVER" maxWidth="284.3333740234375" minWidth="-Infinity" prefWidth="284.3333740234375" />
-                                          <ColumnConstraints hgrow="NEVER" maxWidth="414.333251953125" minWidth="-Infinity" prefWidth="363.6666259765625" />
+                                          <ColumnConstraints hgrow="ALWAYS" />
+                                          <ColumnConstraints hgrow="ALWAYS" />
                                        </columnConstraints>
                                        <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+                                          <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
                                           <Label fx:id="lbUst" text="ust" GridPane.columnIndex="1" GridPane.rowIndex="1" />
@@ -166,33 +170,17 @@
                                           <Label text="USt." GridPane.rowIndex="1" />
                                           <Label text="Preis (exkl. USt.)" />
                                           <Label fx:id="lbPriceExcl" text="priceExcl" GridPane.columnIndex="1" />
-                                       </children>
-                                       <padding>
-                                          <Insets left="30.0" right="30.0" />
-                                       </padding>
-                                    </GridPane>
-                                    <Separator>
-                                       <padding>
-                                          <Insets bottom="12.0" left="30.0" right="30.0" top="15.0" />
-                                       </padding>
-                                    </Separator>
-                                    <GridPane>
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="NEVER" maxWidth="284.3333740234375" minWidth="-Infinity" prefWidth="284.3333740234375" />
-                                          <ColumnConstraints hgrow="NEVER" maxWidth="414.333251953125" minWidth="-Infinity" prefWidth="363.6666259765625" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-                                       </rowConstraints>
-                                       <children>
-                                          <Label fx:id="lbDueDate" text="dueDate" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                          <Label text="Fällig" GridPane.rowIndex="1" />
-                                          <Label text="Erstellt am" />
-                                          <Label fx:id="lbCreatedDate" text="createdDate" GridPane.columnIndex="1" />
-                                          <Label text="Bezahlt" GridPane.rowIndex="2" />
-                                          <Label fx:id="lbPayedDate" text="payedDate" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Separator GridPane.columnSpan="2" GridPane.rowIndex="3">
+                                             <padding>
+                                                <Insets bottom="15.0" top="15.0" />
+                                             </padding>
+                                          </Separator>
+                                          <Label text="Erstellt am" GridPane.rowIndex="4" />
+                                          <Label text="Fällig" GridPane.rowIndex="5" />
+                                          <Label text="Bezahlt" GridPane.rowIndex="6" />
+                                          <Label fx:id="lbCreatedDate" text="createdDate" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                          <Label fx:id="lbDueDate" text="dueDate" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                          <Label fx:id="lbPayedDate" text="payedDate" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                        </children>
                                        <padding>
                                           <Insets left="30.0" right="30.0" />

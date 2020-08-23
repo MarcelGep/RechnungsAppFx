@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane stylesheets="@../stylesheet/boxStyles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomersController">
+<StackPane stylesheets="@../stylesheet/boxStyles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.gepraegs.rechnungsAppFx.controllers.CustomersController">
    <children>
       <HBox prefHeight="750.0" prefWidth="1068.0">
          <children>
@@ -90,9 +90,9 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="578.0" prefWidth="654.0" style="-fx-background-color: #dee5df;" GridPane.columnIndex="1">
+                  <AnchorPane style="-fx-background-color: #dee5df;" GridPane.columnIndex="1">
                      <children>
-                        <StackPane prefHeight="150.0" prefWidth="200.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
+                        <StackPane AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
                            <children>
                               <VBox fx:id="customerDetailsFilled" spacing="15.0" style="-fx-background-color: white;" styleClass="card">
                                  <children>
@@ -157,7 +157,7 @@
                                              <content>
                                                 <VBox>
                                                    <children>
-                                                      <GridPane prefWidth="259.0" vgap="10.0">
+                                                      <GridPane vgap="10.0">
                                                         <columnConstraints>
                                                           <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="228.333251953125" />
                                                           <ColumnConstraints hgrow="NEVER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="418.666748046875" />
