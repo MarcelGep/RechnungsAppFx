@@ -249,15 +249,20 @@ public class InvoiceDialogController implements Initializable {
     private void createPositions() {
         Position position = new Position();
 
-        for (int i = 0; i < gpPositions.getRowCount(); i++) {
+        int rowCount = gpPositions.getRowCount();
+
+        for (int i = 1; i < rowCount; i++) {
             for (Node child : gpPositions.getChildren()) {
-                if (GridPane.getRowIndex(child) == i) {
-                    //TODO set position infos
+                if (child != null) {
+                    int rowIndex = GridPane.getRowIndex(child);
+                    if (rowIndex == i) {
+                        System.out.println(child);
+                    }
                 }
             }
         }
 
-        dbController.createPosition(position);
+//        dbController.createPosition(position);
     }
 
     @FXML
