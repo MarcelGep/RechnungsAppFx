@@ -720,6 +720,68 @@ public class DbController {
 		}
 	}
 
+	public boolean createPosition(Position position) {
+		String query = "INSERT INTO Positions(ArtNr, RgNr, Description, Amount, Unit, PriceExcl, PriceIncl, Ust, CreatedDate) VALUES(?,?,?,?,?,?,?,?,?)";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, position.getArtNr());
+			ps.setString( 2, position.getRgNr());
+			ps.setString( 3, position.getDescription());
+			ps.setDouble( 4, position.getAmount());
+			ps.setString( 5, position.getUnit());
+			ps.setDouble( 6, position.getPriceExcl());
+			ps.setDouble( 7, position.getPriceIncl());
+			ps.setDouble( 8, position.getUst());
+			ps.setString( 9, position.getCreatedDate());
+
+			ps.executeUpdate();
+
+			LOGGER.info( "New position created!" );
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+		return false;
+	}
+
+	public List<Position> readPositions(String rgNr) {
+		String query = "SELECT * FROM Positions WHERE RgNr = ?";
+
+		List<Position> positions = new ArrayList<Position>();
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setInt( 1, Integer.parseInt(rgNr));
+
+			ResultSet rs = ps.executeQuery();
+
+			Position position;
+
+			while ( rs.next() ) {
+				String artNr = rs.getString("ArtNr");
+				String description = rs.getString("Description");
+				String unit = rs.getString("Unit");
+				String createdDate = rs.getString("CreatedDate");
+				int amount = rs.getInt("Amount");
+				double priceExcl = rs.getDouble("PriceExcl");
+				double priceIncl = rs.getDouble("PriceIncl");
+				double ust = rs.getDouble("Ust");
+
+				position = new Position(artNr, rgNr, description, unit, createdDate, amount, priceExcl, priceIncl, ust);
+
+				positions.add(position);
+			}
+
+			LOGGER.info( "Read all positions successfull!" );
+			return positions;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return null;
+		}
+	}
+
 //	public boolean createContactData( ContactData contactData, ContactType type ) {
 //		String query = "INSERT INTO " + type.getText() + " (name, street, plz, ort, phone, email) VALUES(?,?,?,?,?,?)";
 //

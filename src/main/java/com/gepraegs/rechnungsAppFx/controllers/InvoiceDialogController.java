@@ -2,6 +2,7 @@ package com.gepraegs.rechnungsAppFx.controllers;
 
 import com.gepraegs.rechnungsAppFx.Customer;
 import com.gepraegs.rechnungsAppFx.Invoice;
+import com.gepraegs.rechnungsAppFx.Position;
 import com.gepraegs.rechnungsAppFx.Product;
 import com.gepraegs.rechnungsAppFx.helpers.HelperDialogs;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -228,18 +229,35 @@ public class InvoiceDialogController implements Initializable {
                                          PercentageStringToDouble(lbUst.getText()));
 
         if (selectedInvoice != null) {
-            // Edit selected customer
+            // Edit selected invoice
             invoiceData.set(this.invoiceData.indexOf(selectedInvoice), newInvoice);
             dbController.editInvoice(newInvoice);
         } else {
-            // Add new customer to customerData
+            // Add new invoice to invoiceData
             invoiceData.add(newInvoice);
             dbController.createInvoice(newInvoice);
+
+            // create positions
+            createPositions();
         }
 
         savedInvoice = newInvoice;
 
         dialogStage.close();
+    }
+
+    private void createPositions() {
+        Position position = new Position();
+
+        for (int i = 0; i < gpPositions.getRowCount(); i++) {
+            for (Node child : gpPositions.getChildren()) {
+                if (GridPane.getRowIndex(child) == i) {
+                    //TODO set position infos
+                }
+            }
+        }
+
+        dbController.createPosition(position);
     }
 
     @FXML

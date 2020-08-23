@@ -1,6 +1,8 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
+import com.gepraegs.rechnungsAppFx.Customer;
 import com.gepraegs.rechnungsAppFx.Invoice;
+import com.gepraegs.rechnungsAppFx.Position;
 import com.gepraegs.rechnungsAppFx.helpers.CalculateHelper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -42,6 +44,8 @@ public class InvoicesController implements Initializable {
 	private final TableColumn<Invoice, String> colState = new TableColumn<>("STATUS");
 
 	@FXML private TableView<Invoice> invoiceTable;
+	@FXML private TableView<Position> invoicePositionsTable;
+
 	@FXML private TextField tfSearchInvoice;
 
 	@FXML private Label lbReNr;
@@ -138,6 +142,12 @@ public class InvoicesController implements Initializable {
 		showInvoiceDetails(true);
 	}
 
+	private void showPositions(Invoice invoice) {
+		List<Position> positions = dbController.readPositions(invoice.getReNr());
+
+
+	}
+
 	private void clearInvoiceDetails() {
 		lbReNr.setText("");
 		lbCustomer.setText("");
@@ -184,6 +194,7 @@ public class InvoicesController implements Initializable {
 		invoiceTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 			if (newSelection != null) {
 				showInvoiceInformations(newSelection);
+				showPositions(newSelection);
 			}
 		});
 	}

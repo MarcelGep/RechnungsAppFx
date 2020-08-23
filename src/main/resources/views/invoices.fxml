@@ -211,7 +211,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Separator>
-                                    <TableView fx:id="invoiceEntiesTable" VBox.vgrow="ALWAYS">
+                                    <TableView fx:id="invoicePositionsTable" VBox.vgrow="ALWAYS">
                                        <VBox.margin>
                                           <Insets left="30.0" right="30.0" />
                                        </VBox.margin>
