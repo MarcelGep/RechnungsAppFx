@@ -12,7 +12,7 @@
     -fx-faint-focus-color: -fx-accent-faint;
 }
 
-/*toogle-button*/
+/*toggle-button*/
 .toggle-button:selected {
     -fx-background-color: -fx-accent;
     -fx-text-fill: white;
@@ -114,7 +114,7 @@
 #tabButton {
     -fx-background-color: #9eb1af;
     -fx-font-weight:bold;
-    -fx-background-radius: 0.0px;
+    -fx-background-radius: 0px;
     -fx-fill: white;
     -fx-text-fill: white;
 }
@@ -126,7 +126,7 @@
 #tabButtonSelected {
     -fx-background-color: -fx-accent;
     -fx-font-weight: bold;
-    -fx-background-radius: 0.0px;
+    -fx-background-radius: 0px;
     -fx-fill: white;
     -fx-text-fill: white;
 }
@@ -171,4 +171,18 @@
     -fx-cursor: hand;
     -fx-background-color: derive(-fx-accent, 30%);
     -fx-background-radius: 40;
+}
+
+.choose_button {
+    -fx-background-color: -fx-accent;
+    -fx-font-weight:bold;
+    -fx-fill: white;
+    -fx-text-fill: white;
+    -fx-min-width: 95px;
+    -fx-min-height: 25px;
+    -fx-background-radius: 30;
+}
+
+.choose_button:focused {
+
 }

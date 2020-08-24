@@ -566,12 +566,14 @@ public class DbController {
 				String createdDate = rs.getString( "CreatedDate" );
 				String dueDate = rs.getString( "DueDate" );
 				String payedDate = rs.getString( "PayedDate" );
+				String deliveryDate = rs.getString( "DeliveryDate" );
 				String skonto = rs.getString( "Skonto" );
-				boolean state = rs.getInt( "State" ) == 1 ? true : false;
+				String state = rs.getString( "State" );
+				int payCondition = rs.getInt( "PayCondition" );
 				double totalPrice = rs.getDouble( "TotalPrice" );
 				double ust = rs.getDouble( "USt" );
 
-				Invoice invoice = new Invoice(reNr, readCustomer(kdNr), createdDate, dueDate, payedDate, state, totalPrice,  ust);
+				Invoice invoice = new Invoice(reNr, readCustomer(kdNr), createdDate, dueDate, payedDate, deliveryDate, state, payCondition, totalPrice,  ust);
 
 				invoiceData.add(invoice);
 			}
@@ -584,7 +586,7 @@ public class DbController {
 	}
 
 	public boolean createInvoice(Invoice invoice) {
-		String query = "INSERT INTO Invoices(ReNr, KdNr, CreatedDate, DueDate, PayedDate, State, USt, TotalPrice) VALUES(?,?,?,?,?,?,?,?)";
+		String query = "INSERT INTO Invoices(ReNr, KdNr, CreatedDate, DueDate, PayedDate, DeliveryDate, State, PayCondition, USt, TotalPrice) VALUES(?,?,?,?,?,?,?,?,?,?)";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement( query );
@@ -593,9 +595,11 @@ public class DbController {
 			ps.setString( 3, invoice.getCreateDate());
 			ps.setString( 4, invoice.getDueDate());
 			ps.setString( 5, invoice.getPayedDate());
-			ps.setBoolean( 6, invoice.isState());
-			ps.setDouble( 7, invoice.getUst());
-			ps.setDouble( 8, invoice.getTotalPrice());
+			ps.setString( 6, invoice.getDeliveryDate());
+			ps.setString( 7, invoice.getState());
+			ps.setInt( 8, invoice.getPayCondition());
+			ps.setDouble( 9, invoice.getUst());
+			ps.setDouble( 10, invoice.getTotalPrice());
 
 			ps.executeUpdate();
 
@@ -609,18 +613,20 @@ public class DbController {
 	}
 
 	public boolean editInvoice(Invoice invoice) {
-		String query = "UPDATE Invoices SET KdNr = ?, CreatedDate = ?, DueDate = ?, PayedDate = ?, State = ?, USt = ?, TotalPrice = ? WHERE ReNr = ?";
+		String query = "UPDATE Invoices SET KdNr = ?, CreatedDate = ?, DueDate = ?, PayedDate = ?, DeliveryDate = ?, State = ?, PayCondition = ?, USt = ?, TotalPrice = ? WHERE ReNr = ?";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement( query );
 			ps.setString( 1, invoice.getCustomer().getKdNr().getValue());
 			ps.setString( 2, invoice.getCreateDate());
 			ps.setString( 3, invoice.getDueDate());
-			ps.setString( 3, invoice.getPayedDate());
-			ps.setBoolean( 3, invoice.isState());
-			ps.setDouble( 4, invoice.getUst());
-			ps.setDouble( 4, invoice.getTotalPrice());
-			ps.setString( 4, invoice.getReNr());
+			ps.setString( 4, invoice.getPayedDate());
+			ps.setString( 5, invoice.getDeliveryDate());
+			ps.setString( 6, invoice.getState());
+			ps.setInt( 7, invoice.getPayCondition());
+			ps.setDouble( 8, invoice.getUst());
+			ps.setDouble( 9, invoice.getTotalPrice());
+			ps.setString( 10, invoice.getReNr());
 			ps.executeUpdate();
 
 			LOGGER.info("Invoice with ReNr: " + invoice.getReNr() + " updated!");

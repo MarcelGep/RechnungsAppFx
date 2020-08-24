@@ -242,4 +242,29 @@ public class HelperDialogs {
 
 		return dialogController.getSavedInvoice();
 	}
+
+	public static void showStateDialog(ObservableList<Invoice> invoiceData, Invoice invoice) throws IOException
+	{
+		FXMLLoader fxmlLoader = loadFXML(STATEDIALOGVIEW);
+
+		Stage dialogStage = new Stage();
+
+		Parent parent = initParent(fxmlLoader, dialogStage);
+
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setResizable(false);
+		dialogStage.initStyle(StageStyle.UNDECORATED);
+		dialogStage.setScene(new Scene(parent));
+
+		StateDialogController dialogController = fxmlLoader.getController();
+		dialogController.setDialogStage(dialogStage);
+		dialogController.setDialogTitle("STATUS SETZEN");
+		dialogController.setInvoiceData(invoiceData);
+
+		if (invoice != null) {
+			dialogController.setSelectedInvoice(invoice);
+		}
+
+		dialogStage.showAndWait();
+	}
 }

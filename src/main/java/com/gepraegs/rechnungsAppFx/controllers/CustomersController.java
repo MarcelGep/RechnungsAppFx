@@ -264,7 +264,6 @@ public class CustomersController implements Initializable {
 	@FXML
 	private void onBtnCloseDetailsClicked() {
 		customerTable.getSelectionModel().clearSelection();
-		System.out.println(customerTable.getSelectionModel().getSelectedIndex());
 		clearTableSelection();
 	}
 

@@ -11,7 +11,7 @@ public class Position extends RecursiveTreeObject<Position> {
     private StringProperty description;
     private StringProperty unit;
     private StringProperty createdDate;
-    private int amount;
+    private double amount;
     private double priceExcl;
     private double priceIncl;
     private double ust;
@@ -101,11 +101,11 @@ public class Position extends RecursiveTreeObject<Position> {
         this.createdDate.set(createdDate);
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

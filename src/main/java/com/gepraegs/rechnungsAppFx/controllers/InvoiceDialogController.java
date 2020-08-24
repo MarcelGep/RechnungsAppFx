@@ -1,15 +1,13 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
-import com.gepraegs.rechnungsAppFx.Customer;
-import com.gepraegs.rechnungsAppFx.Invoice;
-import com.gepraegs.rechnungsAppFx.Position;
-import com.gepraegs.rechnungsAppFx.Product;
+import com.gepraegs.rechnungsAppFx.*;
 import com.gepraegs.rechnungsAppFx.helpers.HelperDialogs;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -156,8 +154,12 @@ public class InvoiceDialogController implements Initializable {
     }
 
     private void initDueDate() {
+        lbDueDate.setText(dateFormatter(calcDueDate().toString()));
+    }
+
+    private LocalDate calcDueDate() {
         long days = Long.parseLong(cbPayConditions.getSelectionModel().getSelectedItem().split(" ")[0]);
-        lbDueDate.setText(dateFormatter(dpCreatedDate.getValue().plusDays(days)));
+        return dpCreatedDate.getValue().plusDays(days);
     }
 
     public void setDialogTitle(String title) {
@@ -204,6 +206,19 @@ public class InvoiceDialogController implements Initializable {
 
     public void setSelectedInvoice(Invoice selectedInvoice) {
         this.selectedInvoice = selectedInvoice;
+        this.selectedCustomer = selectedInvoice.getCustomer();
+
+        customerSelected.setValue(true);
+        cbCustomer.getSelectionModel().select(selectedInvoice.getCustomer());
+        lbCompany.setText(selectedInvoice.getCustomer().getCompany().getValue());
+        lbStreet.setText(selectedInvoice.getCustomer().getStreet().getValue());
+        lbPlzOrt.setText(selectedInvoice.getCustomer().getPlz().getValue() + " " + selectedInvoice.getCustomer().getLocation().getValue());
+        lbReNr.setText(selectedInvoice.getReNr());
+        dpCreatedDate.setValue(parseToDate(selectedInvoice.getCreateDate()));
+        dpDeliveryDate.setValue(parseToDate(selectedInvoice.getDeliveryDate()));
+        cbDate.setSelected(selectedInvoice.getCreateDate().equals(selectedInvoice.getDeliveryDate()));
+        cbPayConditions.getSelectionModel().select(selectedInvoice.getPayCondition() + " Tage");
+        lbDueDate.setText(dateFormatter(selectedInvoice.getDueDate()));
     }
 
     public void setInvoiceData(ObservableList<Invoice> invoiceData) {
@@ -219,12 +234,23 @@ public class InvoiceDialogController implements Initializable {
 
         String newReNr = selectedInvoice != null ? selectedInvoice.getReNr() : String.valueOf(dbController.readNextId("Invoices"));
 
+        LocalDate now = LocalDate.now();
+        InvoiceState state = InvoiceState.CREATED;
+        String currentDate = now.toString();
+        String dueDate = calcDueDate().toString();
+
+        if (dueDate.compareTo(currentDate) <= 0) {
+            state = InvoiceState.DUE;
+        }
+
         Invoice newInvoice = new Invoice(newReNr,
                                          selectedCustomer,
-                                         dateFormatter(dpCreatedDate.getValue()),
-                                         lbDueDate.getText(),
+                                         dpCreatedDate.getValue().toString(),
+                                         calcDueDate().toString(),
                                          null,
-                                         false,
+                                         dpDeliveryDate.getValue().toString(),
+                                         state.getCode(),
+                                         Integer.parseInt(cbPayConditions.getSelectionModel().getSelectedItem().split(" ")[0]),
                                          CurrencyStringToDouble(lbPriceIncl.getText()),
                                          PercentageStringToDouble(lbUst.getText()));
 
@@ -247,22 +273,59 @@ public class InvoiceDialogController implements Initializable {
     }
 
     private void createPositions() {
-        Position position = new Position();
+        for (int i = 1; i < gpPositions.getRowCount(); i++) {
+            Position position = new Position();
+            position.setRgNr(lbReNr.getText());
+            position.setCreatedDate(dpCreatedDate.getValue().toString());
 
-        int rowCount = gpPositions.getRowCount();
-
-        for (int i = 1; i < rowCount; i++) {
             for (Node child : gpPositions.getChildren()) {
                 if (child != null) {
-                    int rowIndex = GridPane.getRowIndex(child);
-                    if (rowIndex == i) {
-                        System.out.println(child);
+                    Integer rowIndex = GridPane.getRowIndex(child);
+                    int r = rowIndex == null ? 0 : rowIndex;
+                    String id = child.getId();
+                    if (r == i && id != null) {
+                        TextField tf;
+                        ComboBox cb;
+                        switch (id) {
+                            case "tfAmount" :
+                                tf = (TextField)child;
+                                position.setAmount(NumberStrToDouble(tf.getText()));
+                                break;
+
+                            case "tfPriceExcl" :
+                                tf = (TextField)child;
+                                position.setPriceExcl(CurrencyStringToDouble(tf.getText()));
+                                break;
+
+                            case "tfPriceIncl" :
+                                tf = (TextField)child;
+                                position.setPriceIncl(CurrencyStringToDouble(tf.getText()));
+                                break;
+
+                            case "cbProduct" :
+                                cb = (ComboBox)child;
+                                position.setDescription(cb.getSelectionModel().getSelectedItem().toString());
+                                break;
+
+                            case "cbUnit" :
+                                cb = (ComboBox)child;
+                                position.setUnit(cb.getSelectionModel().getSelectedItem().toString());
+                                break;
+
+                            case "cbUst" :
+                                cb = (ComboBox)child;
+                                position.setUst(PercentageStringToDouble(cb.getSelectionModel().getSelectedItem().toString()));
+                                break;
+
+                            default :
+                                break;
+                        }
                     }
                 }
             }
-        }
 
-//        dbController.createPosition(position);
+            dbController.createPosition(position);
+        }
     }
 
     @FXML
@@ -378,6 +441,7 @@ public class InvoiceDialogController implements Initializable {
     private ComboBox createCbUnit() {
         List<String> unit = Arrays.asList("Stk.", "cm", "h", "kg", "km", "m", "L", "ml");
         ComboBox cb =  createCBox(null, unit, 0);
+        cb.setId("cbUnit");
         cb.setEditable(false);
         return cb;
     }
@@ -463,6 +527,7 @@ public class InvoiceDialogController implements Initializable {
     private ComboBox createCbProduct() {
         ComboBox cb = createCBox("Beschreibe oder wähle ein Produkt", null, -1 );
         cb.setMaxWidth(MAX_VALUE);
+        cb.setId("cbProduct");
         cb.getItems().setAll(productData);
         cb.valueProperty().addListener((ov, oldValue, newValue) -> {
             if (newValue instanceof Product) {
@@ -476,6 +541,7 @@ public class InvoiceDialogController implements Initializable {
     private ComboBox createCbUst() {
         List<String> ustArr = Arrays.asList("19 %", "16 %", "7 %", "5 %", "0 %");
         ComboBox cb = createCBox(null, ustArr, 0);
+        cb.setId("cbUst");
         cb.valueProperty().addListener((ov, oldValue, newValue) -> {
             lbUst.setText((String) newValue);
             double ust = PercentageStringToDouble((String) newValue);

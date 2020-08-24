@@ -75,7 +75,18 @@ public class FormatterHelper {
         }
     }
 
-    public static String dateFormatter(LocalDate date) {
-        return date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    public static String dateFormatter(String date) {
+        if (date != null) {
+            LocalDate formattedDate = LocalDate.parse(date);
+            return formattedDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        }
+        return null;
+    }
+
+    public static LocalDate parseToDate(String date) {
+        if (date != null) {
+            return LocalDate.parse(date);
+        }
+        return null;
     }
 }

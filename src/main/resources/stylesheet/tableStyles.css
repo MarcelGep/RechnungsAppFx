@@ -63,6 +63,70 @@
     -fx-background-color: derive(-fx-accent, 100%);
 }
 
+/* custom tables */
+#positions_table {
+    -fx-background-color: white;
+}
+
+#positions_table:focused {
+    -fx-background-insets: 0, 1;
+}
+
+#positions_table .table-row-cell {
+    -fx-background: white;
+    -fx-cell-size: 30;
+}
+
+#positions_table:focused .table-row-cell:selected {
+    -fx-background-color: derive(-fx-accent, 100%);
+}
+
+#positions_table:focused .table-row-cell:selected .table-cell {
+    -fx-text-fill: black;
+}
+
+#positions_table .table-row-cell:selected {
+    -fx-background-color: derive(-fx-accent, 100%);
+}
+
+#positions_table .table-cell:empty {
+    -fx-background-color: white;
+}
+
+#positions_table .table-cell {
+    -fx-text-fill: black;
+    -fx-padding: 0 0 0 0;
+    -fx-border-color: white;
+}
+
+#positions_table .column-header .label {
+    -fx-text-fill : derive(-fx-accent, 20%);
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 0 10 -2;
+}
+
+#positions_table .column-header {
+    -fx-border-width : 0 0 0 0;
+    -fx-background-color: white;
+}
+
+#positions_table .scroll-bar * {
+    -fx-pref-height: 0;
+}
+
+#positions_table:row-selection .table-row-cell:filled:hover {
+    -fx-background-color: white
+}
+
+#positions_table:row-selection .table-row-cell:selected:hover {
+    -fx-background-color: white
+}
+
+#positions_table .table-row-cell:filled:selected {
+    -fx-background-color: white ;
+}
+
+
 /* Selected row */
 /*.table-row-cell:selected {*/
 /*    -fx-table-cell-border-color: transparent;*/

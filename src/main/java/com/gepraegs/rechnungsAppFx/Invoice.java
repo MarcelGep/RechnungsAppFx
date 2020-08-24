@@ -16,7 +16,9 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
     private StringProperty createDate;
     private StringProperty dueDate;
     private StringProperty payedDate;
-    private BooleanProperty state;
+    private StringProperty deliveryDate;
+    private StringProperty state;
+    private int payCondition;
     private double totalPrice;
     private double ust;
 
@@ -27,18 +29,22 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
         this.createDate = new SimpleStringProperty("");
         this.dueDate = new SimpleStringProperty("");
         this.payedDate = new SimpleStringProperty("");
-        this.state = new SimpleBooleanProperty(false);
+        this.state = new SimpleStringProperty("CR");
+        this.deliveryDate = new SimpleStringProperty("");
+        this.payCondition = 0;
         this.totalPrice = 0.0;
         this.ust = 0.0;
     }
 
-    public Invoice(String reNr, Customer customer, String createDate, String dueDate, String payedDate, boolean state, double totalPrice, double ust) {
+    public Invoice(String reNr, Customer customer, String createDate, String dueDate, String payedDate, String deliveryDate, String state, int payCondition, double totalPrice, double ust) {
         this.reNr = new SimpleStringProperty(reNr);
         this.customer = customer;
         this.createDate = new SimpleStringProperty(createDate);
         this.dueDate = new SimpleStringProperty(dueDate);
         this.payedDate = new SimpleStringProperty(payedDate);
-        this.state = new SimpleBooleanProperty(state);
+        this.deliveryDate = new SimpleStringProperty(deliveryDate);
+        this.state = new SimpleStringProperty(state);
+        this.payCondition = payCondition;
         this.totalPrice = totalPrice;
         this.ust = ust;
     }
@@ -99,15 +105,15 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
         this.payedDate.set(payedDate);
     }
 
-    public boolean isState() {
+    public String getState() {
         return state.get();
     }
 
-    public BooleanProperty stateProperty() {
+    public StringProperty stateProperty() {
         return state;
     }
 
-    public void setState(boolean state) {
+    public void setState(String state) {
         this.state.set(state);
     }
 
@@ -125,5 +131,25 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
 
     public void setUst(double ust) {
         this.ust = ust;
+    }
+
+    public String getDeliveryDate() {
+        return deliveryDate.get();
+    }
+
+    public StringProperty deliveryDateProperty() {
+        return deliveryDate;
+    }
+
+    public void setDeliveryDate(String deliveryDate) {
+        this.deliveryDate.set(deliveryDate);
+    }
+
+    public int getPayCondition() {
+        return payCondition;
+    }
+
+    public void setPayCondition(int payCondition) {
+        this.payCondition = payCondition;
     }
 }
