@@ -176,7 +176,7 @@ public class InvoicesController implements Initializable {
 		colDueDate.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
 				new ReadOnlyStringWrapper(dateFormatter(param.getValue().getDueDate())));
 		colPayedDate.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
-				new ReadOnlyStringWrapper(param.getValue().getPayedDate() == null ? "" : param.getValue().getPayedDate()));
+				new ReadOnlyStringWrapper(param.getValue().getPayedDate() == null ? "" : dateFormatter(param.getValue().getPayedDate())));
 		colTotalPrice.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
 				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getTotalPrice())));
 		colState.setCellFactory(new Callback<>() {
@@ -344,8 +344,9 @@ public class InvoicesController implements Initializable {
 				String lowerCaseFilter = newValue.toLowerCase();
 
 				String customerName = invoice.getCustomer().getCompany().getValue().toLowerCase();
+				String reNr = invoice.getReNr().toLowerCase();
 
-				if (customerName.contains(lowerCaseFilter)) {
+				if (customerName.contains(lowerCaseFilter) || reNr.contains(lowerCaseFilter)) {
 					return true;
 				}
 

@@ -752,6 +752,30 @@ public class DbController {
 		return false;
 	}
 
+	public boolean positionExist(Position position) {
+		String query = "SELECT * FROM Positions WHERE RgNr = ? AND Description = ?";
+
+		boolean exist = false;
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setInt( 1, Integer.parseInt(position.getRgNr()));
+			ps.setString( 2, position.getDescription());
+
+			ResultSet rs = ps.executeQuery();
+
+			while ( rs.next() ) {
+				exist = true;
+			}
+
+			LOGGER.info( "Positions " + position.getDescription() + " exist: " + exist);
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+
+		return exist;
+	}
+
 	public List<Position> readPositions(String rgNr) {
 		String query = "SELECT * FROM Positions WHERE RgNr = ?";
 
@@ -782,6 +806,33 @@ public class DbController {
 
 			LOGGER.info( "Read all positions successfull!" );
 			return positions;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return null;
+		}
+	}
+
+	public Product readProduct(String artNr) {
+		String query = "SELECT * FROM Products WHERE ArtNr = ?";
+		Product product = null;
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, artNr );
+
+			ResultSet rs = ps.executeQuery();
+
+			while ( rs.next() ) {
+				String unit = rs.getString("Unit");
+				String name = rs.getString("Name");
+				double price = rs.getDouble("Price");
+				double ust = rs.getDouble("Ust");
+
+				product = new Product(artNr, name, unit, ust, price);
+			}
+
+			LOGGER.info( "Read product with ArtNr: " + artNr );
+			return product;
 		} catch ( SQLException e ) {
 			LOGGER.warning( e.toString() );
 			return null;

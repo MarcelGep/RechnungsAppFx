@@ -1,13 +1,11 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
 import com.gepraegs.rechnungsAppFx.*;
-import com.gepraegs.rechnungsAppFx.helpers.HelperDialogs;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -15,18 +13,17 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.*;
+import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateExclUst;
+import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateInclUst;
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
-
-import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialog;
 import static java.lang.Integer.MAX_VALUE;
 
 public class InvoiceDialogController implements Initializable {
@@ -68,8 +65,9 @@ public class InvoiceDialogController implements Initializable {
     private final DbController dbController = DbController.getInstance();
 
     private ObservableList<Invoice> invoiceData = FXCollections.observableArrayList();
+    private ObservableList<Product> productData = FXCollections.observableArrayList();
 
-    private List<Product> productData;
+    private List<Position> positionData;
 
     private final SimpleBooleanProperty customerSelected = new SimpleBooleanProperty(false);
 
@@ -91,7 +89,7 @@ public class InvoiceDialogController implements Initializable {
         btnChooseCustomer.visibleProperty().bind(customerSelected);
         btnChooseCustomer.managedProperty().bind(customerSelected);
 
-        productData = dbController.readProducts();
+        productData.setAll(dbController.readProducts());
 
         addTextLimiter(taMessage, MESSAGE_MAX_COUNT);
         addTextLimiter(taFooter, FOOTER_MAX_COUNT);
@@ -100,7 +98,6 @@ public class InvoiceDialogController implements Initializable {
         initDatePicker();
         initDueDate();
         initLabels();
-        addPosition();
     }
 
     @FXML
@@ -207,6 +204,7 @@ public class InvoiceDialogController implements Initializable {
     public void setSelectedInvoice(Invoice selectedInvoice) {
         this.selectedInvoice = selectedInvoice;
         this.selectedCustomer = selectedInvoice.getCustomer();
+        this.positionData = dbController.readPositions(selectedInvoice.getReNr());
 
         customerSelected.setValue(true);
         cbCustomer.getSelectionModel().select(selectedInvoice.getCustomer());
@@ -219,6 +217,8 @@ public class InvoiceDialogController implements Initializable {
         cbDate.setSelected(selectedInvoice.getCreateDate().equals(selectedInvoice.getDeliveryDate()));
         cbPayConditions.getSelectionModel().select(selectedInvoice.getPayCondition() + " Tage");
         lbDueDate.setText(dateFormatter(selectedInvoice.getDueDate()));
+
+        showPositions();
     }
 
     public void setInvoiceData(ObservableList<Invoice> invoiceData) {
@@ -262,10 +262,10 @@ public class InvoiceDialogController implements Initializable {
             // Add new invoice to invoiceData
             invoiceData.add(newInvoice);
             dbController.createInvoice(newInvoice);
-
-            // create positions
-            createPositions();
         }
+
+        // create positions
+        createPositions();
 
         savedInvoice = newInvoice;
 
@@ -304,7 +304,10 @@ public class InvoiceDialogController implements Initializable {
 
                             case "cbProduct" :
                                 cb = (ComboBox)child;
+                                Object test = cb.getSelectionModel().getSelectedItem();
+                                Product product = (Product) cb.getSelectionModel().getSelectedItem();
                                 position.setDescription(cb.getSelectionModel().getSelectedItem().toString());
+                                position.setArtNr(product.getArtNr());
                                 break;
 
                             case "cbUnit" :
@@ -324,32 +327,60 @@ public class InvoiceDialogController implements Initializable {
                 }
             }
 
-            dbController.createPosition(position);
+            if (!dbController.positionExist(position)) {
+                dbController.createPosition(position);
+            }
         }
+    }
+
+    private void showPositions() {
+        for (Position pos : positionData) {
+//            Product product = dbController.readProduct(pos.getArtNr());
+            String description = pos.getDescription();
+            String amount = DoubleToNumberStr(pos.getAmount());
+            String unit = pos.getUnit();
+            String priceExcl = DoubleToCurrencyString(pos.getPriceExcl());
+            String ust = DoubleToPercentageString(pos.getUst());
+            String priceIncl = DoubleToCurrencyString(pos.getPriceIncl());
+
+            addPosition(description, amount, unit, priceExcl, ust, priceIncl);
+        }
+
+        updateTotalPrices();
     }
 
     @FXML
     public void handleCancel() throws IOException {
-        String content = "RECHNUNG VOR DEM VERLASSEN SPEICHERN?\n\n" +
-                         "Du verlässt nun den Rechnungseditor mit ungesicherten Änderungen an der Rechnung. " +
-                         "Möchtest du die Änderungen speichern?";
-        if (showConfirmDialog(content, Arrays.asList("Ja", "Nein"))) {
-            handleSave();
-        } else {
-            dialogStage.close();
-        }
+        dialogStage.close();
+//        if (hasChanges) {
+//            String content = "RECHNUNG VOR DEM VERLASSEN SPEICHERN?\n\n" +
+//                    "Du verlässt nun den Rechnungseditor mit ungesicherten Änderungen an der Rechnung. " +
+//                    "Möchtest du die Änderungen speichern?";
+//            if (showConfirmDialog(content, Arrays.asList("Ja", "Nein"))) {
+//                handleSave();
+//            } else {
+//                dialogStage.close();
+//            }
+//        }
     }
 
     @FXML
     private void onBtnAddPositionClicked() {
-        addPosition();
+        addEmptyPosition();
     }
 
-    private void addPosition() {
+    public void addEmptyPosition() {
         int rowCount = gpPositions.getRowCount();
-        gpPositions.addRow(rowCount, createCbProduct(), createTfAmount(),
-                            createCbUnit(), createTfPriceExcl(),
-                            createCbUst(), createTfPriceIncl(), createDeleteBtn());
+        gpPositions.addRow(rowCount, createCbProduct(null), createTfAmount(null),
+                            createCbUnit(null), createTfPriceExcl(null),
+                            createCbUst(null), createTfPriceIncl(null), createDeleteBtn());
+    }
+
+    private void addPosition(String description, String amount, String unit, String priceExcl, String ust, String priceIncl) {
+        int rowCount = gpPositions.getRowCount();
+        gpPositions.addRow(rowCount, createCbProduct(description), createTfAmount(amount),
+                createCbUnit(unit), createTfPriceExcl(priceExcl),
+                createCbUst(ust), createTfPriceIncl(priceIncl), createDeleteBtn());
     }
 
     private void deletePosition(int row) {
@@ -417,7 +448,7 @@ public class InvoiceDialogController implements Initializable {
         tfPriceExcl.setText(DoubleToCurrencyString(priceExcl));
     }
 
-    private void setProductData(int row, Product product) {
+    private void setPrice(int row, Product product) {
         TextField tfPriceExcl = getTextFieldById(row, "tfPriceExcl");
         TextField tfPriceIncl = getTextFieldById(row, "tfPriceIncl");
         tfPriceExcl.setText(DoubleToCurrencyString(product.getPriceExcl()));
@@ -438,18 +469,20 @@ public class InvoiceDialogController implements Initializable {
         return deleteBtn;
     }
 
-    private ComboBox createCbUnit() {
+    private ComboBox createCbUnit(String value) {
         List<String> unit = Arrays.asList("Stk.", "cm", "h", "kg", "km", "m", "L", "ml");
         ComboBox cb =  createCBox(null, unit, 0);
         cb.setId("cbUnit");
         cb.setEditable(false);
+        cb.getSelectionModel().select(value != null ? value : "Stk.");
         return cb;
     }
 
-    private TextField createTfPriceExcl() {
-        TextField tf = new TextField(DoubleToCurrencyString(0.0));
+    private TextField createTfPriceExcl(String value) {
+        TextField tf = new TextField();
         tf.setId("tfPriceExcl");
         tf.setStyle("-fx-alignment: CENTER-RIGHT;");
+        tf.setText(value != null ? value : DoubleToCurrencyString(0.0));
         tf.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
                 try {
@@ -467,10 +500,11 @@ public class InvoiceDialogController implements Initializable {
         return tf;
     }
 
-    private TextField createTfPriceIncl() {
-        TextField tf = new TextField(DoubleToCurrencyString(0.0));
+    private TextField createTfPriceIncl(String value) {
+        TextField tf = new TextField();
         tf.setId("tfPriceIncl");
         tf.setStyle("-fx-alignment: CENTER-RIGHT;");
+        tf.setText(value != null ? value : DoubleToCurrencyString(0.0));
         tf.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
                 try {
@@ -488,9 +522,10 @@ public class InvoiceDialogController implements Initializable {
         return tf;
     }
 
-    private TextField createTfAmount() {
-        TextField tf = new TextField("1,00");
+    private TextField createTfAmount(String value) {
+        TextField tf = new TextField();
         tf.setId("tfAmount");
+        tf.setText(value != null ? value : DoubleToNumberStr(1.0));
         tf.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
                 try {
@@ -524,24 +559,58 @@ public class InvoiceDialogController implements Initializable {
 //        });
     }
 
-    private ComboBox createCbProduct() {
-        ComboBox cb = createCBox("Beschreibe oder wähle ein Produkt", null, -1 );
+    private ComboBox createCbProduct(String value) {
+        ComboBox cb = createCBox("Beschreibe oder wähle ein Produkt", null, -1);
+//        ComboBox<Product> cb = new ComboBox<>();
+//        cb.setEditable(true);
         cb.setMaxWidth(MAX_VALUE);
         cb.setId("cbProduct");
         cb.getItems().setAll(productData);
+        cb.getSelectionModel().select(value);
         cb.valueProperty().addListener((ov, oldValue, newValue) -> {
             if (newValue instanceof Product) {
-                setProductData(GridPane.getRowIndex(cb), (Product) newValue);
+
+//            if (!dbController.positionExist(position)) {
+//            } else {
+//                System.out.println("Position exist: " + position.getDescription());
+////                try {
+////                    showConfirmDialog("Die Position wurde schon erfasst!", Arrays.asList("Ok"));
+////                } catch (IOException e) {
+////                    e.printStackTrace();
+////                }
+//            }
+
+                setPrice(GridPane.getRowIndex(cb), (Product) newValue);
                 updateTotalPrices();
+
+                cb.getSelectionModel().select(newValue);
             }
         });
+//        cb.setCellFactory(new Callback<>() {
+//            @Override
+//            public ListCell<Product> call(ListView<Product> l) {
+//                return new ListCell<Product>() {
+//                    @Override
+//                    protected void updateItem(Product item, boolean empty) {
+//                        super.updateItem(item, empty);
+//                        if (item == null || empty) {
+//                            setGraphic(null);
+//                        } else {
+//                            setText(item.getArtNr() + " - " + item.getName());
+//                        }
+//                    }
+//                };
+//            }
+//        });
+
         return cb;
     }
 
-    private ComboBox createCbUst() {
+    private ComboBox createCbUst(String value) {
         List<String> ustArr = Arrays.asList("19 %", "16 %", "7 %", "5 %", "0 %");
         ComboBox cb = createCBox(null, ustArr, 0);
         cb.setId("cbUst");
+        cb.getSelectionModel().select(value != null ? value : DoubleToPercentageString(19.0) );
         cb.valueProperty().addListener((ov, oldValue, newValue) -> {
             lbUst.setText((String) newValue);
             double ust = PercentageStringToDouble((String) newValue);
@@ -602,10 +671,6 @@ public class InvoiceDialogController implements Initializable {
                         String s = ta.getText().substring(0, maxLength);
                         ta.setText(s);
                     }
-
-//                    if(newValue.length() <= 5){
-//                        ta.setText(currentText.substring(0, ta.getText().length()-1));
-//                    }
                 }
 
             });

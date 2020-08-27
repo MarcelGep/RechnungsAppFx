@@ -236,6 +236,7 @@ public class HelperDialogs {
 		}
 		else {
 			dialogController.setDialogTitle("NEUE RECHNUNG");
+			dialogController.addEmptyPosition();
 		}
 
 		dialogStage.showAndWait();
