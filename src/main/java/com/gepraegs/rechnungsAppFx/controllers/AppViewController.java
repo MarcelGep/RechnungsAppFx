@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -20,6 +22,8 @@ import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialo
 
 public class AppViewController implements Initializable {
 
+	@FXML private ProductsController productsController;
+
 	@FXML private TabPane tabPaneContent;
 
 	@FXML private MenuItem menuItemExit;
@@ -29,12 +33,16 @@ public class AppViewController implements Initializable {
 	@Override
 	public void initialize( URL location, ResourceBundle resources ) {
 		// Load initialize tab
-		tabPaneContent.getSelectionModel().selectFirst();
+//		tabPaneContent.getSelectionModel().selectFirst();
+
+		tabPaneContent.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
+			if (newValue.getText().equals("Produkte")) {
+				productsController.loadProductsData();
+			}
+		});
 
 		// Setup menu items
-		menuItemExit.setOnAction( e -> {
-			exitProgram();
-		});
+		menuItemExit.setOnAction( e -> exitProgram());
 	}
 
 	public void exitProgram() {

@@ -67,7 +67,9 @@ public class ProductsController implements Initializable {
 		showDialogLayer.setVisible(false);
 	}
 
-	private void loadProductsData() {
+	public void loadProductsData() {
+		productData.clear();
+
 		//read guests from database
 		List<Product> products = dbController.readProducts();
 
@@ -221,7 +223,7 @@ public class ProductsController implements Initializable {
 		try {
 			// Create Dialog
 			showDialogLayer.setVisible(true);
-			Product product = showProductDialog(productData, null);
+			Product product = showProductDialog(productData, null, null);
 
 			if (product != null) {
 				productTable.sort();
@@ -271,7 +273,7 @@ public class ProductsController implements Initializable {
 			if (selectedIndex != -1) {
 				showDialogLayer.setVisible(true);
 				Product product = productTable.getItems().get(selectedIndex);
-				product = showProductDialog(productData, product);
+				product = showProductDialog(productData, product, null);
 
 				if (product != null) {
 					showProductInformations(product);

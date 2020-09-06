@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -13,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,9 +21,13 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static com.gepraegs.rechnungsAppFx.Constants.PRODUCTDIALOGVIEW;
 import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateExclUst;
 import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateInclUst;
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showProductDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperResourcesLoader.loadFXML;
 import static java.lang.Integer.MAX_VALUE;
 
 public class InvoiceDialogController implements Initializable {
@@ -274,58 +278,9 @@ public class InvoiceDialogController implements Initializable {
 
     private void createPositions() {
         for (int i = 1; i < gpPositions.getRowCount(); i++) {
-            Position position = new Position();
+            Position position = getPositionByRow(i);
             position.setRgNr(lbReNr.getText());
             position.setCreatedDate(dpCreatedDate.getValue().toString());
-
-            for (Node child : gpPositions.getChildren()) {
-                if (child != null) {
-                    Integer rowIndex = GridPane.getRowIndex(child);
-                    int r = rowIndex == null ? 0 : rowIndex;
-                    String id = child.getId();
-                    if (r == i && id != null) {
-                        TextField tf;
-                        ComboBox cb;
-                        switch (id) {
-                            case "tfAmount" :
-                                tf = (TextField)child;
-                                position.setAmount(NumberStrToDouble(tf.getText()));
-                                break;
-
-                            case "tfPriceExcl" :
-                                tf = (TextField)child;
-                                position.setPriceExcl(CurrencyStringToDouble(tf.getText()));
-                                break;
-
-                            case "tfPriceIncl" :
-                                tf = (TextField)child;
-                                position.setPriceIncl(CurrencyStringToDouble(tf.getText()));
-                                break;
-
-                            case "cbProduct" :
-                                cb = (ComboBox)child;
-                                Object test = cb.getSelectionModel().getSelectedItem();
-                                Product product = (Product) cb.getSelectionModel().getSelectedItem();
-                                position.setDescription(cb.getSelectionModel().getSelectedItem().toString());
-                                position.setArtNr(product.getArtNr());
-                                break;
-
-                            case "cbUnit" :
-                                cb = (ComboBox)child;
-                                position.setUnit(cb.getSelectionModel().getSelectedItem().toString());
-                                break;
-
-                            case "cbUst" :
-                                cb = (ComboBox)child;
-                                position.setUst(PercentageStringToDouble(cb.getSelectionModel().getSelectedItem().toString()));
-                                break;
-
-                            default :
-                                break;
-                        }
-                    }
-                }
-            }
 
             if (!dbController.positionExist(position)) {
                 dbController.createPosition(position);
@@ -569,23 +524,51 @@ public class InvoiceDialogController implements Initializable {
         cb.getSelectionModel().select(value);
         cb.valueProperty().addListener((ov, oldValue, newValue) -> {
             if (newValue instanceof Product) {
-
-//            if (!dbController.positionExist(position)) {
-//            } else {
-//                System.out.println("Position exist: " + position.getDescription());
-////                try {
-////                    showConfirmDialog("Die Position wurde schon erfasst!", Arrays.asList("Ok"));
-////                } catch (IOException e) {
-////                    e.printStackTrace();
-////                }
-//            }
-
                 setPrice(GridPane.getRowIndex(cb), (Product) newValue);
                 updateTotalPrices();
+            }
 
-                cb.getSelectionModel().select(newValue);
+            if (newValue != null && oldValue!= null && !oldValue.equals(newValue) && !newValue.toString().isEmpty()) {
+                String productName = newValue.toString();
+
+                if (positionExist(productName)) {
+                    try {
+                        if (showConfirmDialog("Die Position wurde bereits erfasst! Soll die Anzahl übernommen werden?", Arrays.asList("Übernehmen", "Verwerfen"))) {
+                            //TODO Anzahl übernehmen
+                        }
+                        deletePosition(GridPane.getRowIndex(cb));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (!productName.isEmpty() && !dbController.productExist(productName)) {
+                    try {
+                        if (showConfirmDialog("Das Produkt \"" + productName + "\" wurde nicht gefunden, soll dieses angelegt werden?", Arrays.asList("Ja", "Nein"))) {
+                            showProductDialog(productData, null, productName);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
+
+//        cb.focusedProperty().addListener((observable, oldValue, newValue) -> {
+//            if (!newValue) {
+//                if (positionExist(cb.getSelectionModel().getSelectedItem().toString())) {
+//                    try {
+//                        if (showConfirmDialog("Die Position wurde bereits erfasst! Soll die Anzahl übernommen werden?", Arrays.asList("Übernehmen", "Verwerfen"))) {
+//                            //TODO Anzahl übernehmen
+//                        }
+//                        deletePosition(GridPane.getRowIndex(cb));
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+
 //        cb.setCellFactory(new Callback<>() {
 //            @Override
 //            public ListCell<Product> call(ListView<Product> l) {
@@ -622,7 +605,7 @@ public class InvoiceDialogController implements Initializable {
     }
 
     private ComboBox createCBox(String prompt, List<String> content, int selectedIndex) {
-        ComboBox cBox = new ComboBox<String>();
+        ComboBox cBox = new ComboBox<>();
         cBox.setEditable(true);
 
         if (prompt != null) {
@@ -651,6 +634,97 @@ public class InvoiceDialogController implements Initializable {
             }
         }
         return tf;
+    }
+
+    private boolean positionExist(String name) {
+        int posCount = 0;
+
+        if (!name.isEmpty()) {
+            for (Node child : gpPositions.getChildren()) {
+                if (child instanceof ComboBox
+                        && child.getId() != null
+                        && child.getId().equals("cbProduct")) {
+                    ComboBox cb = (ComboBox) child;
+                    if (name.equals(cb.getSelectionModel().getSelectedItem().toString())) {
+                        if (posCount == 0) {
+                            posCount++;
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private Position getPositionByRow(int row) {
+        Position position = new Position();
+        TextField tf;
+        List<String> textFieldIds = Arrays.asList("tfAmount", "tfPriceExcl", "tfPriceIncl");
+        for (String tfId : textFieldIds) {
+            for (Node child : gpPositions.getChildren()) {
+                if (child instanceof TextField
+                        && child.getId() != null
+                        && child.getId().equals(tfId)
+                        && row == GridPane.getRowIndex(child)) {
+
+                    switch (tfId) {
+                        case "tfAmount":
+                            tf = (TextField) child;
+                            position.setAmount(NumberStrToDouble(tf.getText()));
+                            break;
+
+                        case "tfPriceExcl":
+                            tf = (TextField) child;
+                            position.setPriceExcl(CurrencyStringToDouble(tf.getText()));
+                            break;
+
+                        case "tfPriceIncl":
+                            tf = (TextField) child;
+                            position.setPriceIncl(CurrencyStringToDouble(tf.getText()));
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        ComboBox cb;
+        List<String> comboBoxIds = Arrays.asList("cbProduct", "cbUnit", "cbUst");
+        for (String cbId : comboBoxIds) {
+            for (Node child : gpPositions.getChildren()) {
+                if (child instanceof ComboBox
+                        && child.getId() != null
+                        && child.getId().equals(cbId)
+                        && row == GridPane.getRowIndex(child)) {
+
+                    switch (cbId) {
+                        case "cbProduct":
+                            cb = (ComboBox) child;
+                            position.setDescription(cb.getSelectionModel().getSelectedItem().toString());
+                            break;
+
+                        case "cbUnit":
+                            cb = (ComboBox) child;
+                            position.setUnit(cb.getSelectionModel().getSelectedItem().toString());
+                            break;
+
+                        case "cbUst":
+                            cb = (ComboBox) child;
+                            position.setUst(PercentageStringToDouble(cb.getSelectionModel().getSelectedItem().toString()));
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        return position;
     }
 
     public void addTextLimiter(final Object obj, final int maxLength) {

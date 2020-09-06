@@ -496,7 +496,7 @@ public class DbController {
 
 			ps.executeUpdate();
 
-			LOGGER.info( "New customer created!" );
+			LOGGER.info( "New product \"" + product.getName() + "\" created!" );
 
 			return true;
 		} catch ( SQLException e ) {
@@ -670,7 +670,7 @@ public class DbController {
 
 			newId++ ;
 
-			LOGGER.info( "Read new id from " + type + "= " + newId );
+			LOGGER.info( "Read new id from " + type + " = " + newId );
 
 		} catch ( SQLException e ) {
 			LOGGER.warning( e.toString() );
@@ -837,6 +837,38 @@ public class DbController {
 			LOGGER.warning( e.toString() );
 			return null;
 		}
+	}
+
+	public boolean productExist(String name) {
+		String query = "SELECT * FROM Products WHERE Name = ?";
+//		Product product = null;
+		Boolean exist = false;
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setString( 1, name );
+
+			ResultSet rs = ps.executeQuery();
+
+			int findItem = 0;
+
+			while ( rs.next() ) {
+				findItem++;
+//				String artNr = rs.getString("ArtNr");
+//				String unit = rs.getString("Unit");
+//				double price = rs.getDouble("Price");
+//				double ust = rs.getDouble("Ust");
+//
+//				product = new Product(artNr, name, unit, ust, price);
+			}
+
+			exist = findItem > 0;
+			LOGGER.info( "Exist product with name: " + name + " - " + exist);
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+
+		return exist;
 	}
 
 //	public boolean createContactData( ContactData contactData, ContactType type ) {

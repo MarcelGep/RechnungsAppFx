@@ -23,6 +23,14 @@ public class Product extends RecursiveTreeObject<Product> {
         this.ust = 0.0;
     }
 
+    public Product(String name, String unit, double ust, double priceExcl) {
+        this.name = new SimpleStringProperty(name);
+        this.unit = new SimpleStringProperty(unit);
+        this.ust = ust;
+        this.priceExcl = priceExcl;
+        this.priceIncl = ((100 + this.ust) / 100) * this.priceExcl;
+    }
+
     public Product(String artNr, String name, String unit, double ust, double priceExcl) {
         this.artNr = new SimpleStringProperty(artNr);
         this.name = new SimpleStringProperty(name);

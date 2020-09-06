@@ -140,13 +140,13 @@ public class ProductDialogController implements Initializable {
     private void initTextFields() {
         tfPriceIncl.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
-                tfPriceIncl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceIncl.getText())));
+                tfPriceIncl.setText(DoubleToCurrencyString(CurrencyStringToDouble(tfPriceIncl.getText())));
             }
         });
 
         tfPriceExcl.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
-                tfPriceExcl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceExcl.getText())));
+                tfPriceExcl.setText(DoubleToCurrencyString(CurrencyStringToDouble(tfPriceExcl.getText())));
             }
         });
 
@@ -172,6 +172,10 @@ public class ProductDialogController implements Initializable {
         cbUnit.getSelectionModel().select(selectedProduct.getUnit());
     }
 
+    public void setProductName(String name) {
+        tfName.setText(name);
+    }
+
     public void setProductData(ObservableList<Product> productData) {
         this.productData = productData;
     }
@@ -192,11 +196,11 @@ public class ProductDialogController implements Initializable {
 
 
         if (selectedProduct != null) {
-            // Edit selected customer
+            // Edit selected product
             productData.set(this.productData.indexOf(selectedProduct), newProduct);
             dbController.editProduct(newProduct);
         } else {
-            // Add new customer to customerData
+            // Add new customer to productData
             productData.add(newProduct);
             dbController.createProduct(newProduct);
         }

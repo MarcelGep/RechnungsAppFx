@@ -393,13 +393,14 @@ public class InvoicesController implements Initializable {
 						break;
 					}
 				}
+
+				showPositions(invoice);
 			}
 		} catch (IOException e){
 			LOGGER.warning(e.toString());
 		}
 
 		showDialogLayer.setVisible(false);
-		showPositions(invoice);
 	}
 
 	@FXML

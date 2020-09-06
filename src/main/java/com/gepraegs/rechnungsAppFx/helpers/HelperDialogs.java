@@ -160,7 +160,7 @@ public class HelperDialogs {
 		return dialogController.getSavedCustomer();
 	}
 
-	public static Product showProductDialog(ObservableList<Product> productData, Product product) throws IOException
+	public static Product showProductDialog(ObservableList<Product> productData, Product product, String name) throws IOException
 	{
 		FXMLLoader fxmlLoader = loadFXML(PRODUCTDIALOGVIEW);
 
@@ -183,6 +183,10 @@ public class HelperDialogs {
 		}
 		else {
 			dialogController.setDialogTitle("NEUES PRODUKT");
+		}
+
+		if (name != null) {
+			dialogController.setProductName(name);
 		}
 
 		dialogStage.showAndWait();
