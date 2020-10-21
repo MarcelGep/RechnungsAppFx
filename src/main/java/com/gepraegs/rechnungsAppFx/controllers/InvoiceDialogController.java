@@ -25,8 +25,7 @@ import static com.gepraegs.rechnungsAppFx.Constants.PRODUCTDIALOGVIEW;
 import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateExclUst;
 import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateInclUst;
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
-import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialog;
-import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showProductDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
 import static com.gepraegs.rechnungsAppFx.helpers.HelperResourcesLoader.loadFXML;
 import static java.lang.Integer.MAX_VALUE;
 
@@ -262,14 +261,13 @@ public class InvoiceDialogController implements Initializable {
             // Edit selected invoice
             invoiceData.set(this.invoiceData.indexOf(selectedInvoice), newInvoice);
             dbController.editInvoice(newInvoice);
+            editPositions();
         } else {
             // Add new invoice to invoiceData
             invoiceData.add(newInvoice);
             dbController.createInvoice(newInvoice);
+            createPositions();
         }
-
-        // create positions
-        createPositions();
 
         savedInvoice = newInvoice;
 
@@ -288,9 +286,18 @@ public class InvoiceDialogController implements Initializable {
         }
     }
 
+    private void editPositions() {
+        for (int i = 1; i < gpPositions.getRowCount(); i++) {
+            Position position = getPositionByRow(i);
+            position.setRgNr(lbReNr.getText());
+            dbController.editPosition(position);
+        }
+    }
+
     private void showPositions() {
         for (Position pos : positionData) {
 //            Product product = dbController.readProduct(pos.getArtNr());
+            String artNr = pos.getArtNr();
             String description = pos.getDescription();
             String amount = DoubleToNumberStr(pos.getAmount());
             String unit = pos.getUnit();
@@ -298,7 +305,7 @@ public class InvoiceDialogController implements Initializable {
             String ust = DoubleToPercentageString(pos.getUst());
             String priceIncl = DoubleToCurrencyString(pos.getPriceIncl());
 
-            addPosition(description, amount, unit, priceExcl, ust, priceIncl);
+            addPosition(artNr, description, amount, unit, priceExcl, ust, priceIncl);
         }
 
         updateTotalPrices();
@@ -325,15 +332,12 @@ public class InvoiceDialogController implements Initializable {
     }
 
     public void addEmptyPosition() {
-        int rowCount = gpPositions.getRowCount();
-        gpPositions.addRow(rowCount, createCbProduct(null), createTfAmount(null),
-                            createCbUnit(null), createTfPriceExcl(null),
-                            createCbUst(null), createTfPriceIncl(null), createDeleteBtn());
+        addPosition(null, null, null, null,null, null, null);
     }
 
-    private void addPosition(String description, String amount, String unit, String priceExcl, String ust, String priceIncl) {
+    private void addPosition(String artNr, String description, String amount, String unit, String priceExcl, String ust, String priceIncl) {
         int rowCount = gpPositions.getRowCount();
-        gpPositions.addRow(rowCount, createCbProduct(description), createTfAmount(amount),
+        gpPositions.addRow(rowCount, createTfArtNr(artNr), createCbProduct(description), createTfAmount(amount),
                 createCbUnit(unit), createTfPriceExcl(priceExcl),
                 createCbUst(ust), createTfPriceIncl(priceIncl), createDeleteBtn());
     }
@@ -477,6 +481,14 @@ public class InvoiceDialogController implements Initializable {
         return tf;
     }
 
+    private TextField createTfArtNr(String artNr) {
+        TextField tf = new TextField();
+        tf.setId("tfArtNr");
+        tf.setText(artNr);
+        tf.setEditable(false);
+        return tf;
+    }
+
     private TextField createTfAmount(String value) {
         TextField tf = new TextField();
         tf.setId("tfAmount");
@@ -514,6 +526,67 @@ public class InvoiceDialogController implements Initializable {
 //        });
     }
 
+    private void editPositionByRow(int row, Product product) {
+        TextField tf;
+        List<String> textFieldIds = Arrays.asList("tfArtNr", "tfPriceExcl", "tfPriceIncl");
+        for (String tfId : textFieldIds) {
+            for (Node child : gpPositions.getChildren()) {
+                if (child instanceof TextField
+                        && child.getId() != null
+                        && child.getId().equals(tfId)
+                        && row == GridPane.getRowIndex(child)) {
+
+                    switch (tfId) {
+                        case "tfArtNr":
+                            tf = (TextField) child;
+                            tf.setText(product.getArtNr());
+                            break;
+
+                        case "tfPriceExcl":
+                            tf = (TextField) child;
+                            tf.setText(DoubleToCurrencyString(product.getPriceExcl()));
+                            break;
+
+                        case "tfPriceIncl":
+                            tf = (TextField) child;
+                            tf.setText(DoubleToCurrencyString(product.getPriceIncl()));
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            ComboBox cb;
+            List<String> comboBoxIds = Arrays.asList("cbUnit", "cbUst");
+            for (String cbId : comboBoxIds) {
+                for (Node child : gpPositions.getChildren()) {
+                    if (child instanceof ComboBox
+                            && child.getId() != null
+                            && child.getId().equals(cbId)
+                            && row == GridPane.getRowIndex(child)) {
+
+                        switch (cbId) {
+                            case "cbUnit":
+                                cb = (ComboBox) child;
+                                cb.setValue(product.getUnit());
+                                break;
+
+                            case "cbUst":
+                                cb = (ComboBox) child;
+                                cb.setValue(DoubleToPercentageString(product.getUst()));
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private ComboBox createCbProduct(String value) {
         ComboBox cb = createCBox("Beschreibe oder wähle ein Produkt", null, -1);
 //        ComboBox<Product> cb = new ComboBox<>();
@@ -523,35 +596,47 @@ public class InvoiceDialogController implements Initializable {
         cb.getItems().setAll(productData);
         cb.getSelectionModel().select(value);
         cb.valueProperty().addListener((ov, oldValue, newValue) -> {
-            if (newValue instanceof Product) {
-                setPrice(GridPane.getRowIndex(cb), (Product) newValue);
-                updateTotalPrices();
-            }
+            if (newValue != null) {
+                String productName;
 
-            if (newValue != null && oldValue!= null && !oldValue.equals(newValue) && !newValue.toString().isEmpty()) {
-                String productName = newValue.toString();
-
-                if (positionExist(productName)) {
-                    try {
-                        if (showConfirmDialog("Die Position wurde bereits erfasst! Soll die Anzahl übernommen werden?", Arrays.asList("Übernehmen", "Verwerfen"))) {
-                            //TODO Anzahl übernehmen
-                        }
-                        deletePosition(GridPane.getRowIndex(cb));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (newValue instanceof Product) {
+                    productName = ((Product) newValue).getName();
+                } else {
+                    productName = newValue.toString();
                 }
 
-                if (!productName.isEmpty() && !dbController.productExist(productName)) {
-                    try {
-                        if (showConfirmDialog("Das Produkt \"" + productName + "\" wurde nicht gefunden, soll dieses angelegt werden?", Arrays.asList("Ja", "Nein"))) {
-                            showProductDialog(productData, null, productName);
+                if (!productName.isEmpty()) {
+                    // show if position exist in invoice
+                    if (positionExist(productName)) {
+                        try {
+                            showInfoDialog("Die Position wurde bereits erfasst!", "Abbrechen");
+                            //deletePosition(GridPane.getRowIndex(cb));
+                            cb.setValue(null);
+                            cb.requestFocus();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    } else {
+                        // check if product exist
+                        if (dbController.productExist(productName)) {
+                            Product product = dbController.readProduct(productName);
+                            editPositionByRow(GridPane.getRowIndex(cb), product);
+                        } else {
+                            try {
+                                if (showConfirmDialog("Das Produkt \"" + productName + "\" wurde nicht gefunden, soll dieses angelegt werden?", Arrays.asList("Ja", "Nein"))) {
+                                    showProductDialog(productData, null, productName);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
+                } else {
+                    editPositionByRow(GridPane.getRowIndex(cb), new Product());
                 }
             }
+
+            updateTotalPrices();
         });
 
 //        cb.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -661,7 +746,7 @@ public class InvoiceDialogController implements Initializable {
     private Position getPositionByRow(int row) {
         Position position = new Position();
         TextField tf;
-        List<String> textFieldIds = Arrays.asList("tfAmount", "tfPriceExcl", "tfPriceIncl");
+        List<String> textFieldIds = Arrays.asList("tfArtNr", "tfAmount", "tfPriceExcl", "tfPriceIncl");
         for (String tfId : textFieldIds) {
             for (Node child : gpPositions.getChildren()) {
                 if (child instanceof TextField
@@ -670,6 +755,11 @@ public class InvoiceDialogController implements Initializable {
                         && row == GridPane.getRowIndex(child)) {
 
                     switch (tfId) {
+                        case "tfArtNr":
+                            tf = (TextField) child;
+                            position.setArtNr(tf.getText());
+                            break;
+
                         case "tfAmount":
                             tf = (TextField) child;
                             position.setAmount(NumberStrToDouble(tf.getText()));

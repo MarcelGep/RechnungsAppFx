@@ -216,6 +216,26 @@ public class HelperDialogs {
 		return dialogController.isDialogConfirmed();
 	}
 
+	public static void showInfoDialog(String content, String button) throws IOException {
+		FXMLLoader fxmlLoader = loadFXML(INFODIALOGVIEW);
+
+		Stage dialogStage = new Stage();
+
+		Parent parent = initParent(fxmlLoader, dialogStage);
+
+		dialogStage.initModality(Modality.APPLICATION_MODAL);
+		dialogStage.setResizable(false);
+		dialogStage.initStyle(StageStyle.UNDECORATED);
+		dialogStage.setScene(new Scene(parent));
+
+		InfoDialogController dialogController = fxmlLoader.getController();
+		dialogController.setDialogStage(dialogStage);
+		dialogController.setContent(content);
+		dialogController.setButton(button);
+
+		dialogStage.showAndWait();
+	}
+
 	public static Invoice showInvoiceDialog(ObservableList<Invoice> invoiceData, Invoice invoice) throws IOException
 	{
 		FXMLLoader fxmlLoader = loadFXML(INVOICEDIALOGVIEW);

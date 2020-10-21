@@ -17,10 +17,10 @@ public class Product extends RecursiveTreeObject<Product> {
     {
         this.artNr = new SimpleStringProperty("");
         this.name = new SimpleStringProperty("");
-        this.unit = new SimpleStringProperty("");
+        this.unit = new SimpleStringProperty("Stk.");
         this.priceExcl = 0.0;
         this.priceIncl = 0.0;
-        this.ust = 0.0;
+        this.ust = 19.0;
     }
 
     public Product(String name, String unit, double ust, double priceExcl) {

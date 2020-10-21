@@ -752,6 +752,30 @@ public class DbController {
 		return false;
 	}
 
+	public boolean editPosition(Position position) {
+		String query = "UPDATE Positions SET Amount = ?, Unit = ?, PriceExcl = ?, PriceIncl = ?, Ust = ? WHERE ArtNr = ? AND RgNr = ?";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setDouble( 1, position.getAmount());
+			ps.setString( 2, position.getUnit());
+			ps.setDouble( 3, position.getPriceExcl());
+			ps.setDouble( 4, position.getPriceIncl());
+			ps.setDouble( 5, position.getUst());
+			ps.setString( 6, position.getArtNr());
+			ps.setString( 7, position.getRgNr());
+
+			ps.executeUpdate();
+
+			LOGGER.info("Position with ArtNr: " + position.getArtNr() + " and RgNr: " + position.getRgNr() + " updated!");
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+		}
+		return false;
+	}
+
 	public boolean positionExist(Position position) {
 		String query = "SELECT * FROM Positions WHERE RgNr = ? AND Description = ?";
 
@@ -812,26 +836,26 @@ public class DbController {
 		}
 	}
 
-	public Product readProduct(String artNr) {
-		String query = "SELECT * FROM Products WHERE ArtNr = ?";
+	public Product readProduct(String name) {
+		String query = "SELECT * FROM Products WHERE Name = ?";
 		Product product = null;
 
 		try {
 			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, artNr );
+			ps.setString( 1, name );
 
 			ResultSet rs = ps.executeQuery();
 
 			while ( rs.next() ) {
+				String artNr = rs.getString("ArtNr");
 				String unit = rs.getString("Unit");
-				String name = rs.getString("Name");
 				double price = rs.getDouble("Price");
 				double ust = rs.getDouble("Ust");
 
 				product = new Product(artNr, name, unit, ust, price);
 			}
 
-			LOGGER.info( "Read product with ArtNr: " + artNr );
+			LOGGER.info( "Read product with Name: " + name );
 			return product;
 		} catch ( SQLException e ) {
 			LOGGER.warning( e.toString() );
