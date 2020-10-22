@@ -1,16 +1,22 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
 import com.gepraegs.rechnungsAppFx.*;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -21,13 +27,22 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static com.gepraegs.rechnungsAppFx.Constants.PRODUCTDIALOGVIEW;
 import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateExclUst;
 import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateInclUst;
 import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
+
 import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
-import static com.gepraegs.rechnungsAppFx.helpers.HelperResourcesLoader.loadFXML;
 import static java.lang.Integer.MAX_VALUE;
+
+
+
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
+import javafx.scene.control.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class InvoiceDialogController implements Initializable {
 
@@ -430,7 +445,7 @@ public class InvoiceDialogController implements Initializable {
 
     private ComboBox createCbUnit(String value) {
         List<String> unit = Arrays.asList("Stk.", "cm", "h", "kg", "km", "m", "L", "ml");
-        ComboBox cb =  createCBox(null, unit, 0);
+        ComboBox cb = createCBox(null, unit, 0);
         cb.setId("cbUnit");
         cb.setEditable(false);
         cb.getSelectionModel().select(value != null ? value : "Stk.");
@@ -588,43 +603,49 @@ public class InvoiceDialogController implements Initializable {
     }
 
     private ComboBox createCbProduct(String value) {
-        ComboBox cb = createCBox("Beschreibe oder wähle ein Produkt", null, -1);
-//        ComboBox<Product> cb = new ComboBox<>();
-//        cb.setEditable(true);
+        //        ComboBox cb = createCBox("Beschreibe oder wähle ein Produkt", null, -1);
+        //        cb.getItems().setAll(productData);
+
+
+        ComboBox<String> cb = new ComboBox<>();
+        cb.setEditable(true);
         cb.setMaxWidth(MAX_VALUE);
         cb.setId("cbProduct");
-        cb.getItems().setAll(productData);
         cb.getSelectionModel().select(value);
-        cb.valueProperty().addListener((ov, oldValue, newValue) -> {
-            if (newValue != null) {
-                String productName;
+        cb.setPromptText("Beschreibe oder wähle ein Produkt");
 
-                if (newValue instanceof Product) {
-                    productName = ((Product) newValue).getName();
-                } else {
-                    productName = newValue.toString();
-                }
+        List<String> productNames = new ArrayList<>();
+        for (Product p : productData) {
+            productNames.add(p.getName());
+        }
 
-                if (!productName.isEmpty()) {
-                    // show if position exist in invoice
-                    if (positionExist(productName)) {
+        cb.getItems().addAll(productNames);
+
+        new AutoCompleteBox(cb);
+
+        cb.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                String product = cb.getSelectionModel().getSelectedItem();
+                if (!product.isEmpty()) {
+                    if (positionExist(product)) {
                         try {
                             showInfoDialog("Die Position wurde bereits erfasst!", "Abbrechen");
-                            //deletePosition(GridPane.getRowIndex(cb));
                             cb.setValue(null);
                             cb.requestFocus();
+                            cb.getItems().addAll(productNames);
+                            cb.show();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
                         // check if product exist
-                        if (dbController.productExist(productName)) {
-                            Product product = dbController.readProduct(productName);
-                            editPositionByRow(GridPane.getRowIndex(cb), product);
+                        if (dbController.productExist(product)) {
+                            Product p = dbController.readProduct(product);
+                            editPositionByRow(GridPane.getRowIndex(cb), p);
                         } else {
                             try {
-                                if (showConfirmDialog("Das Produkt \"" + productName + "\" wurde nicht gefunden, soll dieses angelegt werden?", Arrays.asList("Ja", "Nein"))) {
-                                    showProductDialog(productData, null, productName);
+                                if (showConfirmDialog("Das Produkt \"" + product + "\" wurde nicht gefunden, soll dieses angelegt werden?", Arrays.asList("Ja", "Nein"))) {
+                                    showProductDialog(productData, null, product);
                                 }
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -634,41 +655,41 @@ public class InvoiceDialogController implements Initializable {
                 } else {
                     editPositionByRow(GridPane.getRowIndex(cb), new Product());
                 }
+                updateTotalPrices();
             }
-
-            updateTotalPrices();
         });
 
-//        cb.focusedProperty().addListener((observable, oldValue, newValue) -> {
-//            if (!newValue) {
-//                if (positionExist(cb.getSelectionModel().getSelectedItem().toString())) {
+//        cb.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+//            if (newValue != null && !newValue.isEmpty()) {
+//                // show if position exist in invoice
+//                if (positionExist(newValue)) {
 //                    try {
-//                        if (showConfirmDialog("Die Position wurde bereits erfasst! Soll die Anzahl übernommen werden?", Arrays.asList("Übernehmen", "Verwerfen"))) {
-//                            //TODO Anzahl übernehmen
-//                        }
-//                        deletePosition(GridPane.getRowIndex(cb));
+//                        showInfoDialog("Die Position wurde bereits erfasst!", "Abbrechen");
+//                        //deletePosition(GridPane.getRowIndex(cb));
+//                        cb.setValue("");
+////                        cb.requestFocus();
 //                    } catch (IOException e) {
 //                        e.printStackTrace();
 //                    }
-//                }
-//            }
-//        });
-
-//        cb.setCellFactory(new Callback<>() {
-//            @Override
-//            public ListCell<Product> call(ListView<Product> l) {
-//                return new ListCell<Product>() {
-//                    @Override
-//                    protected void updateItem(Product item, boolean empty) {
-//                        super.updateItem(item, empty);
-//                        if (item == null || empty) {
-//                            setGraphic(null);
-//                        } else {
-//                            setText(item.getArtNr() + " - " + item.getName());
+//                } else {
+//                    // check if product exist
+//                    if (dbController.productExist(newValue)) {
+//                        Product product = dbController.readProduct(newValue);
+//                        editPositionByRow(GridPane.getRowIndex(cb), product);
+//                    } else {
+//                        try {
+//                            if (showConfirmDialog("Das Produkt \"" + newValue + "\" wurde nicht gefunden, soll dieses angelegt werden?", Arrays.asList("Ja", "Nein"))) {
+//                                showProductDialog(productData, null, newValue);
+//                            }
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
 //                        }
 //                    }
-//                };
+//                }
+//            } else {
+//                editPositionByRow(GridPane.getRowIndex(cb), new Product());
 //            }
+//            updateTotalPrices();
 //        });
 
         return cb;
