@@ -276,7 +276,8 @@ public class InvoiceDialogController implements Initializable {
             // Edit selected invoice
             invoiceData.set(this.invoiceData.indexOf(selectedInvoice), newInvoice);
             dbController.editInvoice(newInvoice);
-            editPositions();
+            dbController.deletePositionsOfInvoice(newReNr);
+            createPositions();
         } else {
             // Add new invoice to invoiceData
             invoiceData.add(newInvoice);
@@ -305,6 +306,7 @@ public class InvoiceDialogController implements Initializable {
         for (int i = 1; i < gpPositions.getRowCount(); i++) {
             Position position = getPositionByRow(i);
             position.setRgNr(lbReNr.getText());
+
             dbController.editPosition(position);
         }
     }
@@ -563,8 +565,9 @@ public class InvoiceDialogController implements Initializable {
                             break;
 
                         case "tfPriceIncl":
+                            double amount = NumberStrToDouble(getTextFieldById(row, "tfAmount").getText());
                             tf = (TextField) child;
-                            tf.setText(DoubleToCurrencyString(product.getPriceIncl()));
+                            tf.setText(DoubleToCurrencyString(product.getPriceIncl() * amount));
                             break;
 
                         default:

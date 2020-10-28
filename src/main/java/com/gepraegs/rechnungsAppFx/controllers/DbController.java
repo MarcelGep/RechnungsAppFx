@@ -278,6 +278,24 @@ public class DbController {
 		}
 	}
 
+	public boolean deletePositionsOfInvoice(String rgNrStr) {
+		try {
+			String query = "DELETE FROM Positions WHERE RgNr = ?";
+			int rgNr = Integer.parseInt(rgNrStr);
+
+			PreparedStatement ps = connection.prepareStatement( query );
+			ps.setInt(1, rgNr);
+			ps.executeUpdate();
+
+			LOGGER.info( "Delete all positions of invoice with RgNr: " + rgNrStr );
+
+			return true;
+		} catch ( SQLException e ) {
+			LOGGER.warning( e.toString() );
+			return false;
+		}
+	}
+
 	public boolean setInvite( Customer guest ) {
 //		String query = "UPDATE Guests SET Invite = ? WHERE ID = ?";
 //
@@ -752,22 +770,22 @@ public class DbController {
 		return false;
 	}
 
-	public boolean editPosition(Position position) {
+	public boolean editPosition(Position newPosition) {
 		String query = "UPDATE Positions SET Amount = ?, Unit = ?, PriceExcl = ?, PriceIncl = ?, Ust = ? WHERE ArtNr = ? AND RgNr = ?";
 
 		try {
 			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setDouble( 1, position.getAmount());
-			ps.setString( 2, position.getUnit());
-			ps.setDouble( 3, position.getPriceExcl());
-			ps.setDouble( 4, position.getPriceIncl());
-			ps.setDouble( 5, position.getUst());
-			ps.setString( 6, position.getArtNr());
-			ps.setString( 7, position.getRgNr());
+			ps.setDouble( 1, newPosition.getAmount());
+			ps.setString( 2, newPosition.getUnit());
+			ps.setDouble( 3, newPosition.getPriceExcl());
+			ps.setDouble( 4, newPosition.getPriceIncl());
+			ps.setDouble( 5, newPosition.getUst());
+			ps.setString( 6, newPosition.getArtNr());
+			ps.setString( 7, newPosition.getRgNr());
 
 			ps.executeUpdate();
 
-			LOGGER.info("Position with ArtNr: " + position.getArtNr() + " and RgNr: " + position.getRgNr() + " updated!");
+			LOGGER.info("Position with ArtNr: " + newPosition.getArtNr() + " and RgNr: " + newPosition.getRgNr() + " updated!");
 
 			return true;
 		} catch ( SQLException e ) {
