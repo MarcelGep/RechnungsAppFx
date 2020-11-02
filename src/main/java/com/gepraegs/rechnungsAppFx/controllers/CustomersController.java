@@ -12,6 +12,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
@@ -98,12 +99,12 @@ public class CustomersController implements Initializable {
 		customerTable.setPlaceholder(new Label("Keine Einträge vorhanden"));
 
 		// set size of columns
-		customerTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
+		//customerTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
 
-		colKdNr.setMaxWidth( 1f * Integer.MAX_VALUE * 12);
-		colCompany.setMaxWidth( 1f * Integer.MAX_VALUE * 58);
-		colOpenCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
-		colPayedCosts.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
+		colKdNr.setMinWidth(120);
+		colCompany.setMinWidth(150);
+		colOpenCosts.setMinWidth(150);
+		colPayedCosts.setMinWidth(150);
 
 		// set cell value factory
 		colKdNr.setCellValueFactory(param -> param.getValue().getKdNr());
@@ -140,6 +141,11 @@ public class CustomersController implements Initializable {
 //		colOpenCosts.setStyle("-fx-alignment: CENTER-RIGHT;");
 		colPayedCosts.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
 				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getPayedCosts())));
+
+		colKdNr.prefWidthProperty().bind(customerTable.widthProperty().multiply(.1));
+		colCompany.prefWidthProperty().bind(customerTable.widthProperty().multiply(.5	));
+		colOpenCosts.prefWidthProperty().bind(customerTable.widthProperty().multiply(.1));
+		colPayedCosts.prefWidthProperty().bind(customerTable.widthProperty().multiply(.1));
 
 		// add columns to customer table
 		customerTable.getColumns().add(colKdNr);

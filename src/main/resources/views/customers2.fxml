@@ -35,79 +35,61 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <VBox>
+                  <AnchorPane style="-fx-background-color: white;">
                      <children>
-                        <StackPane style="-fx-background-color: white;">
+                        <JFXButton id="green-button" fx:id="btnNewCustomer" layoutX="349.0" layoutY="10.0" onAction="#onBtnNewCustomerClicked" ripplerFill="#bdff67" text="Neuer Kunde" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="30.0">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <styleClass>
+                              <String fx:value="hover-hand" />
+                              <String fx:value="hover-green" />
+                           </styleClass>
+                        </JFXButton>
+                        <Label layoutX="22.0" layoutY="23.0" text="Kunden" AnchorPane.leftAnchor="22.0" AnchorPane.topAnchor="23.0">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+                        <TableView fx:id="customerTable" layoutX="-1.0" layoutY="108.0" prefHeight="643.0" prefWidth="643.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
+                        <Label layoutX="22.0" layoutY="58.0" text="Gespeicherte Kundenanzahl:" />
+                        <Label fx:id="lbCustomerCount" layoutX="178.0" layoutY="58.0" text="XX">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <AnchorPane layoutX="243.0" layoutY="30.0" maxWidth="-Infinity" prefHeight="35.0" prefWidth="245.0" scaleZ="2.0" AnchorPane.rightAnchor="150.0">
                            <children>
-                              <VBox>
-                                 <children>
-                                    <Label text="Kunden">
-                                       <font>
-                                          <Font name="System Bold" size="24.0" />
-                                       </font>
-                                    </Label>
-                                    <HBox spacing="5.0">
-                                       <children>
-                                          <Label text="Gespeicherte Kundenanzahl:" />
-                                          <Label fx:id="lbCustomerCount" text="XX">
-                                             <font>
-                                                <Font name="System Bold" size="13.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                              <AnchorPane maxWidth="-Infinity" prefHeight="35.0" prefWidth="245.0" StackPane.alignment="CENTER_RIGHT">
-                                 <children>
-                                    <TextField fx:id="tfSearchCustomer" prefWidth="300.0" promptText="In Liste suchen" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <padding>
-                                          <Insets left="33.0" />
-                                       </padding>
-                                    </TextField>
-                                    <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearchButtonClicked" styleClass="back-transparent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <graphic>
-                                          <ImageView fx:id="btnSearchClear" fitHeight="16.0" fitWidth="16.0" onMouseClicked="#onClearSearchButtonClicked" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../icons/cancel.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                    <Button layoutX="30.0" mnemonicParsing="false" opacity="0.8" styleClass="back-transparent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <graphic>
-                                          <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onClearSearchButtonClicked" opacity="0.5" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../icons/search.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                    </Button>
-                                 </children>
+                              <TextField fx:id="tfSearchCustomer" prefWidth="300.0" promptText="In Liste suchen" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <padding>
-                                    <Insets bottom="5.0" top="5.0" />
+                                    <Insets left="33.0" />
                                  </padding>
-                                 <StackPane.margin>
-                                    <Insets right="130.0" />
-                                 </StackPane.margin>
-                              </AnchorPane>
-                              <JFXButton id="green-button" fx:id="btnNewCustomer" onAction="#onBtnNewCustomerClicked" ripplerFill="#bdff67" text="Neuer Kunde" StackPane.alignment="CENTER_RIGHT">
-                                 <font>
-                                    <Font name="System Bold" size="12.0" />
-                                 </font>
-                                 <styleClass>
-                                    <String fx:value="hover-hand" />
-                                    <String fx:value="hover-green" />
-                                 </styleClass>
-                              </JFXButton>
+                              </TextField>
+                              <Button fx:id="btnClearSearch" mnemonicParsing="false" onAction="#onClearSearchButtonClicked" styleClass="back-transparent" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fx:id="btnSearchClear" fitHeight="16.0" fitWidth="16.0" onMouseClicked="#onClearSearchButtonClicked" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/cancel.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button layoutX="30.0" mnemonicParsing="false" opacity="0.8" styleClass="back-transparent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <graphic>
+                                    <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#onClearSearchButtonClicked" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../icons/search.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
                            </children>
                            <padding>
-                              <Insets bottom="15.0" left="20.0" right="20.0" top="20.0" />
+                              <Insets left="15.0" />
                            </padding>
-                        </StackPane>
-                        <TableView fx:id="customerTable" VBox.vgrow="ALWAYS" />
+                        </AnchorPane>
                      </children>
-                  </VBox>
+                  </AnchorPane>
                   <AnchorPane style="-fx-background-color: #dee5df;" GridPane.columnIndex="1">
                      <children>
                         <StackPane AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
