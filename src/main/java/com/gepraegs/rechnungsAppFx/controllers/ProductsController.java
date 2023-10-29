@@ -1,15 +1,9 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
-import com.gepraegs.rechnungsAppFx.Product;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToCurrencyString;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToPercentageString;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showProductDialog;
 
 import java.io.IOException;
 import java.net.URL;
@@ -19,13 +13,26 @@ import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToCurrencyString;
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToPercentageString;
-import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
+import com.gepraegs.rechnungsAppFx.Product;
+
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 
 public class ProductsController implements Initializable {
 
-	private static final Logger LOGGER = Logger.getLogger( ProductsController.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger(ProductsController.class.getName());
 
 	private final DbController dbController = DbController.getInstance();
 
@@ -37,26 +44,38 @@ public class ProductsController implements Initializable {
 	private final TableColumn<Product, String> colUst = new TableColumn<>("UST.");
 	private final TableColumn<Product, String> colPriceIncl = new TableColumn<>("PREIS INKL. UST.");
 
-	@FXML private TableView<Product> productTable;
+	@FXML
+	private TableView<Product> productTable;
 
-	@FXML private TextField tfSearchProduct;
+	@FXML
+	private TextField tfSearchProduct;
 
-	@FXML private Label lbProduct;
-	@FXML private Label lbArtNr;
-	@FXML private Label lbUnit;
-	@FXML private Label lbPriceExcl;
-	@FXML private Label lbUst;
-	@FXML private Label lbPriceIncl;
+	@FXML
+	private Label lbProduct;
+	@FXML
+	private Label lbArtNr;
+	@FXML
+	private Label lbUnit;
+	@FXML
+	private Label lbPriceExcl;
+	@FXML
+	private Label lbUst;
+	@FXML
+	private Label lbPriceIncl;
 
-	@FXML private VBox productDetailsFilled;
-	@FXML private VBox productDetailsEmpty;
+	@FXML
+	private VBox productDetailsFilled;
+	@FXML
+	private VBox productDetailsEmpty;
 
-	@FXML private VBox showDialogLayer;
+	@FXML
+	private VBox showDialogLayer;
 
-	@FXML private Button btnClearSearch;
+	@FXML
+	private Button btnClearSearch;
 
 	@Override
-	public void initialize( URL location, ResourceBundle resources ) {
+	public void initialize(URL location, ResourceBundle resources) {
 		initializeColumns();
 		loadProductsData();
 		setRowSelectionListener();
@@ -70,10 +89,10 @@ public class ProductsController implements Initializable {
 	public void loadProductsData() {
 		productData.clear();
 
-		//read guests from database
+		// read guests from database
 		List<Product> products = dbController.readProducts();
 
-		//write guests to data list
+		// write guests to data list
 		if (products != null && !products.isEmpty()) {
 			productData.addAll(products);
 		} else {
@@ -101,12 +120,14 @@ public class ProductsController implements Initializable {
 		// set cell value factory
 		colArtNr.setCellValueFactory(param -> param.getValue().artNrProperty());
 		colProductName.setCellValueFactory(param -> param.getValue().nameProperty());
-		colPriceExcl.setCellValueFactory((TableColumn.CellDataFeatures<Product, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getPriceExcl())));
-		colUst.setCellValueFactory((TableColumn.CellDataFeatures<Product, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToPercentageString(param.getValue().getUst())));
-		colPriceIncl.setCellValueFactory((TableColumn.CellDataFeatures<Product, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getPriceIncl())));
+		colPriceExcl
+				.setCellValueFactory((TableColumn.CellDataFeatures<Product, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToCurrencyString(param.getValue().getPriceExcl())));
+		colUst.setCellValueFactory((TableColumn.CellDataFeatures<Product, String> param) -> new ReadOnlyStringWrapper(
+				DoubleToPercentageString(param.getValue().getUst())));
+		colPriceIncl
+				.setCellValueFactory((TableColumn.CellDataFeatures<Product, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToCurrencyString(param.getValue().getPriceIncl())));
 
 		// add columns to customer table
 		productTable.getColumns().add(colArtNr);
@@ -114,6 +135,16 @@ public class ProductsController implements Initializable {
 		productTable.getColumns().add(colPriceExcl);
 		productTable.getColumns().add(colUst);
 		productTable.getColumns().add(colPriceIncl);
+
+		productTable.setRowFactory(tv -> {
+			TableRow<Product> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (event.getClickCount() == 2 && (!row.isEmpty())) {
+					onBtnEditProductClicked();
+				}
+			});
+			return row;
+		});
 	}
 
 	private void showProductInformations(Product product) {
@@ -152,8 +183,7 @@ public class ProductsController implements Initializable {
 		return data == null || data.isEmpty() ? "---" : data;
 	}
 
-	private void scrollToRow(int row)
-	{
+	private void scrollToRow(int row) {
 		productTable.requestFocus();
 		productTable.getSelectionModel().select(row);
 		productTable.getFocusModel().focus(row);
@@ -163,7 +193,7 @@ public class ProductsController implements Initializable {
 	private void setTableSortOrder() {
 		colProductName.setSortType(TableColumn.SortType.ASCENDING);
 		colArtNr.setSortType(TableColumn.SortType.ASCENDING);
-//		productTable.getSortOrder().add(colProductName);
+		// productTable.getSortOrder().add(colProductName);
 		productTable.getSortOrder().add(colArtNr);
 	}
 
@@ -178,10 +208,8 @@ public class ProductsController implements Initializable {
 	private void setupCustomerFilter() {
 		FilteredList<Product> filteredData = new FilteredList<>(productData, e -> true);
 
-		tfSearchProduct.textProperty().addListener((observableValue, oldValue, newValue) ->
-		{
-			filteredData.setPredicate((Predicate<? super Product>) product ->
-			{
+		tfSearchProduct.textProperty().addListener((observableValue, oldValue, newValue) -> {
+			filteredData.setPredicate((Predicate<? super Product>) product -> {
 				if (newValue == null) {
 					return true;
 				}
@@ -240,7 +268,7 @@ public class ProductsController implements Initializable {
 			}
 
 			showDialogLayer.setVisible(false);
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}
 	}
@@ -249,7 +277,8 @@ public class ProductsController implements Initializable {
 	private void onBtnDeleteCustomerClicked() {
 		try {
 			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
-							 "Möchtest du das Produkt \"" + productTable.getSelectionModel().getSelectedItem().getName() + "\" löschen?";
+					"Möchtest du das Produkt \"" + productTable.getSelectionModel().getSelectedItem().getName()
+					+ "\" löschen?";
 
 			showDialogLayer.setVisible(true);
 
@@ -282,7 +311,7 @@ public class ProductsController implements Initializable {
 
 				showDialogLayer.setVisible(false);
 			}
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}
 	}

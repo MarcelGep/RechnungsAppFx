@@ -33,6 +33,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
@@ -179,6 +180,16 @@ public class InvoicesController implements Initializable {
 		positionTable.getColumns().add(colPosPriceExcl);
 		positionTable.getColumns().add(colPosUst);
 		positionTable.getColumns().add(colPosPriceIncl);
+
+		invoiceTable.setRowFactory(tv -> {
+			TableRow<Invoice> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (event.getClickCount() == 2 && (!row.isEmpty())) {
+					onBtnEditInvoiceClicked();
+				}
+			});
+			return row;
+		});
 	}
 
 	private void initializeColumns() {
