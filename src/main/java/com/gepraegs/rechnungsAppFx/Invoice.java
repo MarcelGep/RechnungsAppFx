@@ -1,13 +1,9 @@
 package com.gepraegs.rechnungsAppFx;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Invoice extends RecursiveTreeObject<Invoice> {
 
@@ -22,8 +18,7 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
     private double totalPrice;
     private double ust;
 
-    public Invoice()
-    {
+    public Invoice() {
         this.reNr = new SimpleStringProperty("");
         this.customer = new Customer();
         this.createDate = new SimpleStringProperty("");
@@ -36,7 +31,8 @@ public class Invoice extends RecursiveTreeObject<Invoice> {
         this.ust = 0.0;
     }
 
-    public Invoice(String reNr, Customer customer, String createDate, String dueDate, String payedDate, String deliveryDate, String state, int payCondition, double totalPrice, double ust) {
+    public Invoice(String reNr, Customer customer, String createDate, String dueDate, String payedDate,
+            String deliveryDate, String state, int payCondition, double totalPrice, double ust) {
         this.reNr = new SimpleStringProperty(reNr);
         this.customer = customer;
         this.createDate = new SimpleStringProperty(createDate);

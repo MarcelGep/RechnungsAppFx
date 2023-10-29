@@ -1,18 +1,15 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
-import javafx.beans.property.StringProperty;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.stage.Stage;
-
-import javax.swing.text.Position;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
 
 public class ConfirmDialogController implements Initializable {
 
@@ -20,10 +17,13 @@ public class ConfirmDialogController implements Initializable {
     private Stage dialogStage = new Stage();
     private boolean dialogConfirmed = false;
 
-    @FXML private Label lbContent;
+    @FXML
+    private Label lbContent;
 
-    @FXML private Button btnSave;
-    @FXML private Button btnCancel;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private Button btnCancel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

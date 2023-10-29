@@ -1,18 +1,9 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
-import com.gepraegs.rechnungsAppFx.Customer;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToCurrencyString;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToPercentageString;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showCustomerDialog;
 
 import java.io.IOException;
 import java.net.URL;
@@ -22,12 +13,28 @@ import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
-import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
+import com.gepraegs.rechnungsAppFx.Customer;
+
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 public class CustomersController implements Initializable {
 
-	private static final Logger LOGGER = Logger.getLogger( CustomersController.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger(CustomersController.class.getName());
 
 	private final DbController dbController = DbController.getInstance();
 
@@ -38,33 +45,52 @@ public class CustomersController implements Initializable {
 	private final TableColumn<Customer, String> colOpenCosts = new TableColumn<>("OFFENE\nRECHNUNGEN");
 	private final TableColumn<Customer, String> colPayedCosts = new TableColumn<>("BEZAHLTE\nRECHNUNGEN");
 
-	@FXML private TableView<Customer> customerTable;
+	@FXML
+	private TableView<Customer> customerTable;
 
-	@FXML private TextField tfSearchCustomer;
+	@FXML
+	private TextField tfSearchCustomer;
 
-	@FXML private Label lbCompany;
-	@FXML private Label lbName;
-	@FXML private Label lbKdNr;
-	@FXML private Label lbPhone;
-	@FXML private Label lbHandy;
-	@FXML private Label lbFax;
-	@FXML private Label lbStreet;
-	@FXML private Label lbLocation;
-	@FXML private Label lbCountry;
-	@FXML private Label lbEmail;
-	@FXML private Label lbWebsite;
-	@FXML private Label lbDiscount;
-	@FXML private Label lbCustomerCount;
+	@FXML
+	private Label lbCompany;
+	@FXML
+	private Label lbName;
+	@FXML
+	private Label lbKdNr;
+	@FXML
+	private Label lbPhone;
+	@FXML
+	private Label lbHandy;
+	@FXML
+	private Label lbFax;
+	@FXML
+	private Label lbStreet;
+	@FXML
+	private Label lbLocation;
+	@FXML
+	private Label lbCountry;
+	@FXML
+	private Label lbEmail;
+	@FXML
+	private Label lbWebsite;
+	@FXML
+	private Label lbDiscount;
+	@FXML
+	private Label lbCustomerCount;
 
-	@FXML private VBox customerDetailsFilled;
-	@FXML private VBox customerDetailsEmpty;
+	@FXML
+	private VBox customerDetailsFilled;
+	@FXML
+	private VBox customerDetailsEmpty;
 
-	@FXML private VBox showDialogLayer;
+	@FXML
+	private VBox showDialogLayer;
 
-	@FXML private Button btnClearSearch;
+	@FXML
+	private Button btnClearSearch;
 
 	@Override
-	public void initialize( URL location, ResourceBundle resources ) {
+	public void initialize(URL location, ResourceBundle resources) {
 		initializeColumns();
 		loadCustomersData();
 		setRowSelectionListener();
@@ -76,10 +102,10 @@ public class CustomersController implements Initializable {
 	}
 
 	private void loadCustomersData() {
-		//read guests from database
+		// read guests from database
 		List<Customer> customers = dbController.readCustomers();
 
-		//write guests to data list
+		// write guests to data list
 		if (customers != null && !customers.isEmpty()) {
 			customerData.addAll(customers);
 		} else {
@@ -99,7 +125,7 @@ public class CustomersController implements Initializable {
 		customerTable.setPlaceholder(new Label("Keine Einträge vorhanden"));
 
 		// set size of columns
-		//customerTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
+		// customerTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
 
 		colKdNr.setMinWidth(120);
 		colCompany.setMinWidth(150);
@@ -109,22 +135,23 @@ public class CustomersController implements Initializable {
 		// set cell value factory
 		colKdNr.setCellValueFactory(param -> param.getValue().getKdNr());
 		colCompany.setCellValueFactory(param -> param.getValue().getCompany());
-		colCompany.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
-					new ReadOnlyStringWrapper(param.getValue().getCompany().getValue() + "\n" +
-														param.getValue().getName1().getValue() + " " +
-														param.getValue().getName2().getValue()));
+		colCompany.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Customer, String> param) -> new ReadOnlyStringWrapper(
+						param.getValue().getCompany().getValue() + "\n" +
+								param.getValue().getName1().getValue() + " " +
+								param.getValue().getName2().getValue()));
 
-		colCompany.setCellFactory(column-> new TableCell<>() {
+		colCompany.setCellFactory(column -> new TableCell<>() {
 			@Override
 			protected void updateItem(String item, boolean empty) {
 				super.updateItem(item, empty);
-				if(item == null || empty) {
+				if (item == null || empty) {
 					setGraphic(null);
 				} else {
 					VBox vbox = new VBox();
 					vbox.setAlignment(Pos.CENTER_LEFT);
 					List<String> textList = Arrays.asList(item.split("\n"));
-					for(int i = 0; i < textList.size() ; i++) {
+					for (int i = 0; i < textList.size(); i++) {
 						Text lbl = new Text(textList.get(i));
 						if (i % 2 == 0) {
 							lbl.setStyle("-fx-font-weight: bold");
@@ -136,14 +163,16 @@ public class CustomersController implements Initializable {
 			}
 		});
 
-		colOpenCosts.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getOpenCosts())));
-//		colOpenCosts.setStyle("-fx-alignment: CENTER-RIGHT;");
-		colPayedCosts.setCellValueFactory((TableColumn.CellDataFeatures<Customer, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getPayedCosts())));
+		colOpenCosts.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Customer, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToCurrencyString(param.getValue().getOpenCosts())));
+		// colOpenCosts.setStyle("-fx-alignment: CENTER-RIGHT;");
+		colPayedCosts.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Customer, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToCurrencyString(param.getValue().getPayedCosts())));
 
 		colKdNr.prefWidthProperty().bind(customerTable.widthProperty().multiply(.1));
-		colCompany.prefWidthProperty().bind(customerTable.widthProperty().multiply(.5	));
+		colCompany.prefWidthProperty().bind(customerTable.widthProperty().multiply(.5));
 		colOpenCosts.prefWidthProperty().bind(customerTable.widthProperty().multiply(.1));
 		colPayedCosts.prefWidthProperty().bind(customerTable.widthProperty().multiply(.1));
 
@@ -159,7 +188,8 @@ public class CustomersController implements Initializable {
 		lbCompany.setText(validateExistingData(customer.getCompany().getValue()));
 		lbName.setText(customer.getName1().getValue() + " " + customer.getName2().getValue());
 		lbStreet.setText(validateExistingData(customer.getStreet().getValue()));
-		lbLocation.setText(validateExistingData(customer.getPlz().getValue() + " " + customer.getLocation().getValue()));
+		lbLocation
+				.setText(validateExistingData(customer.getPlz().getValue() + " " + customer.getLocation().getValue()));
 		lbCountry.setText(validateExistingData(customer.getCountry().getValue()));
 		lbPhone.setText(validateExistingData(customer.getPhone().getValue()));
 		lbHandy.setText(validateExistingData(customer.getHandy().getValue()));
@@ -202,8 +232,7 @@ public class CustomersController implements Initializable {
 		return data.isEmpty() ? "---" : data;
 	}
 
-	private void scrollToRow(int row)
-	{
+	private void scrollToRow(int row) {
 		customerTable.requestFocus();
 		customerTable.getSelectionModel().select(row);
 		customerTable.getFocusModel().focus(row);
@@ -214,7 +243,7 @@ public class CustomersController implements Initializable {
 		colCompany.setSortType(TableColumn.SortType.ASCENDING);
 		colKdNr.setSortType(TableColumn.SortType.ASCENDING);
 		customerTable.getSortOrder().add(colCompany);
-//		customerTable.getSortOrder().add(colKdNr);
+		// customerTable.getSortOrder().add(colKdNr);
 	}
 
 	private void setRowSelectionListener() {
@@ -228,10 +257,8 @@ public class CustomersController implements Initializable {
 	private void setupCustomerFilter() {
 		FilteredList<Customer> filteredData = new FilteredList<>(customerData, e -> true);
 
-		tfSearchCustomer.textProperty().addListener((observableValue, oldValue, newValue) ->
-		{
-			filteredData.setPredicate((Predicate<? super Customer>) customer ->
-			{
+		tfSearchCustomer.textProperty().addListener((observableValue, oldValue, newValue) -> {
+			filteredData.setPredicate((Predicate<? super Customer>) customer -> {
 				if (newValue == null) {
 					return true;
 				}
@@ -241,14 +268,14 @@ public class CustomersController implements Initializable {
 				String lowerCaseFilter = newValue.toLowerCase();
 
 				String firstLastName = customer.getName1().toString().toLowerCase() + " " +
-						               customer.getName2().toString().toLowerCase();
+						customer.getName2().toString().toLowerCase();
 				String lastFirstName = customer.getName2().toString().toLowerCase() + " " +
-						               customer.getName1().toString().toLowerCase();
+						customer.getName1().toString().toLowerCase();
 				String companyName = customer.getCompany().toString().toLowerCase();
 
 				if (firstLastName.contains(lowerCaseFilter) ||
-					lastFirstName.contains(lowerCaseFilter) ||
-					companyName.contains(lowerCaseFilter)) {
+						lastFirstName.contains(lowerCaseFilter) ||
+						companyName.contains(lowerCaseFilter)) {
 					return true;
 				}
 
@@ -295,7 +322,7 @@ public class CustomersController implements Initializable {
 			}
 
 			showDialogLayer.setVisible(false);
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}
 	}
@@ -304,7 +331,8 @@ public class CustomersController implements Initializable {
 	private void onBtnDeleteCustomerClicked() {
 		try {
 			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
-							 "Möchtest du den Kunden \"" + customerTable.getSelectionModel().getSelectedItem().getCompany().getValue()  + "\" löschen?";
+					"Möchtest du den Kunden \""
+					+ customerTable.getSelectionModel().getSelectedItem().getCompany().getValue() + "\" löschen?";
 
 			showDialogLayer.setVisible(true);
 
@@ -337,7 +365,7 @@ public class CustomersController implements Initializable {
 
 				showDialogLayer.setVisible(false);
 			}
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}
 	}

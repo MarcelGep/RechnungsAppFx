@@ -1,13 +1,12 @@
 package com.gepraegs.rechnungsAppFx.helpers;
 
-import javafx.scene.control.TextField;
-
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import javafx.scene.control.TextField;
 
 public class FormatterHelper {
 
@@ -27,20 +26,21 @@ public class FormatterHelper {
         return Double.parseDouble(percentage);
     }
 
-//    public static double CurrencyStringToDouble(String value) {
-//        String currency = null;
-//        try {
-//            currency = DecimalFormat.getCurrencyInstance(Locale.getDefault()).parse(value).toString();
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        return Double.parseDouble(currency);
-//    }
+    // public static double CurrencyStringToDouble(String value) {
+    // String currency = null;
+    // try {
+    // currency =
+    // DecimalFormat.getCurrencyInstance(Locale.getDefault()).parse(value).toString();
+    // } catch (ParseException e) {
+    // e.printStackTrace();
+    // }
+    // return Double.parseDouble(currency);
+    // }
 
     public static double CurrencyStringToDouble(String value) {
         String currency = value.replace(".", "")
-                               .replace(",", ".")
-                               .replaceAll("[^\\d.-]", "");
+                .replace(",", ".")
+                .replaceAll("[^\\d.-]", "");
         try {
             return Double.parseDouble(currency);
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class FormatterHelper {
     }
 
     public static double NumberStrToDouble(String str) {
-        return Double.parseDouble(str.replace(".","").replace(",","."));
+        return Double.parseDouble(str.replace(".", "").replace(",", "."));
     }
 
     public static String DoubleToNumberStr(Double value) {

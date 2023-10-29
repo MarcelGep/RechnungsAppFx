@@ -1,16 +1,14 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 
-public class AutoCompleteBox implements EventHandler<KeyEvent>{
+public class AutoCompleteBox implements EventHandler<KeyEvent> {
     private ComboBox comboBox;
     final private ObservableList data;
     private Integer sid;
@@ -33,14 +31,14 @@ public class AutoCompleteBox implements EventHandler<KeyEvent>{
     private void doAutoCompleteBox() {
         this.comboBox.setEditable(true);
         this.comboBox.getEditor().focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue){//mean onfocus
+            if (newValue) {// mean onfocus
                 this.comboBox.show();
             }
         });
 
-        this.comboBox.getEditor().setOnMouseClicked(event ->{
-            if(event.getButton().equals(MouseButton.PRIMARY)){
-                if(event.getClickCount() == 2){
+        this.comboBox.getEditor().setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (event.getClickCount() == 2) {
                     return;
                 }
             }
@@ -55,36 +53,35 @@ public class AutoCompleteBox implements EventHandler<KeyEvent>{
 
         this.comboBox.setOnKeyReleased(AutoCompleteBox.this);
 
-        if(this.sid!=null)
+        if (this.sid != null)
             this.comboBox.getSelectionModel().select(this.sid);
     }
 
     @Override
     public void handle(KeyEvent event) {
-        if ( event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN
+        if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN
                 || event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.LEFT
                 || event.getCode() == KeyCode.HOME
-                || event.getCode() == KeyCode.END || event.getCode() == KeyCode.TAB
-        ) {
+                || event.getCode() == KeyCode.END || event.getCode() == KeyCode.TAB) {
             return;
         }
 
-        if(event.getCode() == KeyCode.BACK_SPACE){
+        if (event.getCode() == KeyCode.BACK_SPACE) {
             String str = this.comboBox.getEditor().getText();
             if (str != null && str.length() > 0) {
                 str = str.substring(0, str.length() - 1);
             }
-            if(str != null){
+            if (str != null) {
                 this.comboBox.getEditor().setText(str);
                 moveCaret(str.length());
             }
             this.comboBox.getSelectionModel().clearSelection();
         }
 
-        if(event.getCode() == KeyCode.ENTER && comboBox.getSelectionModel().getSelectedIndex()>-1)
+        if (event.getCode() == KeyCode.ENTER && comboBox.getSelectionModel().getSelectedIndex() > -1)
             return;
 
-        if(event.getCode() == KeyCode.ESCAPE) {
+        if (event.getCode() == KeyCode.ESCAPE) {
             this.comboBox.hide();
             return;
         }
@@ -102,7 +99,8 @@ public class AutoCompleteBox implements EventHandler<KeyEvent>{
             }
         }
 
-        if(list.isEmpty()) this.comboBox.hide();
+        if (list.isEmpty())
+            this.comboBox.hide();
 
         this.comboBox.setItems(list);
         this.comboBox.show();

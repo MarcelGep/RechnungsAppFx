@@ -1,38 +1,44 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
+//import static com.gepraegs.rechnungsAppFx.helpers.InputValidHelper.isInputInvalid;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.CurrencyStringToDouble;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToCurrencyString;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.PercentageStringToDouble;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
+
 import com.gepraegs.rechnungsAppFx.Product;
-import com.gepraegs.rechnungsAppFx.helpers.FormatterHelper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-import javafx.util.converter.PercentageStringConverter;
-
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.net.URL;
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
-
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
-//import static com.gepraegs.rechnungsAppFx.helpers.InputValidHelper.isInputInvalid;
 
 public class ProductDialogController implements Initializable {
 
-    @FXML private ComboBox<String> cbUnit;
-    @FXML private ComboBox<String> cbUst;
-    @FXML private ComboBox<String> cbPriceType;
+    @FXML
+    private ComboBox<String> cbUnit;
+    @FXML
+    private ComboBox<String> cbUst;
+    @FXML
+    private ComboBox<String> cbPriceType;
 
-    @FXML private TextField tfName;
-    @FXML private TextField tfPriceExcl;
-    @FXML private TextField tfPriceIncl;
+    @FXML
+    private TextField tfName;
+    @FXML
+    private TextField tfPriceExcl;
+    @FXML
+    private TextField tfPriceIncl;
 
-    @FXML private Label lbTitle;
+    @FXML
+    private Label lbTitle;
 
     private static final Logger LOGGER = Logger.getLogger(ProductDialogController.class.getName());
 
@@ -44,23 +50,23 @@ public class ProductDialogController implements Initializable {
 
     private Product selectedProduct;
     private Product savedProduct;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initComboBoxes();
         initTextFields();
 
-//        addTextLimiter(tfFirstName, 29);
-//        addTextLimiter(tfLastName, 29);
-//        addTextLimiter(tfAge, 3);
-//        addTextLimiter(tfPhone, 30);
-//        addTextLimiter(tfHandy, 30);
-//        addTextLimiter(tfEmail, 30);
-//        addTextLimiter(tfStreet, 30);
-//        addTextLimiter(tfPlz, 5);
-//        addTextLimiter(tfOrt, 22);
+        // addTextLimiter(tfFirstName, 29);
+        // addTextLimiter(tfLastName, 29);
+        // addTextLimiter(tfAge, 3);
+        // addTextLimiter(tfPhone, 30);
+        // addTextLimiter(tfHandy, 30);
+        // addTextLimiter(tfEmail, 30);
+        // addTextLimiter(tfStreet, 30);
+        // addTextLimiter(tfPlz, 5);
+        // addTextLimiter(tfOrt, 22);
 
-//        setupFocusedProperty();
+        // setupFocusedProperty();
     }
 
     private double calculateExclPrice() {
@@ -89,25 +95,25 @@ public class ProductDialogController implements Initializable {
 
     private void initComboBoxes() {
         // countries
-//        ObservableList<String> countries =
-//        cbUnit.getSelectionModel().select("Deutschland");
-//        cbUnit.setItems(filteredItems);
-//        cbUnit.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
-//            final TextField editor = cbUnit.getEditor();
-//            final String selected = cbUnit.getSelectionModel().getSelectedItem();
-//
-//            Platform.runLater(() -> {
-//                if (selected == null || !selected.equals(editor.getText())) {
-//                    filteredItems.setPredicate(item -> {
-//                        if (item.toUpperCase().startsWith(newValue.toUpperCase())) {
-//                            return true;
-//                        } else {
-//                            return false;
-//                        }
-//                    });
-//                }
-//            });
-//        });
+        // ObservableList<String> countries =
+        // cbUnit.getSelectionModel().select("Deutschland");
+        // cbUnit.setItems(filteredItems);
+        // cbUnit.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+        // final TextField editor = cbUnit.getEditor();
+        // final String selected = cbUnit.getSelectionModel().getSelectedItem();
+        //
+        // Platform.runLater(() -> {
+        // if (selected == null || !selected.equals(editor.getText())) {
+        // filteredItems.setPredicate(item -> {
+        // if (item.toUpperCase().startsWith(newValue.toUpperCase())) {
+        // return true;
+        // } else {
+        // return false;
+        // }
+        // });
+        // }
+        // });
+        // });
 
         // price type ust
         cbPriceType.getItems().addAll("Preis inkl. USt.", "Preis ohne USt.");
@@ -182,18 +188,18 @@ public class ProductDialogController implements Initializable {
 
     @FXML
     public void handleSave() {
-//        if (!validateInputs())
-//        {
-//            return;
-//        }
+        // if (!validateInputs())
+        // {
+        // return;
+        // }
 
-        String newArtNr = selectedProduct != null ? selectedProduct.getArtNr() : String.valueOf(dbController.readNextId("Products"));
+        String newArtNr = selectedProduct != null ? selectedProduct.getArtNr()
+                : String.valueOf(dbController.readNextId("Products"));
         Product newProduct = new Product(newArtNr,
-                            tfName.getText(),
-                            cbUnit.getSelectionModel().getSelectedItem(),
-                            PercentageStringToDouble(cbUst.getSelectionModel().getSelectedItem()),
-                            CurrencyStringToDouble(tfPriceExcl.getText()));
-
+                tfName.getText(),
+                cbUnit.getSelectionModel().getSelectedItem(),
+                PercentageStringToDouble(cbUst.getSelectionModel().getSelectedItem()),
+                CurrencyStringToDouble(tfPriceExcl.getText()));
 
         if (selectedProduct != null) {
             // Edit selected product
@@ -216,43 +222,43 @@ public class ProductDialogController implements Initializable {
     }
 
     @FXML
-    private void onPriceInclEnter(ActionEvent ae){
+    private void onPriceInclEnter(ActionEvent ae) {
         tfPriceIncl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceIncl.getText())));
     }
 
     @FXML
-    private void onPriceExclEnter(ActionEvent ae){
+    private void onPriceExclEnter(ActionEvent ae) {
         tfPriceExcl.setText(DoubleToCurrencyString(Double.parseDouble(tfPriceExcl.getText())));
     }
 
-//    public void addTextLimiter(final TextField tf, final int maxLength) {
-//        tf.textProperty().addListener((ov, oldValue, newValue) ->
-//        {
-//            if (tf.getText().length() > maxLength && !tf.getText().equals(INPUT_ERROR)) {
-//                String s = tf.getText().substring(0, maxLength);
-//                tf.setText(s);
-//            }
-//        });
-//    }
+    // public void addTextLimiter(final TextField tf, final int maxLength) {
+    // tf.textProperty().addListener((ov, oldValue, newValue) ->
+    // {
+    // if (tf.getText().length() > maxLength && !tf.getText().equals(INPUT_ERROR)) {
+    // String s = tf.getText().substring(0, maxLength);
+    // tf.setText(s);
+    // }
+    // });
+    // }
 
-//    private boolean validateInputs() {
-//        boolean isInputCorrect = true;
-//
-//        if (!tfFirstName.validate()) isInputCorrect = false;
-//        if (!tfLastName.validate()) isInputCorrect = false;
-//        if (!tfAge.validate()) isInputCorrect = false;
-//        if (!tfPlz.validate()) isInputCorrect = false;
-//        if (!tfPhone.validate()) isInputCorrect = false;
-//        if (!tfHandy.validate()) isInputCorrect = false;
-//        if (!tfEmail.validate()) isInputCorrect = false;
-//        if (!cbState.validate()) {
-//            isInputCorrect = false;
-//            LOGGER.warning("cbstate error");
-//        }
-//
-//        // TODO
-////            tpGuestData.getSelectionModel().select(PERSON);
-//
-//        return isInputCorrect;
-//    }
+    // private boolean validateInputs() {
+    // boolean isInputCorrect = true;
+    //
+    // if (!tfFirstName.validate()) isInputCorrect = false;
+    // if (!tfLastName.validate()) isInputCorrect = false;
+    // if (!tfAge.validate()) isInputCorrect = false;
+    // if (!tfPlz.validate()) isInputCorrect = false;
+    // if (!tfPhone.validate()) isInputCorrect = false;
+    // if (!tfHandy.validate()) isInputCorrect = false;
+    // if (!tfEmail.validate()) isInputCorrect = false;
+    // if (!cbState.validate()) {
+    // isInputCorrect = false;
+    // LOGGER.warning("cbstate error");
+    // }
+    //
+    // // TODO
+    //// tpGuestData.getSelectionModel().select(PERSON);
+    //
+    // return isInputCorrect;
+    // }
 }

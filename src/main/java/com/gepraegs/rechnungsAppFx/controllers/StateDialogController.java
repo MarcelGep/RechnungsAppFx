@@ -1,7 +1,15 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Logger;
+
 import com.gepraegs.rechnungsAppFx.Invoice;
 import com.gepraegs.rechnungsAppFx.InvoiceState;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,23 +21,18 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.dateFormatter;
-
 public class StateDialogController implements Initializable {
 
-    @FXML private ComboBox<InvoiceState> cbNewState;
-    @FXML private DatePicker dpPayedDate;
+    @FXML
+    private ComboBox<InvoiceState> cbNewState;
+    @FXML
+    private DatePicker dpPayedDate;
 
-    @FXML private Label lbTitle;
+    @FXML
+    private Label lbTitle;
 
-    @FXML private GridPane gpState;
+    @FXML
+    private GridPane gpState;
 
     private static final Logger LOGGER = Logger.getLogger(StateDialogController.class.getName());
 
@@ -57,7 +60,7 @@ public class StateDialogController implements Initializable {
         this.selectedInvoice = selectedInvoice;
 
         if (InvoiceState.getByCode(selectedInvoice.getState()) == InvoiceState.CREATED ||
-            InvoiceState.getByCode(selectedInvoice.getState()) == InvoiceState.DUE) {
+                InvoiceState.getByCode(selectedInvoice.getState()) == InvoiceState.DUE) {
             cbNewState.getItems().addAll(InvoiceState.PAYED);
             LocalDate createdDate = LocalDate.now();
             dpPayedDate.setValue(createdDate);
@@ -69,7 +72,7 @@ public class StateDialogController implements Initializable {
                 int r = rowIndex == null ? 0 : rowIndex;
                 if (r > 1) {
                     // decrement rows for rows after the deleted row
-                    GridPane.setRowIndex(node, r-1);
+                    GridPane.setRowIndex(node, r - 1);
                 } else if (r == 1) {
                     // collect matching rows for deletion
                     deleteNodes.add(node);

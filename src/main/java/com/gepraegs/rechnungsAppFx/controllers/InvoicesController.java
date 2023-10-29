@@ -1,9 +1,27 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
-import com.gepraegs.rechnungsAppFx.Customer;
+import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateExclUst;
+import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateUst;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToCurrencyString;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToNumberStr;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.DoubleToPercentageString;
+import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.dateFormatter;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showConfirmDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showInvoiceDialog;
+import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.showStateDialog;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
+
 import com.gepraegs.rechnungsAppFx.Invoice;
 import com.gepraegs.rechnungsAppFx.InvoiceState;
 import com.gepraegs.rechnungsAppFx.Position;
+
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,34 +29,21 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
-
-import java.io.IOException;
-import java.net.URL;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.function.Predicate;
-import java.util.logging.Logger;
-
-import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateExclUst;
-import static com.gepraegs.rechnungsAppFx.helpers.CalculateHelper.calculateUst;
-import static com.gepraegs.rechnungsAppFx.helpers.FormatterHelper.*;
-import static com.gepraegs.rechnungsAppFx.helpers.HelperDialogs.*;
-import static javax.print.attribute.standard.Chromaticity.COLOR;
 
 public class InvoicesController implements Initializable {
 
-	private static final Logger LOGGER = Logger.getLogger( InvoicesController.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger(InvoicesController.class.getName());
 
 	private final DbController dbController = DbController.getInstance();
 
@@ -61,32 +66,49 @@ public class InvoicesController implements Initializable {
 	private final TableColumn<Position, String> colPosUst = new TableColumn<>("UST. %");
 	private final TableColumn<Position, String> colPosPriceIncl = new TableColumn<>("GESAMT");
 
-	@FXML private TableView<Invoice> invoiceTable;
-	@FXML private TableView<Position> positionTable;
+	@FXML
+	private TableView<Invoice> invoiceTable;
+	@FXML
+	private TableView<Position> positionTable;
 
-	@FXML private TextField tfSearchInvoice;
+	@FXML
+	private TextField tfSearchInvoice;
 
-	@FXML private Button btnState;
+	@FXML
+	private Button btnState;
 
-	@FXML private Label lbReNr;
-	@FXML private Label lbCustomer;
-	@FXML private Label lbPriceExcl;
-	@FXML private Label lbUst;
-	@FXML private Label lbPriceIncl;
-	@FXML private Label lbCreatedDate;
-	@FXML private Label lbDueDate;
-	@FXML private Label lbPayedDate;
-	@FXML private Label lbDeliveryDate;
+	@FXML
+	private Label lbReNr;
+	@FXML
+	private Label lbCustomer;
+	@FXML
+	private Label lbPriceExcl;
+	@FXML
+	private Label lbUst;
+	@FXML
+	private Label lbPriceIncl;
+	@FXML
+	private Label lbCreatedDate;
+	@FXML
+	private Label lbDueDate;
+	@FXML
+	private Label lbPayedDate;
+	@FXML
+	private Label lbDeliveryDate;
 
-	@FXML private VBox invoiceDetailsFilled;
-	@FXML private VBox invoiceDetailsEmpty;
+	@FXML
+	private VBox invoiceDetailsFilled;
+	@FXML
+	private VBox invoiceDetailsEmpty;
 
-	@FXML private VBox showDialogLayer;
+	@FXML
+	private VBox showDialogLayer;
 
-	@FXML private Button btnClearSearch;
+	@FXML
+	private Button btnClearSearch;
 
 	@Override
-	public void initialize( URL location, ResourceBundle resources ) {
+	public void initialize(URL location, ResourceBundle resources) {
 		initializeColumns();
 		initializePositionColumns();
 		loadInvoiceData();
@@ -99,10 +121,10 @@ public class InvoicesController implements Initializable {
 	}
 
 	private void loadInvoiceData() {
-		//read guests from database
+		// read guests from database
 		List<Invoice> invoices = dbController.readInvoices();
 
-		//write guests to data list
+		// write guests to data list
 		if (invoices != null && !invoices.isEmpty()) {
 			invoiceData.addAll(invoices);
 		} else {
@@ -120,29 +142,34 @@ public class InvoicesController implements Initializable {
 		positionTable.setPlaceholder(new Label("Keine Einträge vorhanden"));
 
 		// set size of columns
-		positionTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
+		positionTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-		colPosDescription.setMaxWidth( 1f * Integer.MAX_VALUE * 60);
-		colPosCreatedDate.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
-		colPosAmount.setMaxWidth( 1f * Integer.MAX_VALUE * 12);
-		colPosUnit.setMaxWidth( 1f * Integer.MAX_VALUE * 10);
-		colPosPriceExcl.setMaxWidth( 1f * Integer.MAX_VALUE * 16);
-		colPosUst.setMaxWidth( 1f * Integer.MAX_VALUE * 10);
-		colPosPriceIncl.setMaxWidth( 1f * Integer.MAX_VALUE * 16);
+		colPosDescription.setMaxWidth(1f * Integer.MAX_VALUE * 60);
+		colPosCreatedDate.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+		colPosAmount.setMaxWidth(1f * Integer.MAX_VALUE * 12);
+		colPosUnit.setMaxWidth(1f * Integer.MAX_VALUE * 10);
+		colPosPriceExcl.setMaxWidth(1f * Integer.MAX_VALUE * 16);
+		colPosUst.setMaxWidth(1f * Integer.MAX_VALUE * 10);
+		colPosPriceIncl.setMaxWidth(1f * Integer.MAX_VALUE * 16);
 
 		// set cell value factory
 		colPosDescription.setCellValueFactory(param -> param.getValue().descriptionProperty());
-		colPosCreatedDate.setCellValueFactory((TableColumn.CellDataFeatures<Position, String> param) ->
-				new ReadOnlyStringWrapper(dateFormatter(param.getValue().getCreatedDate())));
-		colPosAmount.setCellValueFactory((TableColumn.CellDataFeatures<Position, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToNumberStr(param.getValue().getAmount())));
+		colPosCreatedDate.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Position, String> param) -> new ReadOnlyStringWrapper(
+						dateFormatter(param.getValue().getCreatedDate())));
+		colPosAmount.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Position, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToNumberStr(param.getValue().getAmount())));
 		colPosUnit.setCellValueFactory(param -> param.getValue().unitProperty());
-		colPosPriceExcl.setCellValueFactory((TableColumn.CellDataFeatures<Position, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getPriceExcl())));
-		colPosUst.setCellValueFactory((TableColumn.CellDataFeatures<Position, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToPercentageString(param.getValue().getUst())));
-		colPosPriceIncl.setCellValueFactory((TableColumn.CellDataFeatures<Position, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getPriceIncl())));
+		colPosPriceExcl.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Position, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToCurrencyString(param.getValue().getPriceExcl())));
+		colPosUst.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Position, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToPercentageString(param.getValue().getUst())));
+		colPosPriceIncl.setCellValueFactory(
+				(TableColumn.CellDataFeatures<Position, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToCurrencyString(param.getValue().getPriceIncl())));
 
 		// add columns to customer table
 		positionTable.getColumns().add(colPosDescription);
@@ -158,27 +185,31 @@ public class InvoicesController implements Initializable {
 		invoiceTable.setPlaceholder(new Label("Keine Einträge vorhanden"));
 
 		// set size of columns
-		invoiceTable.setColumnResizePolicy( TableView.CONSTRAINED_RESIZE_POLICY );
+		invoiceTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-		colReNr.setMaxWidth( 1f * Integer.MAX_VALUE * 16);
-		colCustomer.setMaxWidth( 1f * Integer.MAX_VALUE * 43);
-		colCreatedDate.setMaxWidth( 1f * Integer.MAX_VALUE * 18);
-		colDueDate.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
-		colPayedDate.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
-		colTotalPrice.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
-		colState.setMaxWidth( 1f * Integer.MAX_VALUE * 15);
+		colReNr.setMaxWidth(1f * Integer.MAX_VALUE * 16);
+		colCustomer.setMaxWidth(1f * Integer.MAX_VALUE * 43);
+		colCreatedDate.setMaxWidth(1f * Integer.MAX_VALUE * 18);
+		colDueDate.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+		colPayedDate.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+		colTotalPrice.setMaxWidth(1f * Integer.MAX_VALUE * 15);
+		colState.setMaxWidth(1f * Integer.MAX_VALUE * 15);
 
 		// set cell value factory
 		colReNr.setCellValueFactory(param -> param.getValue().reNrProperty());
 		colCustomer.setCellValueFactory(param -> param.getValue().getCustomer().getCompany());
-		colCreatedDate.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
-				new ReadOnlyStringWrapper(dateFormatter(param.getValue().getCreateDate())));
-		colDueDate.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
-				new ReadOnlyStringWrapper(dateFormatter(param.getValue().getDueDate())));
-		colPayedDate.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
-				new ReadOnlyStringWrapper(param.getValue().getPayedDate() == null ? "" : dateFormatter(param.getValue().getPayedDate())));
-		colTotalPrice.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) ->
-				new ReadOnlyStringWrapper(DoubleToCurrencyString(param.getValue().getTotalPrice())));
+		colCreatedDate
+				.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) -> new ReadOnlyStringWrapper(
+						dateFormatter(param.getValue().getCreateDate())));
+		colDueDate
+				.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) -> new ReadOnlyStringWrapper(
+						dateFormatter(param.getValue().getDueDate())));
+		colPayedDate
+				.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) -> new ReadOnlyStringWrapper(
+						param.getValue().getPayedDate() == null ? "" : dateFormatter(param.getValue().getPayedDate())));
+		colTotalPrice
+				.setCellValueFactory((TableColumn.CellDataFeatures<Invoice, String> param) -> new ReadOnlyStringWrapper(
+						DoubleToCurrencyString(param.getValue().getTotalPrice())));
 		colState.setCellFactory(new Callback<>() {
 			@Override
 			public TableCell call(final TableColumn<Invoice, String> param) {
@@ -304,8 +335,7 @@ public class InvoicesController implements Initializable {
 		return data == null || data.isEmpty() ? "---" : data;
 	}
 
-	private void scrollToRow(int row)
-	{
+	private void scrollToRow(int row) {
 		invoiceTable.requestFocus();
 		invoiceTable.getSelectionModel().select(row);
 		invoiceTable.getFocusModel().focus(row);
@@ -316,7 +346,7 @@ public class InvoicesController implements Initializable {
 		colCustomer.setSortType(TableColumn.SortType.ASCENDING);
 		colReNr.setSortType(TableColumn.SortType.ASCENDING);
 		invoiceTable.getSortOrder().add(colReNr);
-//		customerTable.getSortOrder().add(colCustomer);
+		// customerTable.getSortOrder().add(colCustomer);
 	}
 
 	private void setRowSelectionListener() {
@@ -331,10 +361,8 @@ public class InvoicesController implements Initializable {
 	private void setupInvoiceFilter() {
 		FilteredList<Invoice> filteredData = new FilteredList<>(invoiceData, e -> true);
 
-		tfSearchInvoice.textProperty().addListener((observableValue, oldValue, newValue) ->
-		{
-			filteredData.setPredicate((Predicate<? super Invoice>) invoice ->
-			{
+		tfSearchInvoice.textProperty().addListener((observableValue, oldValue, newValue) -> {
+			filteredData.setPredicate((Predicate<? super Invoice>) invoice -> {
 				if (newValue == null) {
 					return true;
 				}
@@ -384,7 +412,7 @@ public class InvoicesController implements Initializable {
 			if (invoice != null) {
 				invoiceTable.sort();
 
-				//scroll to last added invoice, select it and show detail informations
+				// scroll to last added invoice, select it and show detail informations
 				int lastInvoiceReNr = dbController.readNextId("Invoices") - 1;
 				for (int i = 0; i < invoiceTable.getItems().size(); i++) {
 					if (Integer.parseInt(invoiceTable.getItems().get(i).getReNr()) == lastInvoiceReNr) {
@@ -396,7 +424,7 @@ public class InvoicesController implements Initializable {
 
 				showPositions(invoice);
 			}
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}
 
@@ -408,8 +436,8 @@ public class InvoicesController implements Initializable {
 		try {
 			Invoice selectedInvoice = invoiceTable.getSelectionModel().getSelectedItem();
 			String content = "Diese Aktion kann später nicht mehr rückgängig gemacht werden.\n\n" +
-							 "Möchtest du die Rechnung mit der Nr. " + selectedInvoice.getReNr() +
-							 " für den Kunden \"" + selectedInvoice.getCustomer().getCompany().getValue()  + "\" löschen?";
+					"Möchtest du die Rechnung mit der Nr. " + selectedInvoice.getReNr() +
+					" für den Kunden \"" + selectedInvoice.getCustomer().getCompany().getValue() + "\" löschen?";
 
 			showDialogLayer.setVisible(true);
 
@@ -442,7 +470,7 @@ public class InvoicesController implements Initializable {
 
 				showDialogLayer.setVisible(false);
 			}
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}
 	}
@@ -458,7 +486,7 @@ public class InvoicesController implements Initializable {
 				showStateDialog(invoiceData, invoice);
 				showDialogLayer.setVisible(false);
 			}
-		} catch (IOException e){
+		} catch (IOException e) {
 			LOGGER.warning(e.toString());
 		}
 	}

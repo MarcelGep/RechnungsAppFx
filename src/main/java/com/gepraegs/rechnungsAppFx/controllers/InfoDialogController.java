@@ -1,15 +1,14 @@
 package com.gepraegs.rechnungsAppFx.controllers;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.logging.Logger;
 
 public class InfoDialogController implements Initializable {
 
@@ -17,9 +16,11 @@ public class InfoDialogController implements Initializable {
     private Stage dialogStage = new Stage();
     private boolean dialogConfirmed = false;
 
-    @FXML private Label lbContent;
+    @FXML
+    private Label lbContent;
 
-    @FXML private Button btnCancel;
+    @FXML
+    private Button btnCancel;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

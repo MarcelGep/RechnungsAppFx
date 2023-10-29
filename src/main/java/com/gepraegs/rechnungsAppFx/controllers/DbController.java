@@ -3,18 +3,26 @@ package com.gepraegs.rechnungsAppFx.controllers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.gepraegs.rechnungsAppFx.*;
+import com.gepraegs.rechnungsAppFx.Customer;
+import com.gepraegs.rechnungsAppFx.Invoice;
+import com.gepraegs.rechnungsAppFx.Position;
+import com.gepraegs.rechnungsAppFx.Product;
 
 public class DbController {
 
 	private static final DbController dbcontroller = new DbController();
 	private static Connection connection;
-	private static final Logger LOGGER = Logger.getLogger( DbController.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger(DbController.class.getName());
 	private static final String DB_NAME = "database/database.db";
 	private static final String JDBC_PREFIX = "jdbc:sqlite:";
 	private static String DB_PATH = "";
@@ -23,11 +31,11 @@ public class DbController {
 
 	static {
 		try {
-			Class.forName( "org.sqlite.JDBC" );
-		} catch ( ClassNotFoundException e ) {
-			System.err.println( "Fehler beim Laden des JDBC-Treibers" );
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e) {
+			System.err.println("Fehler beim Laden des JDBC-Treibers");
 			e.printStackTrace();
-			LOGGER.warning( e.toString() );
+			LOGGER.warning(e.toString());
 		}
 	}
 
@@ -39,12 +47,12 @@ public class DbController {
 		boolean isDbConnected = false;
 
 		try {
-			if ( connection != null ) {
+			if (connection != null) {
 				isDbConnected = !connection.isClosed();
 			}
-		} catch ( SQLException e ) {
+		} catch (SQLException e) {
 			e.printStackTrace();
-			LOGGER.warning( e.toString() );
+			LOGGER.warning(e.toString());
 			isDbConnected = false;
 		}
 
@@ -52,133 +60,132 @@ public class DbController {
 	}
 
 	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection( JDBC_PREFIX + DB_PATH );
+		return DriverManager.getConnection(JDBC_PREFIX + DB_PATH);
 	}
 
-	public boolean databaseExist( String dbPath ) {
-		File dbFile = new File( dbPath );
+	public boolean databaseExist(String dbPath) {
+		File dbFile = new File(dbPath);
 		return dbFile.exists();
 	}
 
-	public void initDBConnection( String dbPath ) {
+	public void initDBConnection(String dbPath) {
 		DB_PATH = dbPath;
 
 		try {
-			if ( connection != null )
+			if (connection != null)
 				return;
 
-			LOGGER.info( "Creating Connection to Database..." );
-			LOGGER.info( "DB-Path: " + DB_PATH );
+			LOGGER.info("Creating Connection to Database...");
+			LOGGER.info("DB-Path: " + DB_PATH);
 
-			if ( !databaseExist( DB_PATH ) ) {
-				LOGGER.info( "Database NOT FOUND!" );
+			if (!databaseExist(DB_PATH)) {
+				LOGGER.info("Database NOT FOUND!");
 				return;
 			}
 
 			connection = getConnection();
 
-			if ( !connection.isClosed() ) {
-				LOGGER.info( "...Connection established to DB \"" + DB_NAME + "\"" );
+			if (!connection.isClosed()) {
+				LOGGER.info("...Connection established to DB \"" + DB_NAME + "\"");
 			}
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return;
 		}
 
-		Runtime.getRuntime().addShutdownHook( new Thread( () -> {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {
-				if ( !connection.isClosed() && connection != null ) {
+				if (!connection.isClosed() && connection != null) {
 					connection.close();
-					if ( connection.isClosed() ) {
-						System.out.println( "Connection to Database closed" );
+					if (connection.isClosed()) {
+						System.out.println("Connection to Database closed");
 					}
 				}
-			} catch ( SQLException e ) {
+			} catch (SQLException e) {
 				e.printStackTrace();
-				System.out.println( e.toString() );
+				System.out.println(e.toString());
 			}
-		} ) );
+		}));
 	}
 
-	public boolean createNewDatabase( String dbPath ) {
+	public boolean createNewDatabase(String dbPath) {
 		DB_PATH = dbPath;
 
 		StringBuffer sb = new StringBuffer();
 
 		try {
-			if ( databaseExist( DB_PATH ) ) {
-				new File( DB_PATH ).delete();
+			if (databaseExist(DB_PATH)) {
+				new File(DB_PATH).delete();
 			}
 
-			FileReader fr = new FileReader( new File( DB_SQL_FILE ) );
-			BufferedReader br = new BufferedReader( fr );
+			FileReader fr = new FileReader(new File(DB_SQL_FILE));
+			BufferedReader br = new BufferedReader(fr);
 
 			String line;
-			while ( ( line = br.readLine() ) != null ) {
-				sb.append( line );
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
 			}
 			br.close();
 
-			String[] inst = sb.toString().split( ";" );
+			String[] inst = sb.toString().split(";");
 
 			Connection c = getConnection();
 			Statement st = c.createStatement();
 
-			for ( int i = 0; i < inst.length; i++ ) {
-				if ( !inst[i].trim().equals( "" ) ) {
-					st.executeUpdate( inst[i] );
-					LOGGER.info( "DB Install: " + inst[i] );
+			for (int i = 0; i < inst.length; i++) {
+				if (!inst[i].trim().equals("")) {
+					st.executeUpdate(inst[i]);
+					LOGGER.info("DB Install: " + inst[i]);
 				}
 			}
 
-			LOGGER.info( "DB Install: COMPLETED!" );
+			LOGGER.info("DB Install: COMPLETED!");
 			return true;
-		} catch ( Exception e ) {
-			LOGGER.warning( "Error Create DB: " + e.toString() );
+		} catch (Exception e) {
+			LOGGER.warning("Error Create DB: " + e.toString());
 			return false;
 		}
 	}
 
-//	private boolean updateIDs( int deletedId ) {
-//		String query = "UPDATE Guests SET ID = ID - 1 WHERE ID > ?";
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setInt( 1, deletedId );
-//			ps.executeUpdate();
-//
-//			LOGGER.info( "Guest ids updated!" );
-//			return true;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
-//	}
-//
-//	private boolean updateSqliteSeq() {
-//		int guestCount = readGuestCount();
-//		String query = "UPDATE sqlite_sequence SET seq = ? WHERE name = 'Guests'";
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setInt( 1, guestCount );
-//			ps.executeUpdate();
-//
-//			LOGGER.info( "Update slite sequence from Guests to " + guestCount );
-//
-//			return true;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
-//	}
+	// private boolean updateIDs( int deletedId ) {
+	// String query = "UPDATE Guests SET ID = ID - 1 WHERE ID > ?";
+	//
+	// try {
+	// PreparedStatement ps = connection.prepareStatement( query );
+	// ps.setInt( 1, deletedId );
+	// ps.executeUpdate();
+	//
+	// LOGGER.info( "Guest ids updated!" );
+	// return true;
+	// } catch ( SQLException e ) {
+	// LOGGER.warning( e.toString() );
+	// return false;
+	// }
+	// }
+	//
+	// private boolean updateSqliteSeq() {
+	// int guestCount = readGuestCount();
+	// String query = "UPDATE sqlite_sequence SET seq = ? WHERE name = 'Guests'";
+	//
+	// try {
+	// PreparedStatement ps = connection.prepareStatement( query );
+	// ps.setInt( 1, guestCount );
+	// ps.executeUpdate();
+	//
+	// LOGGER.info( "Update slite sequence from Guests to " + guestCount );
+	//
+	// return true;
+	// } catch ( SQLException e ) {
+	// LOGGER.warning( e.toString() );
+	// return false;
+	// }
+	// }
 
-	private boolean updateSqliteSeq()
-	{
+	private boolean updateSqliteSeq() {
 		int customerCount = readCustomerCount();
 		String query = "UPDATE sqlite_sequence SET seq = ? WHERE name = 'Customers'";
 
-		try{
+		try {
 			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setInt(1, customerCount);
 			ps.executeUpdate();
@@ -186,94 +193,94 @@ public class DbController {
 			LOGGER.info("Update slite sequence from Customers to " + customerCount);
 
 			return true;
-		} catch (SQLException e){
+		} catch (SQLException e) {
 			LOGGER.warning(e.toString());
 			return false;
 		}
 	}
 
-	public boolean createCustomer(Customer customer ) {
+	public boolean createCustomer(Customer customer) {
 		String query = "INSERT INTO Customers(Company, Name1, Name2, Street, Plz, Location, Country, Phone, Fax, Email, Website, Discount, PayedCosts, Handy, OpenCosts, Informations) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, customer.getCompany().getValue());
-			ps.setString( 2, customer.getName1().getValue());
-			ps.setString( 3, customer.getName2().getValue());
-			ps.setString( 4, customer.getStreet().getValue());
-			ps.setString( 5, customer.getPlz().getValue());
-			ps.setString( 6, customer.getLocation().getValue());
-			ps.setString( 7, customer.getCountry().getValue());
-			ps.setString( 8, customer.getPhone().getValue());
-			ps.setString( 9, customer.getFax().getValue());
-			ps.setString( 10, customer.getEmail().getValue());
-			ps.setString( 11, customer.getWebsite().getValue());
-			ps.setDouble( 12, customer.getDiscount());
-			ps.setDouble( 13, customer.getPayedCosts());
-			ps.setString( 14, customer.getHandy().getValue());
-			ps.setDouble( 15, customer.getOpenCosts());
-			ps.setString( 16, customer.getInformations().getValue());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, customer.getCompany().getValue());
+			ps.setString(2, customer.getName1().getValue());
+			ps.setString(3, customer.getName2().getValue());
+			ps.setString(4, customer.getStreet().getValue());
+			ps.setString(5, customer.getPlz().getValue());
+			ps.setString(6, customer.getLocation().getValue());
+			ps.setString(7, customer.getCountry().getValue());
+			ps.setString(8, customer.getPhone().getValue());
+			ps.setString(9, customer.getFax().getValue());
+			ps.setString(10, customer.getEmail().getValue());
+			ps.setString(11, customer.getWebsite().getValue());
+			ps.setDouble(12, customer.getDiscount());
+			ps.setDouble(13, customer.getPayedCosts());
+			ps.setString(14, customer.getHandy().getValue());
+			ps.setDouble(15, customer.getOpenCosts());
+			ps.setString(16, customer.getInformations().getValue());
 			ps.executeUpdate();
 
-			LOGGER.info( "New customer created!" );
+			LOGGER.info("New customer created!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
 
-	public boolean editCustomer(Customer customer ) {
+	public boolean editCustomer(Customer customer) {
 		String query = "UPDATE Customers SET Company = ?, Name1 = ?, Name2 = ?, Street = ?, Plz = ?, Location = ?," +
-				       "Country = ?, Phone = ?, Fax = ?, Email = ?, Website = ?, Discount = ?, PayedCosts = ?, OpenCosts = ?, Handy = ?, Informations = ? WHERE KdNr = ?";
+				"Country = ?, Phone = ?, Fax = ?, Email = ?, Website = ?, Discount = ?, PayedCosts = ?, OpenCosts = ?, Handy = ?, Informations = ? WHERE KdNr = ?";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, customer.getCompany().getValue());
-			ps.setString( 2, customer.getName1().getValue());
-			ps.setString( 3, customer.getName2().getValue());
-			ps.setString( 4, customer.getStreet().getValue());
-			ps.setString( 5, customer.getPlz().getValue());
-			ps.setString( 6, customer.getLocation().getValue());
-			ps.setString( 7, customer.getCountry().getValue());
-			ps.setString( 8, customer.getPhone().getValue());
-			ps.setString( 9, customer.getFax().getValue());
-			ps.setString( 10, customer.getEmail().getValue());
-			ps.setString( 11, customer.getWebsite().getValue());
-			ps.setDouble( 12, customer.getDiscount());
-			ps.setDouble( 13, customer.getPayedCosts());
-			ps.setDouble( 15, customer.getOpenCosts());
-			ps.setString( 14, customer.getHandy().getValue());
-			ps.setString( 16, customer.getInformations().getValue());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, customer.getCompany().getValue());
+			ps.setString(2, customer.getName1().getValue());
+			ps.setString(3, customer.getName2().getValue());
+			ps.setString(4, customer.getStreet().getValue());
+			ps.setString(5, customer.getPlz().getValue());
+			ps.setString(6, customer.getLocation().getValue());
+			ps.setString(7, customer.getCountry().getValue());
+			ps.setString(8, customer.getPhone().getValue());
+			ps.setString(9, customer.getFax().getValue());
+			ps.setString(10, customer.getEmail().getValue());
+			ps.setString(11, customer.getWebsite().getValue());
+			ps.setDouble(12, customer.getDiscount());
+			ps.setDouble(13, customer.getPayedCosts());
+			ps.setDouble(15, customer.getOpenCosts());
+			ps.setString(14, customer.getHandy().getValue());
+			ps.setString(16, customer.getInformations().getValue());
 			ps.setString(17, customer.getKdNr().getValue());
 			ps.executeUpdate();
 
 			LOGGER.info("Customer with KdNr: " + customer.getKdNr().getValue() + " updated!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
 
-	public boolean deleteCustomer(Customer customer ) {
+	public boolean deleteCustomer(Customer customer) {
 		try {
 			String query = "DELETE FROM Customers WHERE KdNr = ?";
 			int kdNr = Integer.parseInt(customer.getKdNr().getValue());
 
-			PreparedStatement ps = connection.prepareStatement( query );
+			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setInt(1, kdNr);
 			ps.executeUpdate();
 
-			LOGGER.info( "Customer \"" + customer.getCompany().getValue() +
-							 "\" with KdNr \"" + customer.getKdNr().getValue() +
-					  	     "\" was deleted!" );
+			LOGGER.info("Customer \"" + customer.getCompany().getValue() +
+					"\" with KdNr \"" + customer.getKdNr().getValue() +
+					"\" was deleted!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return false;
 		}
 	}
@@ -283,36 +290,37 @@ public class DbController {
 			String query = "DELETE FROM Positions WHERE RgNr = ?";
 			int rgNr = Integer.parseInt(rgNrStr);
 
-			PreparedStatement ps = connection.prepareStatement( query );
+			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setInt(1, rgNr);
 			ps.executeUpdate();
 
-			LOGGER.info( "Delete all positions of invoice with RgNr: " + rgNrStr );
+			LOGGER.info("Delete all positions of invoice with RgNr: " + rgNrStr);
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return false;
 		}
 	}
 
-	public boolean setInvite( Customer guest ) {
-//		String query = "UPDATE Guests SET Invite = ? WHERE ID = ?";
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setInt( 1, guest.isInvite() ? 1 : 0 );
-//			ps.setInt( 2, guest.getId() );
-//			ps.executeUpdate();
-//
-//			LOGGER.info(
-//				"Set invite: " + guest.isInvite() + " for " + guest.getFirstName() + ", " + guest.getLastName() );
-//
-//			return true;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
+	public boolean setInvite(Customer guest) {
+		// String query = "UPDATE Guests SET Invite = ? WHERE ID = ?";
+		//
+		// try {
+		// PreparedStatement ps = connection.prepareStatement( query );
+		// ps.setInt( 1, guest.isInvite() ? 1 : 0 );
+		// ps.setInt( 2, guest.getId() );
+		// ps.executeUpdate();
+		//
+		// LOGGER.info(
+		// "Set invite: " + guest.isInvite() + " for " + guest.getFirstName() + ", " +
+		// guest.getLastName() );
+		//
+		// return true;
+		// } catch ( SQLException e ) {
+		// LOGGER.warning( e.toString() );
+		// return false;
+		// }
 		return true;
 
 	}
@@ -322,46 +330,47 @@ public class DbController {
 
 		try {
 			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery( query );
+			ResultSet rs = st.executeQuery(query);
 
 			String count = "";
 
-			while ( rs.next() ) {
-				count = rs.getString( "COUNT(*)" );
+			while (rs.next()) {
+				count = rs.getString("COUNT(*)");
 			}
 
-			LOGGER.info( "Read invite count of all Guests = " + count );
+			LOGGER.info("Read invite count of all Guests = " + count);
 
 			return count;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return null;
 		}
 	}
 
-	public int getGuestId( Customer guest ) {
+	public int getGuestId(Customer guest) {
 		int id = -1;
-//
-//		String query = "SELECT ID FROM Guests WHERE LastName = ? AND FirstName = ? AND Age = ?";
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setString( 1, guest.getLastName() );
-//			ps.setString( 2, guest.getFirstName() );
-//			ps.setInt( 3, guest.getAge() );
-//
-//			ResultSet rs = ps.executeQuery();
-//
-//			while ( rs.next() ) {
-//				id = rs.getInt( "ID" );
-//			}
-//
-//			LOGGER.info( "Guest ID = " + id );
-//
-//			return id;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//		}
+		//
+		// String query = "SELECT ID FROM Guests WHERE LastName = ? AND FirstName = ?
+		// AND Age = ?";
+		//
+		// try {
+		// PreparedStatement ps = connection.prepareStatement( query );
+		// ps.setString( 1, guest.getLastName() );
+		// ps.setString( 2, guest.getFirstName() );
+		// ps.setInt( 3, guest.getAge() );
+		//
+		// ResultSet rs = ps.executeQuery();
+		//
+		// while ( rs.next() ) {
+		// id = rs.getInt( "ID" );
+		// }
+		//
+		// LOGGER.info( "Guest ID = " + id );
+		//
+		// return id;
+		// } catch ( SQLException e ) {
+		// LOGGER.warning( e.toString() );
+		// }
 
 		return id;
 	}
@@ -370,12 +379,12 @@ public class DbController {
 		String query = "SELECT * FROM Customers WHERE KdNr = ?";
 		Customer customer = null;
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setInt( 1, kdNr );
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, kdNr);
 
 			ResultSet rs = ps.executeQuery();
 
-			while ( rs.next() ) {
+			while (rs.next()) {
 				String company = rs.getString("Company");
 				String name1 = rs.getString("Name1");
 				String name2 = rs.getString("Name2");
@@ -393,18 +402,19 @@ public class DbController {
 				double openCosts = rs.getDouble("OpenCosts");
 				double payedCosts = rs.getDouble("PayedCosts");
 
-				customer = new Customer(String.valueOf(kdNr), company, name1, name2, street, plz, location, country, phone, handy, fax,
-										email, website, discount);
+				customer = new Customer(String.valueOf(kdNr), company, name1, name2, street, plz, location, country,
+						phone, handy, fax,
+						email, website, discount);
 
 				customer.setInformations(informations);
 				customer.setOpenCosts(openCosts);
 				customer.setPayedCosts(payedCosts);
 			}
 
-			LOGGER.info( "Read customer with KdNr: " + kdNr );
+			LOGGER.info("Read customer with KdNr: " + kdNr);
 			return customer;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return null;
 		}
 	}
@@ -414,42 +424,43 @@ public class DbController {
 
 		try {
 			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery( query );
+			ResultSet rs = st.executeQuery(query);
 
 			List<Customer> customerData = new ArrayList<>();
 
-			while ( rs.next() ) {
-				String kdNr = rs.getString( "KdNr" );
-				String company = rs.getString( "Company" );
-				String name1 = rs.getString( "Name1" );
-				String name2 = rs.getString( "Name2" );
-				String street = rs.getString( "Street" );
-				String plz = rs.getString( "Plz" );
-				String location = rs.getString( "Location" );
-				String country = rs.getString( "Country" );
-				String phone = rs.getString( "Phone" );
-				String handy = rs.getString( "Handy" );
-				String fax = rs.getString( "Fax" );
-				String email = rs.getString( "Email" );
-				String website = rs.getString( "Website" );
-				String informations = rs.getString( "Informations" );
-				int discount = rs.getInt( "Discount" );
-				double openCosts = rs.getDouble( "OpenCosts" );
-				double payedCosts = rs.getDouble( "PayedCosts" );
+			while (rs.next()) {
+				String kdNr = rs.getString("KdNr");
+				String company = rs.getString("Company");
+				String name1 = rs.getString("Name1");
+				String name2 = rs.getString("Name2");
+				String street = rs.getString("Street");
+				String plz = rs.getString("Plz");
+				String location = rs.getString("Location");
+				String country = rs.getString("Country");
+				String phone = rs.getString("Phone");
+				String handy = rs.getString("Handy");
+				String fax = rs.getString("Fax");
+				String email = rs.getString("Email");
+				String website = rs.getString("Website");
+				String informations = rs.getString("Informations");
+				int discount = rs.getInt("Discount");
+				double openCosts = rs.getDouble("OpenCosts");
+				double payedCosts = rs.getDouble("PayedCosts");
 
-				Customer customer = new Customer(kdNr, company, name1, name2, street, plz, location, country, phone, handy, fax,
+				Customer customer = new Customer(kdNr, company, name1, name2, street, plz, location, country, phone,
+						handy, fax,
 						email, website, discount);
 
 				customer.setInformations(informations);
 				customer.setOpenCosts(openCosts);
 				customer.setPayedCosts(payedCosts);
 
-				customerData.add( customer );
+				customerData.add(customer);
 			}
-			LOGGER.info( "Read all customers!" );
+			LOGGER.info("Read all customers!");
 			return customerData;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return null;
 		}
 	}
@@ -459,17 +470,17 @@ public class DbController {
 			String query = "DELETE FROM Products WHERE ArtNr = ?";
 			int artNr = Integer.parseInt(product.getArtNr());
 
-			PreparedStatement ps = connection.prepareStatement( query );
+			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setInt(1, artNr);
 			ps.executeUpdate();
 
-			LOGGER.info( "Product \"" + product.getName() +
+			LOGGER.info("Product \"" + product.getName() +
 					"\" with KdNr \"" + product.getArtNr() +
-					"\" was deleted!" );
+					"\" was deleted!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return false;
 		}
 	}
@@ -479,25 +490,25 @@ public class DbController {
 
 		try {
 			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery( query );
+			ResultSet rs = st.executeQuery(query);
 
 			List<Product> productData = new ArrayList<>();
 
-			while ( rs.next() ) {
-				String artNr = rs.getString( "ArtNr" );
-				String name = rs.getString( "Name" );
-				String unit = rs.getString( "Unit" );
-				double price = rs.getDouble( "Price" );
-				double ust = rs.getDouble( "Ust" );
+			while (rs.next()) {
+				String artNr = rs.getString("ArtNr");
+				String name = rs.getString("Name");
+				String unit = rs.getString("Unit");
+				double price = rs.getDouble("Price");
+				double ust = rs.getDouble("Ust");
 
 				Product product = new Product(artNr, name, unit, ust, price);
 
-				productData.add( product );
+				productData.add(product);
 			}
-			LOGGER.info( "Read all products!" );
+			LOGGER.info("Read all products!");
 			return productData;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return null;
 		}
 	}
@@ -506,55 +517,53 @@ public class DbController {
 		String query = "INSERT INTO Products(Name, Unit, Price, Ust) VALUES(?,?,?,?)";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, product.getName());
-			ps.setString( 2, product.getUnit());
-			ps.setDouble( 3, product.getPriceExcl());
-			ps.setDouble( 4, product.getUst());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, product.getName());
+			ps.setString(2, product.getUnit());
+			ps.setDouble(3, product.getPriceExcl());
+			ps.setDouble(4, product.getUst());
 
 			ps.executeUpdate();
 
-			LOGGER.info( "New product \"" + product.getName() + "\" created!" );
+			LOGGER.info("New product \"" + product.getName() + "\" created!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
 
-	public boolean editProduct( Product product ) {
+	public boolean editProduct(Product product) {
 		String query = "UPDATE Products SET Name = ?, Unit = ?, Price = ?, Ust = ? WHERE ArtNr = ?";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, product.getName());
-			ps.setString( 2, product.getUnit());
-			ps.setDouble( 3, product.getPriceExcl());
-			ps.setDouble( 4, product.getUst());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, product.getName());
+			ps.setString(2, product.getUnit());
+			ps.setDouble(3, product.getPriceExcl());
+			ps.setDouble(4, product.getUst());
 			ps.setString(5, product.getArtNr());
 			ps.executeUpdate();
 
 			LOGGER.info("Product with ArtNr: " + product.getArtNr() + " updated!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
 
-	public int readNextId()
-	{
+	public int readNextId() {
 		String query = "SELECT * FROM sqlite_sequence";
 		int newId = -1;
 
-		try{
+		try {
 			Statement st = connection.createStatement();
 			ResultSet rs = st.executeQuery(query);
 
-			while(rs.next())
-			{
+			while (rs.next()) {
 				newId = rs.getInt("seq");
 			}
 
@@ -562,7 +571,7 @@ public class DbController {
 
 			LOGGER.info("Read new id = " + newId);
 
-		} catch (SQLException e){
+		} catch (SQLException e) {
 			LOGGER.warning(e.toString());
 		}
 
@@ -574,31 +583,32 @@ public class DbController {
 
 		try {
 			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery( query );
+			ResultSet rs = st.executeQuery(query);
 
 			List<Invoice> invoiceData = new ArrayList<>();
 
-			while ( rs.next() ) {
-				String reNr = rs.getString( "ReNr" );
-				int kdNr = rs.getInt( "KdNr" );
-				String createdDate = rs.getString( "CreatedDate" );
-				String dueDate = rs.getString( "DueDate" );
-				String payedDate = rs.getString( "PayedDate" );
-				String deliveryDate = rs.getString( "DeliveryDate" );
-				String skonto = rs.getString( "Skonto" );
-				String state = rs.getString( "State" );
-				int payCondition = rs.getInt( "PayCondition" );
-				double totalPrice = rs.getDouble( "TotalPrice" );
-				double ust = rs.getDouble( "USt" );
+			while (rs.next()) {
+				String reNr = rs.getString("ReNr");
+				int kdNr = rs.getInt("KdNr");
+				String createdDate = rs.getString("CreatedDate");
+				String dueDate = rs.getString("DueDate");
+				String payedDate = rs.getString("PayedDate");
+				String deliveryDate = rs.getString("DeliveryDate");
+				String skonto = rs.getString("Skonto");
+				String state = rs.getString("State");
+				int payCondition = rs.getInt("PayCondition");
+				double totalPrice = rs.getDouble("TotalPrice");
+				double ust = rs.getDouble("USt");
 
-				Invoice invoice = new Invoice(reNr, readCustomer(kdNr), createdDate, dueDate, payedDate, deliveryDate, state, payCondition, totalPrice,  ust);
+				Invoice invoice = new Invoice(reNr, readCustomer(kdNr), createdDate, dueDate, payedDate, deliveryDate,
+						state, payCondition, totalPrice, ust);
 
 				invoiceData.add(invoice);
 			}
-			LOGGER.info( "Read all invoices!" );
+			LOGGER.info("Read all invoices!");
 			return invoiceData;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return null;
 		}
 	}
@@ -607,25 +617,25 @@ public class DbController {
 		String query = "INSERT INTO Invoices(ReNr, KdNr, CreatedDate, DueDate, PayedDate, DeliveryDate, State, PayCondition, USt, TotalPrice) VALUES(?,?,?,?,?,?,?,?,?,?)";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, invoice.getReNr());
-			ps.setString( 2, invoice.getCustomer().getKdNr().getValue());
-			ps.setString( 3, invoice.getCreateDate());
-			ps.setString( 4, invoice.getDueDate());
-			ps.setString( 5, invoice.getPayedDate());
-			ps.setString( 6, invoice.getDeliveryDate());
-			ps.setString( 7, invoice.getState());
-			ps.setInt( 8, invoice.getPayCondition());
-			ps.setDouble( 9, invoice.getUst());
-			ps.setDouble( 10, invoice.getTotalPrice());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, invoice.getReNr());
+			ps.setString(2, invoice.getCustomer().getKdNr().getValue());
+			ps.setString(3, invoice.getCreateDate());
+			ps.setString(4, invoice.getDueDate());
+			ps.setString(5, invoice.getPayedDate());
+			ps.setString(6, invoice.getDeliveryDate());
+			ps.setString(7, invoice.getState());
+			ps.setInt(8, invoice.getPayCondition());
+			ps.setDouble(9, invoice.getUst());
+			ps.setDouble(10, invoice.getTotalPrice());
 
 			ps.executeUpdate();
 
-			LOGGER.info( "New invoice created!" );
+			LOGGER.info("New invoice created!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
@@ -634,24 +644,24 @@ public class DbController {
 		String query = "UPDATE Invoices SET KdNr = ?, CreatedDate = ?, DueDate = ?, PayedDate = ?, DeliveryDate = ?, State = ?, PayCondition = ?, USt = ?, TotalPrice = ? WHERE ReNr = ?";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, invoice.getCustomer().getKdNr().getValue());
-			ps.setString( 2, invoice.getCreateDate());
-			ps.setString( 3, invoice.getDueDate());
-			ps.setString( 4, invoice.getPayedDate());
-			ps.setString( 5, invoice.getDeliveryDate());
-			ps.setString( 6, invoice.getState());
-			ps.setInt( 7, invoice.getPayCondition());
-			ps.setDouble( 8, invoice.getUst());
-			ps.setDouble( 9, invoice.getTotalPrice());
-			ps.setString( 10, invoice.getReNr());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, invoice.getCustomer().getKdNr().getValue());
+			ps.setString(2, invoice.getCreateDate());
+			ps.setString(3, invoice.getDueDate());
+			ps.setString(4, invoice.getPayedDate());
+			ps.setString(5, invoice.getDeliveryDate());
+			ps.setString(6, invoice.getState());
+			ps.setInt(7, invoice.getPayCondition());
+			ps.setDouble(8, invoice.getUst());
+			ps.setDouble(9, invoice.getTotalPrice());
+			ps.setString(10, invoice.getReNr());
 			ps.executeUpdate();
 
 			LOGGER.info("Invoice with ReNr: " + invoice.getReNr() + " updated!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
@@ -661,37 +671,37 @@ public class DbController {
 			String query = "DELETE FROM Invoices WHERE ReNr = ?";
 			int reNr = Integer.parseInt(invoice.getReNr());
 
-			PreparedStatement ps = connection.prepareStatement( query );
+			PreparedStatement ps = connection.prepareStatement(query);
 			ps.setInt(1, reNr);
 			ps.executeUpdate();
 
-			LOGGER.info( "Invoice with ReNr \"" + invoice.getReNr() + "\" was deleted!" );
+			LOGGER.info("Invoice with ReNr \"" + invoice.getReNr() + "\" was deleted!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return false;
 		}
 	}
 
-	public int readNextId( String type ) {
+	public int readNextId(String type) {
 		String query = "SELECT seq FROM sqlite_sequence WHERE name = \"" + type + "\"";
 		int newId = -1;
 
 		try {
 			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery( query );
+			ResultSet rs = st.executeQuery(query);
 
-			while ( rs.next() ) {
-				newId = rs.getInt( "seq" );
+			while (rs.next()) {
+				newId = rs.getInt("seq");
 			}
 
-			newId++ ;
+			newId++;
 
-			LOGGER.info( "Read new id from " + type + " = " + newId );
+			LOGGER.info("Read new id from " + type + " = " + newId);
 
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 
 		return newId;
@@ -702,44 +712,44 @@ public class DbController {
 
 		try {
 			Statement st = connection.createStatement();
-			ResultSet rs = st.executeQuery( query );
+			ResultSet rs = st.executeQuery(query);
 
 			int count = -1;
 
-			while ( rs.next() ) {
-				count = rs.getInt( "COUNT(*)" );
+			while (rs.next()) {
+				count = rs.getInt("COUNT(*)");
 			}
 
-			LOGGER.info( "Read count of Customers = " + count );
+			LOGGER.info("Read count of Customers = " + count);
 
 			return count;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return -1;
 		}
 	}
 
-	public int readAgeCount( int fromAge, int toAge ) {
+	public int readAgeCount(int fromAge, int toAge) {
 		String query = "SELECT * FROM Guests WHERE Age >= ? AND Age <= ?";
 
 		int guestCounter = 0;
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setInt( 1, fromAge );
-			ps.setInt( 2, toAge );
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, fromAge);
+			ps.setInt(2, toAge);
 
 			ResultSet rs = ps.executeQuery();
 
-			while ( rs.next() ) {
-				guestCounter++ ;
+			while (rs.next()) {
+				guestCounter++;
 			}
 
-			LOGGER.info( "Read age count from " + fromAge + " years to " + toAge + " years: " + guestCounter );
+			LOGGER.info("Read age count from " + fromAge + " years to " + toAge + " years: " + guestCounter);
 
 			return guestCounter;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return -1;
 		}
 	}
@@ -748,24 +758,24 @@ public class DbController {
 		String query = "INSERT INTO Positions(ArtNr, RgNr, Description, Amount, Unit, PriceExcl, PriceIncl, Ust, CreatedDate) VALUES(?,?,?,?,?,?,?,?,?)";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, position.getArtNr());
-			ps.setString( 2, position.getRgNr());
-			ps.setString( 3, position.getDescription());
-			ps.setDouble( 4, position.getAmount());
-			ps.setString( 5, position.getUnit());
-			ps.setDouble( 6, position.getPriceExcl());
-			ps.setDouble( 7, position.getPriceIncl());
-			ps.setDouble( 8, position.getUst());
-			ps.setString( 9, position.getCreatedDate());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, position.getArtNr());
+			ps.setString(2, position.getRgNr());
+			ps.setString(3, position.getDescription());
+			ps.setDouble(4, position.getAmount());
+			ps.setString(5, position.getUnit());
+			ps.setDouble(6, position.getPriceExcl());
+			ps.setDouble(7, position.getPriceIncl());
+			ps.setDouble(8, position.getUst());
+			ps.setString(9, position.getCreatedDate());
 
 			ps.executeUpdate();
 
-			LOGGER.info( "New position created!" );
+			LOGGER.info("New position created!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
@@ -774,22 +784,23 @@ public class DbController {
 		String query = "UPDATE Positions SET Amount = ?, Unit = ?, PriceExcl = ?, PriceIncl = ?, Ust = ? WHERE ArtNr = ? AND RgNr = ?";
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setDouble( 1, newPosition.getAmount());
-			ps.setString( 2, newPosition.getUnit());
-			ps.setDouble( 3, newPosition.getPriceExcl());
-			ps.setDouble( 4, newPosition.getPriceIncl());
-			ps.setDouble( 5, newPosition.getUst());
-			ps.setString( 6, newPosition.getArtNr());
-			ps.setString( 7, newPosition.getRgNr());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setDouble(1, newPosition.getAmount());
+			ps.setString(2, newPosition.getUnit());
+			ps.setDouble(3, newPosition.getPriceExcl());
+			ps.setDouble(4, newPosition.getPriceIncl());
+			ps.setDouble(5, newPosition.getUst());
+			ps.setString(6, newPosition.getArtNr());
+			ps.setString(7, newPosition.getRgNr());
 
 			ps.executeUpdate();
 
-			LOGGER.info("Position with ArtNr: " + newPosition.getArtNr() + " and RgNr: " + newPosition.getRgNr() + " updated!");
+			LOGGER.info("Position with ArtNr: " + newPosition.getArtNr() + " and RgNr: " + newPosition.getRgNr()
+					+ " updated!");
 
 			return true;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 		return false;
 	}
@@ -800,19 +811,19 @@ public class DbController {
 		boolean exist = false;
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setInt( 1, Integer.parseInt(position.getRgNr()));
-			ps.setString( 2, position.getDescription());
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, Integer.parseInt(position.getRgNr()));
+			ps.setString(2, position.getDescription());
 
 			ResultSet rs = ps.executeQuery();
 
-			while ( rs.next() ) {
+			while (rs.next()) {
 				exist = true;
 			}
 
-			LOGGER.info( "Positions " + position.getDescription() + " exist: " + exist);
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+			LOGGER.info("Positions " + position.getDescription() + " exist: " + exist);
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 
 		return exist;
@@ -824,14 +835,14 @@ public class DbController {
 		List<Position> positions = new ArrayList<Position>();
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setInt( 1, Integer.parseInt(rgNr));
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setInt(1, Integer.parseInt(rgNr));
 
 			ResultSet rs = ps.executeQuery();
 
 			Position position;
 
-			while ( rs.next() ) {
+			while (rs.next()) {
 				String artNr = rs.getString("ArtNr");
 				String description = rs.getString("Description");
 				String unit = rs.getString("Unit");
@@ -846,10 +857,10 @@ public class DbController {
 				positions.add(position);
 			}
 
-			LOGGER.info( "Read all positions successfull!" );
+			LOGGER.info("Read all positions successfull!");
 			return positions;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return null;
 		}
 	}
@@ -859,12 +870,12 @@ public class DbController {
 		Product product = null;
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, name );
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, name);
 
 			ResultSet rs = ps.executeQuery();
 
-			while ( rs.next() ) {
+			while (rs.next()) {
 				String artNr = rs.getString("ArtNr");
 				String unit = rs.getString("Unit");
 				double price = rs.getDouble("Price");
@@ -873,131 +884,133 @@ public class DbController {
 				product = new Product(artNr, name, unit, ust, price);
 			}
 
-			LOGGER.info( "Read product with Name: " + name );
+			LOGGER.info("Read product with Name: " + name);
 			return product;
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 			return null;
 		}
 	}
 
 	public boolean productExist(String name) {
 		String query = "SELECT * FROM Products WHERE Name = ?";
-//		Product product = null;
+		// Product product = null;
 		Boolean exist = false;
 
 		try {
-			PreparedStatement ps = connection.prepareStatement( query );
-			ps.setString( 1, name );
+			PreparedStatement ps = connection.prepareStatement(query);
+			ps.setString(1, name);
 
 			ResultSet rs = ps.executeQuery();
 
 			int findItem = 0;
 
-			while ( rs.next() ) {
+			while (rs.next()) {
 				findItem++;
-//				String artNr = rs.getString("ArtNr");
-//				String unit = rs.getString("Unit");
-//				double price = rs.getDouble("Price");
-//				double ust = rs.getDouble("Ust");
-//
-//				product = new Product(artNr, name, unit, ust, price);
+				// String artNr = rs.getString("ArtNr");
+				// String unit = rs.getString("Unit");
+				// double price = rs.getDouble("Price");
+				// double ust = rs.getDouble("Ust");
+				//
+				// product = new Product(artNr, name, unit, ust, price);
 			}
 
 			exist = findItem > 0;
-			LOGGER.info( "Exist product with name: " + name + " - " + exist);
-		} catch ( SQLException e ) {
-			LOGGER.warning( e.toString() );
+			LOGGER.info("Exist product with name: " + name + " - " + exist);
+		} catch (SQLException e) {
+			LOGGER.warning(e.toString());
 		}
 
 		return exist;
 	}
 
-//	public boolean createContactData( ContactData contactData, ContactType type ) {
-//		String query = "INSERT INTO " + type.getText() + " (name, street, plz, ort, phone, email) VALUES(?,?,?,?,?,?)";
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//			ps.setString( 1, contactData.getName() );
-//			ps.setString( 2, contactData.getStreet() );
-//			ps.setString( 3, contactData.getPlz() );
-//			ps.setString( 4, contactData.getOrt() );
-//			ps.setString( 5, contactData.getPhone() );
-//			ps.setString( 6, contactData.getEmail() );
-//			ps.executeUpdate();
-//
-//			LOGGER.info( "New " + type.getText() + " created!" );
-//
-//			return true;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
-//	}
-//
-//	public ContactData readContactData( ContactType type ) {
-//		String query = "SELECT * FROM " + type.getText();
-//
-//		try {
-//			Statement st = connection.createStatement();
-//			ResultSet rs = st.executeQuery( query );
-//
-//			ContactData contactData = new ContactData();
-//			contactData.setType( type );
-//
-//			while ( rs.next() ) {
-//				contactData.setName( rs.getString( "Name" ) );
-//				contactData.setStreet( rs.getString( "Street" ) );
-//				contactData.setPlz( rs.getString( "Plz" ) );
-//				contactData.setOrt( rs.getString( "Ort" ) );
-//				contactData.setPhone( rs.getString( "Phone" ) );
-//				contactData.setEmail( rs.getString( "Email" ) );
-//			}
-//
-//			LOGGER.info( "Read " + type.getText() + " data!" );
-//			return contactData;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return null;
-//		}
-//	}
-//
-//	public void deleteContactData( ContactType type ) {
-//		String query = "DELETE FROM " + type.getText();
-//
-//		try {
-//			PreparedStatement ps = connection.prepareStatement( query );
-//
-//			// execute the delete statement
-//			ps.executeUpdate();
-//
-//			LOGGER.info( type.getText() + " data deleted!" );
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//		}
-//	}
-//
-//	public boolean checkContactData( ContactType type ) {
-//		String query = "SELECT COUNT(*) FROM " + type.getText();
-//
-//		try {
-//			Statement st = connection.createStatement();
-//			ResultSet rs = st.executeQuery( query );
-//
-//			int count = -1;
-//
-//			while ( rs.next() ) {
-//				count = rs.getInt( "COUNT(*)" );
-//			}
-//
-//			boolean locationDataValid = count != 0;
-//
-//			LOGGER.info( "Check " + type.getText() + " data: " + locationDataValid );
-//
-//			return locationDataValid;
-//		} catch ( SQLException e ) {
-//			LOGGER.warning( e.toString() );
-//			return false;
-//		}
-//	}
+	// public boolean createContactData( ContactData contactData, ContactType type )
+	// {
+	// String query = "INSERT INTO " + type.getText() + " (name, street, plz, ort,
+	// phone, email) VALUES(?,?,?,?,?,?)";
+	//
+	// try {
+	// PreparedStatement ps = connection.prepareStatement( query );
+	// ps.setString( 1, contactData.getName() );
+	// ps.setString( 2, contactData.getStreet() );
+	// ps.setString( 3, contactData.getPlz() );
+	// ps.setString( 4, contactData.getOrt() );
+	// ps.setString( 5, contactData.getPhone() );
+	// ps.setString( 6, contactData.getEmail() );
+	// ps.executeUpdate();
+	//
+	// LOGGER.info( "New " + type.getText() + " created!" );
+	//
+	// return true;
+	// } catch ( SQLException e ) {
+	// LOGGER.warning( e.toString() );
+	// return false;
+	// }
+	// }
+	//
+	// public ContactData readContactData( ContactType type ) {
+	// String query = "SELECT * FROM " + type.getText();
+	//
+	// try {
+	// Statement st = connection.createStatement();
+	// ResultSet rs = st.executeQuery( query );
+	//
+	// ContactData contactData = new ContactData();
+	// contactData.setType( type );
+	//
+	// while ( rs.next() ) {
+	// contactData.setName( rs.getString( "Name" ) );
+	// contactData.setStreet( rs.getString( "Street" ) );
+	// contactData.setPlz( rs.getString( "Plz" ) );
+	// contactData.setOrt( rs.getString( "Ort" ) );
+	// contactData.setPhone( rs.getString( "Phone" ) );
+	// contactData.setEmail( rs.getString( "Email" ) );
+	// }
+	//
+	// LOGGER.info( "Read " + type.getText() + " data!" );
+	// return contactData;
+	// } catch ( SQLException e ) {
+	// LOGGER.warning( e.toString() );
+	// return null;
+	// }
+	// }
+	//
+	// public void deleteContactData( ContactType type ) {
+	// String query = "DELETE FROM " + type.getText();
+	//
+	// try {
+	// PreparedStatement ps = connection.prepareStatement( query );
+	//
+	// // execute the delete statement
+	// ps.executeUpdate();
+	//
+	// LOGGER.info( type.getText() + " data deleted!" );
+	// } catch ( SQLException e ) {
+	// LOGGER.warning( e.toString() );
+	// }
+	// }
+	//
+	// public boolean checkContactData( ContactType type ) {
+	// String query = "SELECT COUNT(*) FROM " + type.getText();
+	//
+	// try {
+	// Statement st = connection.createStatement();
+	// ResultSet rs = st.executeQuery( query );
+	//
+	// int count = -1;
+	//
+	// while ( rs.next() ) {
+	// count = rs.getInt( "COUNT(*)" );
+	// }
+	//
+	// boolean locationDataValid = count != 0;
+	//
+	// LOGGER.info( "Check " + type.getText() + " data: " + locationDataValid );
+	//
+	// return locationDataValid;
+	// } catch ( SQLException e ) {
+	// LOGGER.warning( e.toString() );
+	// return false;
+	// }
+	// }
 }
