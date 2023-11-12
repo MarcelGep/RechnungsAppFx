@@ -351,7 +351,7 @@ public class InvoiceDialogController implements Initializable {
             // Product product = dbController.readProduct(pos.getArtNr());
             String artNr = pos.getArtNr();
             String description = pos.getDescription();
-            String amount = DoubleToNumberStr(pos.getAmount());
+            String amount = DoubleToNumberStr(pos.getQuantity());
             String unit = pos.getUnit();
             String priceExcl = DoubleToCurrencyString(pos.getPriceExcl());
             String ust = DoubleToPercentageString(pos.getUst());
@@ -827,7 +827,7 @@ public class InvoiceDialogController implements Initializable {
 
                         case "tfAmount":
                             tf = (TextField) child;
-                            position.setAmount(NumberStrToDouble(tf.getText()));
+                            position.setQuantity(NumberStrToDouble(tf.getText()));
                             break;
 
                         case "tfPriceExcl":

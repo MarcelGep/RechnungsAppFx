@@ -762,7 +762,7 @@ public class DbController {
 			ps.setString(1, position.getArtNr());
 			ps.setString(2, position.getRgNr());
 			ps.setString(3, position.getDescription());
-			ps.setDouble(4, position.getAmount());
+			ps.setDouble(4, position.getQuantity());
 			ps.setString(5, position.getUnit());
 			ps.setDouble(6, position.getPriceExcl());
 			ps.setDouble(7, position.getPriceIncl());
@@ -785,7 +785,7 @@ public class DbController {
 
 		try {
 			PreparedStatement ps = connection.prepareStatement(query);
-			ps.setDouble(1, newPosition.getAmount());
+			ps.setDouble(1, newPosition.getQuantity());
 			ps.setString(2, newPosition.getUnit());
 			ps.setDouble(3, newPosition.getPriceExcl());
 			ps.setDouble(4, newPosition.getPriceIncl());

@@ -1,6 +1,7 @@
 package com.gepraegs.rechnungsAppFx;
 
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -13,8 +14,7 @@ public class Product extends RecursiveTreeObject<Product> {
     private double priceIncl;
     private double ust;
 
-    public Product()
-    {
+    public Product() {
         this.artNr = new SimpleStringProperty("");
         this.name = new SimpleStringProperty("");
         this.unit = new SimpleStringProperty("Stk.");

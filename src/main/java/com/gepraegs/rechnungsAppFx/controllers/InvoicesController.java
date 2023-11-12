@@ -160,7 +160,7 @@ public class InvoicesController implements Initializable {
 						dateFormatter(param.getValue().getCreatedDate())));
 		colPosAmount.setCellValueFactory(
 				(TableColumn.CellDataFeatures<Position, String> param) -> new ReadOnlyStringWrapper(
-						DoubleToNumberStr(param.getValue().getAmount())));
+						DoubleToNumberStr(param.getValue().getQuantity())));
 		colPosUnit.setCellValueFactory(param -> param.getValue().unitProperty());
 		colPosPriceExcl.setCellValueFactory(
 				(TableColumn.CellDataFeatures<Position, String> param) -> new ReadOnlyStringWrapper(

@@ -6,6 +6,49 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PdfInvoicesBasic",
+            "request": "launch",
+            "mainClass": "com.gepraegs.rechnungsAppFx.PdfInvoicesBasic",
+            "projectName": "rechungsAppFx"
+        },
+        {
+            "type": "java",
+            "name": "GeneratePDFInvoice",
+            "request": "launch",
+            "mainClass": "com.gepraegs.rechnungsAppFx.GeneratePDFInvoice",
+            "projectName": "rechungsAppFx"
+        },
+        {
+            "type": "java",
+            "name": "GeneratePdf_Modified",
+            "request": "launch",
+            "mainClass": "com.gepraegs.rechnungsAppFx.GeneratePdf_Modified",
+            "projectName": "rechungsAppFx"
+        },
+        {
+            "type": "java",
+            "name": "GenerateInvoiceSample",
+            "request": "launch",
+            "mainClass": "com.gepraegs.rechnungsAppFx.GenerateInvoiceSample",
+            "projectName": "rechungsAppFx",
+            "args": "InvoiceSample.pdf"
+        },
+        {
+            "type": "java",
+            "name": "GenerateInvoice",
+            "request": "launch",
+            "mainClass": "com.gepraegs.rechnungsAppFx.GenerateInvoice",
+            "projectName": "rechungsAppFx"
+        },
+        {
+            "type": "java",
+            "name": "PDFPrinter",
+            "request": "launch",
+            "mainClass": "com.gepraegs.rechnungsAppFx.PDFPrinter",
+            "projectName": "rechungsAppFx"
+        },
+        {
+            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "com.gepraegs.rechnungsAppFx.Main",
